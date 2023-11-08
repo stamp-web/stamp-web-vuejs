@@ -57,6 +57,7 @@ export default ({mode}) => {
   return defineConfig({
     // @ts-ignore
     plugins: config.plugins,
+    base: '',
     optimizeDeps: {
       include: [
         'nouislider',
