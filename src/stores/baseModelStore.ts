@@ -71,5 +71,5 @@ export function baseModelStore<T extends PersistedNamedModel>() {
         return m
       }
     }
-  });
+  })
 }
