@@ -5,9 +5,10 @@ import vue from '@vitejs/plugin-vue'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import process from 'node:process'
 import tailwindcss from 'tailwindcss'
-import autoprefixer = require("autoprefixer");
+import autoprefixer from 'autoprefixer'
 
 // https://vitejs.dev/config/
+// @ts-ignore
 export default ({mode}) => {
 
   const CI = !!process.env.CI
@@ -35,6 +36,7 @@ export default ({mode}) => {
   }
 
   if( mode !== 'production' && !CI) {
+    // @ts-ignore
     config.proxy = {
       '^/stamp-webservices': {
         target: process.env.VITE_PROXY_URL,
@@ -45,6 +47,7 @@ export default ({mode}) => {
         },
         changeOrigin: true,
         configure: (proxy : object, options: object) => {
+          // @ts-ignore
           options.auth = `${process.env.VITE_PROXY_USER}:${process.env.VITE_PROXY_PASSWORD}`;
         }
       }
@@ -52,6 +55,7 @@ export default ({mode}) => {
   }
 
   return defineConfig({
+    // @ts-ignore
     plugins: config.plugins,
     optimizeDeps: {
       include: [
@@ -62,6 +66,7 @@ export default ({mode}) => {
     },
     server: {
       https: config.https,
+      // @ts-ignore
       proxy: config.proxy
     },
     resolve: {

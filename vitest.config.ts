@@ -3,6 +3,7 @@ import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config'
 
 export default defineConfig(configEnv => mergeConfig(
+    // @ts-ignore
     viteConfig(configEnv),
     defineConfig({
         test: {
