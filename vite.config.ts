@@ -10,13 +10,15 @@ import autoprefixer = require("autoprefixer");
 // https://vitejs.dev/config/
 export default ({mode}) => {
 
+  const CI = !!process.env.CI
   /**
    * When called from vitest the mode will be 'test'. Any variables defined in .env.test will
    * supercede properties, but load the development environment variables to ensure a proper configuraton.
    */
   const processEnvironment = () => {
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
-    if(mode === 'test') {
+
+    if(mode === 'test' && !CI) {
       process.env = {...process.env, ...loadEnv('development', process.cwd())};
     }
   };
@@ -27,12 +29,12 @@ export default ({mode}) => {
     https: true,
   };
 
-  /*if(process.argv.includes('preview')) {
+  if(process.argv.includes('preview')) {
     config.plugins.pop();
     config.https = false;
-  }*/
+  }
 
-  if( mode !== 'production') {
+  if( mode !== 'production' && !CI) {
     config.proxy = {
       '^/stamp-webservices': {
         target: process.env.VITE_PROXY_URL,
