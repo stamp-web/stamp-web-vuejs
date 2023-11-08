@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-import { modelStore } from '../../stores/modelStore'
+import { countryStore } from '../../stores/countryStore'
 import { mount, VueWrapper } from '@vue/test-utils'
 import Countries from '@/views/Countries.vue'
 import { createInstance } from '../../models/entityModels'
@@ -17,8 +17,8 @@ describe('Countries', () => {
       createSpy: vi.fn
     })
     setActivePinia(pinia)
-    store = modelStore()
-    const spyGetCountries = vi.spyOn(store, 'getCountries')
+    store = countryStore()
+    const spyGetCountries = vi.spyOn(store, 'find')
     spyGetCountries.mockImplementation(() => Promise.resolve([]))
 
     wrapper = mount(Countries, {
@@ -30,6 +30,6 @@ describe('Countries', () => {
   it('renders properly', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const c = createInstance<Country>({ id: 5, name: 'test' })
-    expect(wrapper.find('.country-list-pane').exists()).toBe(true)
+    expect(wrapper.find('.flex.flex-col').exists()).toBe(true)
   })
 })

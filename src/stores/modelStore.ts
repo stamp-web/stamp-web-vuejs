@@ -5,7 +5,7 @@ import AlbumService from '../services/AlbumService'
 import { defineStore } from 'pinia'
 import { EntityList } from '../models/entityList'
 
-import _ from 'lodash-es'
+import _ from 'lodash'
 export const modelStore = defineStore('models', {
   state: () => {
     return {

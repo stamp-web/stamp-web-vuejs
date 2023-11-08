@@ -5,7 +5,7 @@ import type BaseService from '@/services/BaseService'
 import { reactive } from 'vue'
 import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
-import _ from 'lodash-es'
+import _sortedIndexBy from 'lodash/sortedIndexBy'
 
 export type BaseModelStore<T extends PersistedNamedModel> = PiniaStore<
   'entityModelStore',
@@ -61,7 +61,7 @@ export function baseModelStore<T extends PersistedNamedModel>() {
       },
       async create(model: T): Promise<T> {
         const m: T = await this.service.create(model)
-        let index = _.sortedIndexBy(this.items.list as T[], m, (m: T) => m)
+        let index = _sortedIndexBy(this.items.list as T[], m, (m: T) => m)
         if (index < 0) {
           index = this.items.list.length - 1
         }
@@ -71,5 +71,5 @@ export function baseModelStore<T extends PersistedNamedModel>() {
         return m
       }
     }
-  })
+  });
 }

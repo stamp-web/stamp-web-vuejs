@@ -1,10 +1,12 @@
 <script lang="ts">
 import { reactive, ref, defineComponent, watch } from 'vue'
-import type { Album } from '../models/entityModels'
-import { albumStore } from '../stores/albumStore'
-import { createInstance } from '../models/entityModels'
-import _ from 'lodash-es'
+import _defer from 'lodash/defer'
+import _isEmpty from 'lodash/isEmpty'
 import { AgGridVue } from 'ag-grid-vue3'
+
+import type { Album } from '@/models/entityModels'
+import { albumStore } from '@/stores/albumStore'
+import { createInstance } from '@/models/entityModels'
 import { isNil } from '@/util/object-utils'
 
 export default defineComponent({
@@ -21,7 +23,7 @@ export default defineComponent({
     watch(
       () => [albums.list],
       () => {
-        _.defer(() => {
+        _defer(() => {
           if (!isNil(gridApi.value)) {
             gridApi.value.showLoadingOverlay()
             gridApi.value.setRowData(albums.list)
@@ -45,7 +47,7 @@ export default defineComponent({
 
   computed: {
     isSelected() {
-      return !_.isEmpty(this.albums.selected)
+      return !_isEmpty(this.albums.selected)
     }
   },
 

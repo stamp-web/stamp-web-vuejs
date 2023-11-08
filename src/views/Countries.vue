@@ -1,10 +1,12 @@
 <script lang="ts">
 import { AgGridVue } from 'ag-grid-vue3'
 import { reactive, ref, defineComponent, watch } from 'vue'
-import type { Country } from '../models/entityModels'
-import { countryStore } from '../stores/countryStore'
-import { createInstance } from '../models/entityModels'
-import _ from 'lodash-es'
+import _isEmpty from 'lodash/isEmpty'
+import _defer from 'lodash/defer'
+
+import type { Country } from '@/models/entityModels'
+import { countryStore } from '@/stores/countryStore'
+import { createInstance } from '@/models/entityModels'
 import { isNil } from '@/util/object-utils'
 
 export default defineComponent({
@@ -24,7 +26,7 @@ export default defineComponent({
     watch(
       () => [countries.list],
       () => {
-        _.defer(() => {
+        _defer(() => {
           if (!isNil(gridApi.value)) {
             gridApi.value.setRowData(countries.list)
           }
@@ -46,10 +48,10 @@ export default defineComponent({
 
   computed: {
     isSelected() {
-      return !_.isEmpty(this.countries.selected)
+      return !_isEmpty(this.countries.selected)
     },
     selectedName() {
-      return !_.isEmpty(this.countries.selected) ? this.countries.selected.name : 'Nope'
+      return !_isEmpty(this.countries.selected) ? this.countries.selected.name : 'Nope'
     }
   },
 
