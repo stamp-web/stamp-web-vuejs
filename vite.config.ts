@@ -52,7 +52,6 @@ export default ({mode}) => {
   }
 
   return defineConfig({
-
     plugins: config.plugins,
     optimizeDeps: {
       include: [

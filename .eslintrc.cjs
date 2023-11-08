@@ -1,5 +1,6 @@
 /* eslint-env node */
 require('@rushstack/eslint-patch/modern-module-resolution')
+const tsConfig = require('./tsconfig.eslint.json')
 
 module.exports = {
   root: true,
@@ -13,6 +14,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
+  ignorePatterns: tsConfig.exclude,
   rules: {
 
   }
