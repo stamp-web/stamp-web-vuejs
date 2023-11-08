@@ -96,6 +96,7 @@ export default defineComponent({
 
 <template>
   <div class="flex flex-col">
+    <span class="sw-icon-country"></span>
     <ag-grid-vue
       class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
       :columnDefs="columnDefs"

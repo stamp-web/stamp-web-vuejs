@@ -1,5 +1,4 @@
 @import './base.css';
-@import './fonts/stamp-web/css/stamp-web-embedded.css';
 
 @tailwind base;
 @tailwind components;
