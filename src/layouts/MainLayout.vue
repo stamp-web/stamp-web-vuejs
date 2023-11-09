@@ -4,7 +4,7 @@
     <AppNavigator
       class="app-navigator col-start-1 col-end-1 flex flex-col flex-grow-0 flex-shrink flex-auto"
     />
-    <router-view class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0" />
+    <router-view/>
   </div>
 </template>
 

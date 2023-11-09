@@ -26,6 +26,11 @@ const router = createRouter({
           component: () => import('@/views/Albums.vue')
         },
         {
+          path: '/stampCollections',
+          name: 'stampCollections',
+          component: () => import('@/views/StampCollections.vue')
+        },
+        {
           path: '/about',
           name: 'about',
           // route level code-splitting

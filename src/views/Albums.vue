@@ -89,7 +89,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-col">
     <ag-grid-vue
       class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
       :columnDefs="columnDefs"
