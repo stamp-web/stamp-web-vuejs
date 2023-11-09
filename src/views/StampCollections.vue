@@ -3,6 +3,7 @@ import { reactive, ref, defineComponent, watch } from 'vue'
 import _defer from 'lodash/defer'
 import _isEmpty from 'lodash/isEmpty'
 import { AgGridVue } from 'ag-grid-vue3'
+import {Prompt} from "@/util/Prompt";
 
 import type { StampCollection } from '@/models/entityModels'
 import { stampCollectionStore } from '@/stores/stampCollectionStore'
@@ -40,7 +41,7 @@ export default defineComponent({
       gridApi,
       gridOptions: null,
       columnDefs: Object.freeze([{ field: 'name' }, { field: 'description' }]),
-      rowData: []
+      rowData: [],
     }
   },
 
@@ -62,12 +63,20 @@ export default defineComponent({
     },
 
     remove() {
-      if (this.isSelected) {
-        this.store.remove(this.collections.selected as StampCollection).then(() => {
-          this.collections.selected = undefined
-        })
+      const selectedCollection = this.collections.selected
+      if (this.isSelected && selectedCollection && selectedCollection.name) {
+        Prompt.confirm({
+          message: `Delete the collection '${selectedCollection.name}'?`
+        }).then(confirmed => {
+          if(confirmed) {
+            this.store.remove(this.collections.selected as StampCollection).then(() => {
+              this.collections.selected = undefined
+            })
+          }
+        });
       }
     },
+
 
   },
 
@@ -78,16 +87,21 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-col">
-    <ag-grid-vue
-        class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
-        :columnDefs="columnDefs"
-        :rowData="rowData"
-        rowSelection="single"
-        @grid-ready="onGridReady"
-        @selection-changed="onSelected"
-    >
-    </ag-grid-vue>
-    <button @click="remove()">Remove</button>
+  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
+    <div class="flex-grow flex-auto flex flex-col">
+      <div class="flex mb-1">
+        <button @click="create()" class="sw-icon-plus hover:bg-blue-500 hover:text-gray-50 text-gray-800 rounded p-1 border-2">New Stamp Collection</button>
+        <button @click="remove()" :disabled="!isSelected" class="sw-icon-delete enabled:text-gray-800 text-gray-300 rounded p-1 border-2">Delete</button>
+      </div>
+      <ag-grid-vue
+          class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          rowSelection="single"
+          @grid-ready="onGridReady"
+          @selection-changed="onSelected"
+      >
+      </ag-grid-vue>
+    </div>
   </div>
 </template>
