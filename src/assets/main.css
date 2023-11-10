@@ -9,7 +9,7 @@
  *
  -----------------------------------------------------------------------------*/
 .btn-primary {
-  @apply enabled:bg-blue-500 enabled:hover:bg-blue-700 bg-gray-200 enabled:text-white text-gray-500 enabled:font-bold py-1 px-4 text-xs rounded mr-2;
+  @apply enabled:bg-blue-500 enabled:hover:bg-blue-700 bg-gray-200 enabled:text-white text-gray-500 enabled:font-bold py-1 px-4 text-xs rounded;
 }
 
 .btn-secondary {

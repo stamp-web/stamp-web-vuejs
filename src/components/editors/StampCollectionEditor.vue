@@ -1,6 +1,6 @@
 <template>
   <div class="panel-form">
-    <div class="panel-form-title">{{ title }}</div>
+    <div class="panel-form-title"><span class="sw-icon-stamp-collection"></span>{{ title }}</div>
     <Vueform size="sm" ref="form$" :model-value="model" sync class="panel-form-form">
       <TextElement
         label="Name"
@@ -16,7 +16,7 @@
       />
     </Vueform>
     <div class="panel-form-buttonbar">
-      <button :disabled="invalid" class="btn-primary" @click="$emit('save', model)">
+      <button :disabled="invalid" class="btn-primary mr-2" @click="$emit('save', model)">
         Save
       </button>
       <button class="btn-secondary" @click="$emit('cancel')">Cancel</button>
