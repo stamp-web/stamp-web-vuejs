@@ -17,10 +17,10 @@ import { RouterLink } from 'vue-router'
       >About</RouterLink
     >
     <RouterLink
-        :exact-active-class="'bg-gray-600 text-gray-50'"
-        class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-        to="/stampCollections"
-    >Stamp Collections</RouterLink
+      :exact-active-class="'bg-gray-600 text-gray-50'"
+      class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
+      to="/stampCollections"
+      >Stamp Collections</RouterLink
     >
     <RouterLink
       :exact-active-class="'bg-gray-600 text-gray-50'"

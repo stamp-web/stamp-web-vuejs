@@ -2,6 +2,38 @@
 
 @tailwind base;
 @tailwind components;
+
+/**----------------------------------------------------------------------------
+ *
+ * Button Styling for common app button
+ *
+ -----------------------------------------------------------------------------*/
+.btn-primary {
+  @apply enabled:bg-blue-500 enabled:hover:bg-blue-700 bg-gray-200 enabled:text-white text-gray-500 enabled:font-bold py-1 px-4 text-xs rounded mr-2;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-4 border border-gray-400 text-xs rounded;
+}
+
+/**----------------------------------------------------------------------------
+ *
+ * Form Styling for common app forms
+ *
+ -----------------------------------------------------------------------------*/
+.panel-form {
+  @apply flex flex-grow flex-col h-full m-0 bg-gray-50;
+}
+.panel-form-form {
+  @apply flex-grow h-full mb-auto m-2;
+}
+.panel-form-buttonbar {
+  @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;
+}
+.panel-form-title {
+  @apply bg-gray-500 p-2 font-bold text-white mb-5 h-12 flex-nowrap truncate;
+}
+
 @tailwind utilities;
 
 #app {

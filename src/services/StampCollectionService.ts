@@ -1,4 +1,4 @@
-import type {StampCollection} from '../models/entityModels'
+import type { StampCollection } from '../models/entityModels'
 import BaseService from '@/services/BaseService'
 
 class StampCollectionService extends BaseService<StampCollection> {

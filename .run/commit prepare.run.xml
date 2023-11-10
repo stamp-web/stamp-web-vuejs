@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="commit prepare" type="CompoundRunConfigurationType">
+    <toRun name="eslint" type="js.build_tools.npm" />
+    <toRun name="format code" type="js.build_tools.npm" />
+    <toRun name="type-check" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

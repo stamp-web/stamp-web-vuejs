@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { isNil } from '../object-utils'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { isNil, augmentModel } from '../object-utils'
 
 describe('object-utils', () => {
   describe('isNil', () => {
@@ -25,6 +25,27 @@ describe('object-utils', () => {
 
     it('verify primitive string', () => {
       expect(isNil('test')).toBe(false)
+    })
+  })
+
+  describe('augmentModel', () => {
+    let model: Object
+
+    beforeEach(() => {
+      model = {
+        str: 'test',
+        num: 42
+      }
+    })
+    it('adds missing keys of each core type', () => {
+      augmentModel(model, {
+        obj: { key: 'value' },
+        arr: [5, 7, 9]
+      })
+      // @ts-ignore
+      expect(model.obj).toStrictEqual({})
+      // @ts-ignore
+      expect(model.arr).toStrictEqual([])
     })
   })
 })

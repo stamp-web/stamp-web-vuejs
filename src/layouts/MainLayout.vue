@@ -1,10 +1,10 @@
 <template>
   <AppHeader />
-  <div class="content grid flex-col col-start-1 col-end-6 h-full w-full">
+  <div class="content grid flex-col col-start-1 col-end-6 h-full w-full border-t-2">
     <AppNavigator
       class="app-navigator col-start-1 col-end-1 flex flex-col flex-grow-0 flex-shrink flex-auto"
     />
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
