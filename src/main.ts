@@ -9,4 +9,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-createApp(App).use(createPinia()).use(router).use(Vueform, vueformConfig).mount('#app')
+const app = createApp(App).use(createPinia()).use(router).use(Vueform, vueformConfig)
+// if we need it
+app.config.globalProperties.window = window
+app.mount('#app')

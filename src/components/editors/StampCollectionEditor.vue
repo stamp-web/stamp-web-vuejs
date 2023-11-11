@@ -1,6 +1,8 @@
 <template>
   <div class="panel-form">
-    <div class="panel-form-title"><span class="sw-icon-stamp-collection"></span>{{ title }}</div>
+    <div class="panel-form-title">
+      <span class="sw-icon-stamp-collection"></span>{{ title }}
+    </div>
     <Vueform size="sm" ref="form$" :model-value="model" sync class="panel-form-form">
       <TextElement
         label="Name"
