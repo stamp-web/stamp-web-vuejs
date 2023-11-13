@@ -5,24 +5,11 @@
 
 /**----------------------------------------------------------------------------
  *
- * Button Styling for common app button
- *
- -----------------------------------------------------------------------------*/
-.btn-primary {
-  @apply enabled:bg-blue-500 enabled:hover:bg-blue-700 bg-gray-200 enabled:text-white text-gray-500 enabled:font-bold py-1 px-4 text-xs rounded;
-}
-
-.btn-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1 px-4 border border-gray-400 text-xs rounded;
-}
-
-/**----------------------------------------------------------------------------
- *
  * Form Styling for common app forms
  *
  -----------------------------------------------------------------------------*/
 .panel-form {
-  @apply flex flex-grow flex-col h-full m-0 bg-gray-50;
+  @apply flex flex-grow flex-col h-full m-0 border-2 border-[var(--vf-primary)];
 }
 .panel-form-form {
   @apply flex-grow h-full mb-auto m-2;
@@ -31,7 +18,7 @@
   @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;
 }
 .panel-form-title {
-  @apply bg-gray-500 p-2 font-bold text-white mb-5 h-12 flex-nowrap truncate;
+  @apply bg-gray-300 p-2 text-gray-900 mb-5 h-12 flex-nowrap truncate;
 }
 
 @tailwind utilities;
@@ -65,7 +52,7 @@ a,
 
   #app {
     display: grid;
-    grid-template: auto 1fr / auto 1fr auto;
+    grid-template: auto 1fr / 1fr;
 
     /*display: flex;
     flex: 1 1 auto;

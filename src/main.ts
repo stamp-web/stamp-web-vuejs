@@ -8,5 +8,11 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import ClickableIconCellRenderer from '@/components/renderers/ClickableIconCellRenderer.vue'
 
-createApp(App).use(createPinia()).use(router).use(Vueform, vueformConfig).mount('#app')
+const app = createApp(App).use(createPinia()).use(router).use(Vueform, vueformConfig)
+/**
+ * Globally define cell renderers so they can be used by name without having to import them all in the Grid Component
+ */
+app.component('ClickableIconCellRenderer', ClickableIconCellRenderer)
+app.mount('#app')

@@ -2,58 +2,43 @@
 import { reactive, ref, defineComponent, watch } from 'vue'
 import _ from 'lodash'
 
-import { AgGridVue } from 'ag-grid-vue3'
-import { Prompt } from '@/util/Prompt'
+import { Prompt } from '@/components/Prompt'
 import { TransitionRoot } from '@headlessui/vue'
 import StampCollectionEditor from '@/components/editors/StampCollectionEditor.vue'
-import ClickableIconCellRenderer from '@/components/renderers/ClickableIconCellRenderer.vue'
-
+import DataGridComponent from '@/components/table/DataGridComponent.vue'
 import type { StampCollection } from '@/models/entityModels'
 import { stampCollectionStore } from '@/stores/stampCollectionStore'
-import { isNil } from '@/util/object-utils'
 import { createInstance } from '@/models/entityModels'
+import { ColumnDefinition } from '@/components/table/DataGridModels'
+import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
+import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
 
+// look into https://vuejs.org/guide/components/async.html
 export default defineComponent({
   name: 'StampCollectionsView',
   components: {
-    AgGridVue,
+    PrimaryButton,
+    SecondaryButton,
     TransitionRoot,
     StampCollectionEditor,
-    // eslint-disable-next-line vue/no-unused-components
-    ClickableIconCellRenderer
+    DataGridComponent
   },
 
   setup() {
+    const dataGridRef = ref()
     const showEditor = ref(false)
     const editingModel = ref()
-    const gridApi = ref()
     const context = ref()
     const store = stampCollectionStore()
     const collections = reactive({
-      list: [] as StampCollection[],
+      list: new Array<StampCollection>(),
       selected: {} as StampCollection | undefined
     })
 
     watch(
-      () => [collections.list],
+      () => [showEditor.value],
       () => {
-        _.defer(() => {
-          if (!isNil(gridApi.value)) {
-            gridApi.value.showLoadingOverlay()
-            gridApi.value.setRowData(collections.list)
-            gridApi.value.hideOverlay()
-          }
-        })
-      },
-      { deep: true }
-    )
-
-    watch(
-      () => [showEditor],
-      () => {
-        if (!isNil(gridApi.value)) {
-          gridApi.value.sizeColumnsToFit()
-        }
+        dataGridRef.value.resizeColumns()
       }
     )
 
@@ -63,22 +48,13 @@ export default defineComponent({
       store,
       collections,
       context,
-      gridApi,
-      gridOptions: null,
+      dataGridRef,
 
-      columnDefs: Object.freeze([
-        { field: 'name', resizable: true },
-        {
-          width: 2,
-          cellClass: ['!p-0.25', 'max-w-[2rem]', '!flex', 'items-center'],
-          cellRenderer: 'ClickableIconCellRenderer',
-          cellRendererParams: {
-            icon: 'sw-icon-edit',
-            onClick: 'editRow'
-          }
-        },
-        { field: 'description', resizable: true }
-      ]),
+      columnDefs: [
+        new ColumnDefinition('name'),
+        ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
+        new ColumnDefinition('description')
+      ],
       rowData: []
     }
   },
@@ -90,14 +66,8 @@ export default defineComponent({
   },
 
   methods: {
-    onGridReady(params: any) {
-      this.gridApi = params.api
-      this.gridApi.sizeColumnsToFit()
-    },
-
-    onSelected() {
-      const selectedRows = this.gridApi.getSelectedRows()
-      this.collections.selected = selectedRows.at(0)
+    onSelected(selected: StampCollection) {
+      this.collections.selected = selected
     },
 
     remove() {
@@ -115,8 +85,8 @@ export default defineComponent({
       }
     },
     create() {
-      this.editingModel = createInstance<StampCollection>({})
       this.showEditor = true
+      this.editingModel = createInstance<StampCollection>({})
     },
     close() {
       this.showEditor = false
@@ -132,13 +102,11 @@ export default defineComponent({
         })
       }
     },
-    editRow(index: number) {
-      if (index >= 0) {
-        const sc: StampCollection = this.gridApi.getRowNode(index).data
-        if (sc) {
-          this.editingModel = _.cloneDeep(sc)
-          this.showEditor = true
-        }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    editRow(model: StampCollection, index: number) {
+      if (model) {
+        this.editingModel = _.cloneDeep(model)
+        this.showEditor = true
       }
     }
   },
@@ -157,46 +125,36 @@ export default defineComponent({
   <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1">
-        <button
-          @click="create()"
-          class="sw-icon-plus hover:bg-blue-500 hover:text-gray-50 text-gray-800 rounded p-1 border-2"
-        >
+        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           New Stamp Collection
-        </button>
-        <button
-          @click="remove()"
-          :disabled="!isSelected"
-          class="sw-icon-delete enabled:text-gray-800 text-gray-300 rounded p-1 border-2"
-        >
+        </PrimaryButton>
+        <SecondaryButton @click="remove()" :disabled="!isSelected" icon="sw-icon-delete">
           Delete
-        </button>
+        </SecondaryButton>
       </div>
-      <ag-grid-vue
-        class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
+      <DataGridComponent
+        ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="rowData"
+        :rowData="collections.list"
         :context="context"
-        rowSelection="single"
-        @grid-ready="onGridReady"
-        @selection-changed="onSelected"
+        @selected="onSelected"
       >
-      </ag-grid-vue>
+      </DataGridComponent>
     </div>
     <TransitionRoot
       :show="showEditor"
       enter="transition-opacity duration-75"
       enter-from="opacity-0"
       enter-to="opacity-100"
-      leave="transition-opacity duration-1500"
+      leave="transition-opacity duration-150"
       leave-from="opacity-100"
       leave-to="opacity-0"
-      class="max-w-[20rem] min-w-[20rem] h-full flex flex-col border-2 ml-1"
+      class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
       <StampCollectionEditor
         :model="editingModel"
         @cancel="showEditor = false"
         @save="save()"
-        class=""
       ></StampCollectionEditor>
     </TransitionRoot>
   </div>

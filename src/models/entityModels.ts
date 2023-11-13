@@ -1,5 +1,7 @@
-export interface PersistedNamedModel {
+export interface PersistedModel {
   id: number
+}
+export interface PersistedNamedModel extends PersistedModel {
   name: string
   description?: string
 }

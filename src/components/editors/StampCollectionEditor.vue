@@ -1,38 +1,17 @@
-<template>
-  <div class="panel-form">
-    <div class="panel-form-title">
-      <span class="sw-icon-stamp-collection"></span>{{ title }}
-    </div>
-    <Vueform size="sm" ref="form$" :model-value="model" sync class="panel-form-form">
-      <TextElement
-        label="Name"
-        name="name"
-        autocomplete="none"
-        rules="required|max:150"
-      />
-      <TextareaElement
-        label="Description"
-        name="description"
-        rules="max:1500"
-        :autogrow="false"
-      />
-    </Vueform>
-    <div class="panel-form-buttonbar">
-      <button :disabled="invalid" class="btn-primary mr-2" @click="$emit('save', model)">
-        Save
-      </button>
-      <button class="btn-secondary" @click="$emit('cancel')">Cancel</button>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
 import { ref, onMounted, onUpdated } from 'vue'
 import type { ComponentObjectPropsOptions } from 'vue'
+import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
+import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+
 import _ from 'lodash'
 
 export default {
   name: 'StampCollectionEditor',
+  components: {
+    SecondaryButton,
+    PrimaryButton
+  },
   props: ['model'],
   emits: ['cancel', 'save'],
   computed: {
@@ -77,3 +56,31 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div class="panel-form bg-white">
+    <div class="panel-form-title">
+      <span class="sw-icon-stamp-collection"></span>{{ title }}
+    </div>
+    <Vueform size="sm" ref="form$" :model-value="model" sync class="panel-form-form">
+      <TextElement
+        label="Name"
+        name="name"
+        autocomplete="none"
+        rules="required|max:150"
+      />
+      <TextareaElement
+        label="Description"
+        name="description"
+        rules="max:1500"
+        :autogrow="false"
+      />
+    </Vueform>
+    <div class="panel-form-buttonbar">
+      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)"
+        >Save</PrimaryButton
+      >
+      <SecondaryButton @click="$emit('cancel')">Cancel</SecondaryButton>
+    </div>
+  </div>
+</template>

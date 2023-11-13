@@ -1,6 +1,8 @@
 <template>
   <AppHeader />
-  <div class="content grid flex-col col-start-1 col-end-6 h-full w-full border-t-2">
+  <div
+    class="content grid flex-col col-start-1 col-end-6 h-full w-full border-t-2 border-[var(--vf-primary)] bg-gray-50"
+  >
     <AppNavigator
       class="app-navigator col-start-1 col-end-1 flex flex-col flex-grow-0 flex-shrink flex-auto"
     />

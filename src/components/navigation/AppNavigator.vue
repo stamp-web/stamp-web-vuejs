@@ -12,13 +12,6 @@ import { RouterLink } from 'vue-router'
     <RouterLink
       :exact-active-class="'bg-gray-600 text-gray-50'"
       class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      disabled=""
-      to="/about"
-      >About</RouterLink
-    >
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
       to="/stampCollections"
       >Stamp Collections</RouterLink
     >
@@ -33,6 +26,20 @@ import { RouterLink } from 'vue-router'
       class="text-gray-100 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
       to="/countries"
       >Countries</RouterLink
+    >
+    <RouterLink
+      :exact-active-class="'bg-gray-600 text-gray-50'"
+      class="mt-auto text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
+      disabled=""
+      to="/about"
+      >Settings</RouterLink
+    >
+    <RouterLink
+      :exact-active-class="'bg-gray-600 text-gray-50'"
+      class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
+      disabled=""
+      to="/about"
+      >About</RouterLink
     >
   </nav>
 </template>
