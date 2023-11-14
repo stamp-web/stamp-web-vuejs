@@ -1,10 +1,8 @@
 <script lang="ts">
-import { ref, onMounted, onUpdated } from 'vue'
+import {ref, onMounted, onUpdated, nextTick} from 'vue'
 import type { ComponentObjectPropsOptions } from 'vue'
 import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
-
-import _ from 'lodash'
 
 export default {
   name: 'StampCollectionEditor',
@@ -40,14 +38,14 @@ export default {
       }*/
     }
 
-    onMounted(() => {
+    onMounted(async () => {
       updateForm()
-      _.defer(() => {
+      await nextTick()
+
         // @ts-ignore
         form$.value.el$('name').focus()
         // @ts-ignore
         form$.value.validate()
-      })
     })
     onUpdated(() => {
       updateForm()

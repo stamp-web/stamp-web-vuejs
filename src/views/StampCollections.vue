@@ -1,6 +1,7 @@
 <script lang="ts">
-import { reactive, ref, defineComponent, watch } from 'vue'
-import _ from 'lodash'
+import { ref, defineComponent } from 'vue'
+import isEmpty from 'lodash-es/isEmpty'
+import cloneDeep from 'lodash-es/cloneDeep'
 
 import { Prompt } from '@/components/Prompt'
 import { TransitionRoot } from '@headlessui/vue'
@@ -12,11 +13,13 @@ import { createInstance } from '@/models/entityModels'
 import { ColumnDefinition } from '@/components/table/DataGridModels'
 import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+import FilterInput from '@/components/inputs/FilterInput.vue'
 
 // look into https://vuejs.org/guide/components/async.html
 export default defineComponent({
   name: 'StampCollectionsView',
   components: {
+    FilterInput,
     PrimaryButton,
     SecondaryButton,
     TransitionRoot,
@@ -30,17 +33,12 @@ export default defineComponent({
     const editingModel = ref()
     const context = ref()
     const store = stampCollectionStore()
-    const collections = reactive({
+    const collections = ref({
       list: new Array<StampCollection>(),
-      selected: {} as StampCollection | undefined
+      filteredList: new Array<StampCollection>(),
+      selected: {} as StampCollection | undefined,
+      filterString: ''
     })
-
-    watch(
-      () => [showEditor.value],
-      () => {
-        dataGridRef.value.resizeColumns()
-      }
-    )
 
     return {
       editingModel,
@@ -61,7 +59,7 @@ export default defineComponent({
 
   computed: {
     isSelected() {
-      return !_.isEmpty(this.collections.selected)
+      return !isEmpty(this.collections.selected)
     }
   },
 
@@ -70,16 +68,32 @@ export default defineComponent({
       this.collections.selected = selected
     },
 
+    filterList() {
+      this.collections.filteredList = this.collections.list.filter(
+        (item: StampCollection) => {
+          return (
+            item.name.includes(this.collections.filterString) ||
+            (item.description && item.description.includes(this.collections.filterString))
+          )
+        }
+      )
+    },
+
+    filterChanged(filterText: string) {
+      this.collections.filterString = filterText
+      this.filterList()
+    },
+
     remove() {
       const selectedCollection = this.collections.selected
       if (this.isSelected && selectedCollection) {
         Prompt.confirm({
           message: `Delete the collection '${selectedCollection.name}'?`
-        }).then((confirmed) => {
+        }).then(async (confirmed) => {
           if (confirmed) {
-            this.store.remove(this.collections.selected as StampCollection).then(() => {
-              this.collections.selected = undefined
-            })
+            await this.store.remove(this.collections.selected as StampCollection)
+            this.collections.selected = undefined
+            this.filterList()
           }
         })
       }
@@ -91,21 +105,20 @@ export default defineComponent({
     close() {
       this.showEditor = false
     },
-    save() {
+    async save() {
       if (this.editingModel.id && this.editingModel.id > 0) {
-        this.store.update(this.editingModel).then(() => {
-          this.showEditor = false
-        })
+        await this.store.update(this.editingModel)
+        this.showEditor = false
       } else {
-        this.store.create(this.editingModel).then(() => {
-          this.showEditor = false
-        })
+        await this.store.create(this.editingModel)
+        this.showEditor = false
       }
+      this.filterList()
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     editRow(model: StampCollection, index: number) {
       if (model) {
-        this.editingModel = _.cloneDeep(model)
+        this.editingModel = cloneDeep(model)
         this.showEditor = true
       }
     }
@@ -117,6 +130,7 @@ export default defineComponent({
 
   async mounted() {
     this.collections.list = await this.store.find()
+    this.filterList()
   }
 })
 </script>
@@ -125,17 +139,24 @@ export default defineComponent({
   <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1">
+        <FilterInput
+            class="mr-4"
+            placeholder="Filter"
+            @filter-changed="filterChanged"
+        ></FilterInput>
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           New Stamp Collection
         </PrimaryButton>
         <SecondaryButton @click="remove()" :disabled="!isSelected" icon="sw-icon-delete">
           Delete
         </SecondaryButton>
+
       </div>
       <DataGridComponent
+        class="w-[calc(100% - 1px)]"
         ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="collections.list"
+        :rowData="collections.filteredList"
         :context="context"
         @selected="onSelected"
       >

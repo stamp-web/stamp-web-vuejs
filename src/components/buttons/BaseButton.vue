@@ -15,7 +15,8 @@ export default /*#__PURE__*/ defineComponent({
     const baseClass =
       'py-1 px-3 hover:cursor-pointer ' +
       'bg-[var(--vf-bg-disabled)] text-[var(--vf-color-disabled)] ' +
-      'rounded border border-[var(--vf-bg-disabled)] '
+      'rounded border border-[var(--vf-bg-disabled)] ' +
+      'flex-nowrap item-center flex flex-row '
 
     return {
       baseClass

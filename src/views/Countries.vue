@@ -1,8 +1,8 @@
 <script lang="ts">
 import { AgGridVue } from 'ag-grid-vue3'
 import { reactive, ref, defineComponent, watch } from 'vue'
-import _isEmpty from 'lodash/isEmpty'
-import _defer from 'lodash/defer'
+import _isEmpty from 'lodash-es/isEmpty'
+import _defer from 'lodash-es/defer'
 
 import type { Country } from '@/models/entityModels'
 import { countryStore } from '@/stores/countryStore'

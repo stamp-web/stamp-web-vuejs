@@ -1,5 +1,9 @@
 import type { KeyIndexable } from '@/util/ts/key-accessor'
-import _ from 'lodash'
+import {isObject} from 'lodash-es'
+import {isArrayLikeObject} from 'lodash-es'
+import {has} from 'lodash-es'
+import {isNumber} from 'lodash-es'
+import _set from 'lodash-es/set'
 
 export function isNil(obj: any) {
   return obj === null || obj === undefined
@@ -17,12 +21,12 @@ export function isNil(obj: any) {
 export function augmentModel(model: Object, m: Object) {
   Object.keys(m).forEach((k) => {
     const value: any = (m as KeyIndexable)[k]
-    const obj = _.isObject(value)
-    const arr = _.isArrayLikeObject(value)
-    if (!_.has(model, k)) {
-      const num = _.isNumber(value)
+    const obj = isObject(value)
+    const arr = isArrayLikeObject(value)
+    if (!has(model, k)) {
+      const num = isNumber(value)
       const v = arr ? [] : obj ? {} : num ? 0 : null
-      _.set(model, k, v)
+      _set(model, k, v)
     } else if (arr) {
       for (let i = 0; i < value.length; i++) {
         augmentModel(

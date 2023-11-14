@@ -5,7 +5,7 @@ import AlbumService from '../services/AlbumService'
 import { defineStore } from 'pinia'
 import { EntityList } from '../models/entityList'
 
-import _ from 'lodash'
+import {sortedIndexBy} from 'lodash-es'
 export const modelStore = defineStore('models', {
   state: () => {
     return {
@@ -47,7 +47,7 @@ export const modelStore = defineStore('models', {
 
     async createCountry(m: Country): Promise<Country> {
       const country = await CountryService.create(m)
-      let index = _.sortedIndexBy(this.countries.list, country, (m: Country) => m)
+      let index = sortedIndexBy(this.countries.list, country, (m: Country) => m)
       if (index < 0) {
         index = this.countries.list.length - 1
       }

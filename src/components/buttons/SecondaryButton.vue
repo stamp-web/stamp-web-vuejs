@@ -27,6 +27,6 @@ export default /*#__PURE__*/ defineComponent({
 <template>
   <button :class="`${appliedStyles}`">
     <span v-if="icon" :class="`${icon}`"></span>
-    <slot></slot>
+    <span class="truncate"><slot></slot></span>
   </button>
 </template>

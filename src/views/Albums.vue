@@ -1,7 +1,7 @@
 <script lang="ts">
 import { reactive, ref, defineComponent, watch } from 'vue'
-import _defer from 'lodash/defer'
-import _isEmpty from 'lodash/isEmpty'
+import _defer from 'lodash-es/defer'
+import _isEmpty from 'lodash-es/isEmpty'
 import { AgGridVue } from 'ag-grid-vue3'
 
 import type { Album } from '@/models/entityModels'

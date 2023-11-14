@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type { RawAxiosRequestHeaders, AxiosRequestConfig } from 'axios'
-import _ from 'lodash'
+import merge from 'lodash-es/merge'
+import isEmpty from 'lodash-es/isEmpty'
 
 import { EntityList } from '@/models/entityList'
 import type { PersistedNamedModel } from '@/models/entityModels'
@@ -27,7 +28,7 @@ export default abstract class BaseService<T extends PersistedNamedModel> {
 
   augmentHeaders(headers?: {}): RawAxiosRequestHeaders {
     const h = headers || {}
-    return _.merge(
+    return merge(
       h,
       {
         'Content-Type': 'application/json'
@@ -55,7 +56,7 @@ export default abstract class BaseService<T extends PersistedNamedModel> {
     if (id && id > 0) {
       uri += `/${id}`
     }
-    if (!_.isEmpty(options)) {
+    if (!isEmpty(options)) {
       uri += `?${this.toParameters(options)}`
     }
     return uri

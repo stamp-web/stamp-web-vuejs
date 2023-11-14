@@ -72,6 +72,7 @@ export default ({mode}) => {
     },
     resolve: {
       alias: {
+        'vue': 'vue/dist/vue.esm-bundler',
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     }

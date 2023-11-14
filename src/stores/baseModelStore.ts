@@ -35,16 +35,14 @@ export function baseModelStore<T extends PersistedNamedModel>() {
     actions: {
       async remove(model: T): Promise<void> {
         const id = model.id
-        return this.service.remove(model).then(() => {
-          const indx = this.items.list.findIndex((e) => {
-            return e.id === id
-          })
-          if (indx >= 0) {
-            this.items.list.splice(indx, 1)
-            this.items.total--
-          }
-          return Promise.resolve()
+        await this.service.remove(model)
+        const indx = this.items.list.findIndex((e) => {
+          return e.id === id
         })
+        if (indx >= 0) {
+          this.items.list.splice(indx, 1)
+          this.items.total--
+        }
       },
       async find(): Promise<T[]> {
         if (this.items.list.length === 0) {
@@ -57,7 +55,7 @@ export function baseModelStore<T extends PersistedNamedModel>() {
             this.items.loading = false
           })
         }
-        return Promise.resolve(this.items.list as unknown as T[])
+        return this.items.list as unknown as T[]
       },
       async create(model: T): Promise<T> {
         const m: T = await this.service.create(model)

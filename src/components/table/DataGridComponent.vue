@@ -1,12 +1,13 @@
 <script setup lang="ts" generic="T extends PersistedModel">
 import { AgGridVue } from 'ag-grid-vue3'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
 
 import type { PersistedModel } from '@/models/entityModels'
 import { ColumnDefinition } from '@/components/table/DataGridModels'
 import { isNil } from '@/util/object-utils'
 
 const gridApi = ref()
+const gridEl = ref()
 
 const props = defineProps({
   rowData: Array<T>,
@@ -30,6 +31,10 @@ watch(
   { deep: true }
 )
 
+const observer = new ResizeObserver(() => {
+  resizeColumns()
+})
+
 const onGridReady = (params: any) => {
   gridApi.value = params.api
   resizeColumns()
@@ -44,23 +49,34 @@ const onSelected = () => {
   }
 }
 
-const resizeColumns = () => {
-  // Need to re-render the column layout when there is a slide out panel
-  // or other changing in the display.  A nextTick() is insufficient to
-  // wait for the previous ag-grid rendering so we have to add some additional
-  // time and use a timeout.
-  setTimeout(() => {
-    if (gridApi.value) {
-      gridApi.value.sizeColumnsToFit()
-    }
-  }, 200)
+const resizeColumns = async () => {
+  await nextTick()
+  if (gridApi.value) {
+    gridApi.value.sizeColumnsToFit()
+  }
 }
+
+onMounted(async () => {
+  if (gridEl.value.$el) {
+    observer.observe(gridEl.value.$el)
+  }
+})
+
+onUpdated(() => {
+  resizeColumns()
+})
+
+onBeforeUnmount(() => {
+  // cleanup to prevent any memory leaks
+  observer.disconnect()
+})
 
 defineExpose({ resizeColumns })
 </script>
 <template>
   <ag-grid-vue
-    class="ag-theme-stamp-web grid flex-shrink flex-auto flex-grow min-h-[5rem]"
+    ref="gridEl"
+    class="ag-theme-stamp-web grid flex-shrink h-full flex-auto flex-grow min-h-[5rem]"
     :columnDefs="columns"
     :rowData="props.rowData"
     :context="context"
