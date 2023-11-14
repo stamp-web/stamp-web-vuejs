@@ -1,28 +1,28 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+  import { defineComponent } from 'vue'
 
-export default /*#__PURE__*/ defineComponent({
-  props: {
-    icon: String
-  },
+  export default /*#__PURE__*/ defineComponent({
+    props: {
+      icon: String
+    },
 
-  computed: {
-    appliedStyles() {
-      return this.baseClass
+    computed: {
+      appliedStyles() {
+        return this.baseClass
+      }
+    },
+    setup() {
+      const baseClass =
+        'py-1 px-3 hover:cursor-pointer ' +
+        'bg-[var(--vf-bg-disabled)] text-[var(--vf-color-disabled)] ' +
+        'rounded border border-[var(--vf-bg-disabled)] ' +
+        'flex-nowrap item-center flex flex-row '
+
+      return {
+        baseClass
+      }
     }
-  },
-  setup() {
-    const baseClass =
-      'py-1 px-3 hover:cursor-pointer ' +
-      'bg-[var(--vf-bg-disabled)] text-[var(--vf-color-disabled)] ' +
-      'rounded border border-[var(--vf-bg-disabled)] ' +
-      'flex-nowrap item-center flex flex-row '
-
-    return {
-      baseClass
-    }
-  }
-})
+  })
 </script>
 
 <template>

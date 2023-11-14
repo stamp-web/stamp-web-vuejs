@@ -11,19 +11,19 @@
 </template>
 
 <script lang="ts">
-import '../../node_modules/ag-grid-community/styles/ag-grid.css'
-import '../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+  import '../../node_modules/ag-grid-community/styles/ag-grid.css'
+  import '../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
 
-import AppHeader from '@/components/navigation/AppHeader.vue'
-import AppNavigator from '@/components/navigation/AppNavigator.vue'
+  import AppHeader from '@/components/navigation/AppHeader.vue'
+  import AppNavigator from '@/components/navigation/AppNavigator.vue'
 
-export default {
-  components: { AppHeader, AppNavigator }
-}
+  export default {
+    components: { AppHeader, AppNavigator }
+  }
 </script>
 
 <style scoped lang="scss">
-.content {
-  grid-template: auto / auto 1fr auto;
-}
+  .content {
+    grid-template: auto / auto 1fr auto;
+  }
 </style>

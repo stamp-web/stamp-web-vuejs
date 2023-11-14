@@ -1,31 +1,41 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+  import { ref, watch } from 'vue'
+  import _debounce from 'lodash-es/debounce'
 
-const model = ref({
-  text: ''
-})
-const filterInput = ref()
+  const model = ref({
+    text: ''
+  })
+  const filterInput = ref()
 
-const props = defineProps({
-  placeholder: String,
-  filterText: String
-})
+  const props = defineProps({
+    placeholder: String,
+    filterText: String,
+    updateRate: Number
+  })
 
-if (props.filterText) {
-  model.value.text = props.filterText
-}
-const emit = defineEmits(['filter-changed'])
-
-watch(
-  () => [model.value.text],
-  () => {
-    emit('filter-changed', model.value.text)
+  if (props.filterText) {
+    model.value.text = props.filterText
   }
-)
-const clear = () => {
-  model.value.text = ''
-  emit('filter-changed', model.value.text)
-}
+  const emit = defineEmits(['filter-changed'])
+
+  const filterChanged = _debounce(
+    () => {
+      emit('filter-changed', model.value.text)
+    },
+    props.updateRate ? +props.updateRate : 250
+  )
+
+  watch(
+    () => [model.value.text],
+    () => {
+      filterChanged()
+    },
+    { deep: true }
+  )
+  const clear = () => {
+    model.value.text = ''
+    filterChanged()
+  }
 </script>
 
 <template>
@@ -33,6 +43,7 @@ const clear = () => {
     <TextElement
       ref="filterInput"
       :placeholder="`${props.placeholder || 'Filter'}`"
+      :debounce="500"
       size="sm"
       autocomplete="none"
       :floating="false"
