@@ -6,5 +6,5 @@
   "printWidth": 90,
   "trailingComma": "none",
   "vueIndentScriptAndStyle": true,
-  "endOfLine": "crlf"
+  "endOfLine": "auto"
 }
