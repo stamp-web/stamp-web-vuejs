@@ -4,7 +4,7 @@ import merge from 'lodash-es/merge'
 import isEmpty from 'lodash-es/isEmpty'
 
 import { EntityList } from '@/models/entityList'
-import type { PersistedNamedModel } from '@/models/entityModels'
+import type { PersistedModel } from '@/models/entityModels'
 import requiredId from '@/util/decorators/requiredId'
 
 enum HttpResponseCode {
@@ -23,7 +23,7 @@ enum HttpMethod {
   PUT = 'put'
 }
 
-export default abstract class BaseService<T extends PersistedNamedModel> {
+export default abstract class BaseService<T extends PersistedModel> {
   protected abstract getResourceName(): string
 
   augmentHeaders(headers?: {}): RawAxiosRequestHeaders {

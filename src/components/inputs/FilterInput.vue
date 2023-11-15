@@ -2,21 +2,21 @@
   import { ref, watch } from 'vue'
   import _debounce from 'lodash-es/debounce'
 
-  const model = ref({
-    text: ''
-  })
-  const filterInput = ref()
-
   const props = defineProps({
     placeholder: String,
     filterText: String,
     updateRate: Number
   })
+  const emit = defineEmits(['filter-changed'])
+
+  const model = ref({
+    text: ''
+  })
+  const filterInput = ref()
 
   if (props.filterText) {
     model.value.text = props.filterText
   }
-  const emit = defineEmits(['filter-changed'])
 
   const filterChanged = _debounce(
     () => {
@@ -43,7 +43,6 @@
     <TextElement
       ref="filterInput"
       :placeholder="`${props.placeholder || 'Filter'}`"
-      :debounce="500"
       size="sm"
       autocomplete="none"
       :floating="false"

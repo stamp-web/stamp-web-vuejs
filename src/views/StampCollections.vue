@@ -2,6 +2,7 @@
   import { ref, defineComponent } from 'vue'
   import isEmpty from 'lodash-es/isEmpty'
   import cloneDeep from 'lodash-es/cloneDeep'
+  import _debounce from 'lodash-es/debounce'
 
   import { Prompt } from '@/components/Prompt'
   import { TransitionRoot } from '@headlessui/vue'
@@ -9,6 +10,7 @@
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import type { StampCollection } from '@/models/entityModels'
   import { stampCollectionStore } from '@/stores/stampCollectionStore'
+  import LocalCache from '@/stores/LocalCache'
   import { createInstance } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
@@ -16,15 +18,27 @@
   import FilterInput from '@/components/inputs/FilterInput.vue'
 
   // look into https://vuejs.org/guide/components/async.html
+  const FILTER_KEY = 'stampCollection-filter'
+
+  /**
+   * Will use the local cache to set the filter string value, but will hold updates for ~ 2500ms
+   * since we may have filter updates coming in at a much higher rate (100-300ms) but it is not necessary
+   * to store this in the local cache immediately since the local cache is only used for page refresh
+   * restoring the local cache.
+   */
+  const UpdateLocalCache = _debounce((value: string) => {
+    LocalCache.setItem(FILTER_KEY, value)
+  }, 2500)
+
   export default defineComponent({
     name: 'StampCollectionsView',
     components: {
       FilterInput,
+      DataGridComponent,
       PrimaryButton,
       SecondaryButton,
       TransitionRoot,
-      StampCollectionEditor,
-      DataGridComponent
+      StampCollectionEditor
     },
 
     setup() {
@@ -82,6 +96,7 @@
 
       filterChanged(filterText: string) {
         this.collections.filterString = filterText
+        UpdateLocalCache(filterText)
         this.filterList()
       },
 
@@ -127,6 +142,7 @@
 
     beforeMount() {
       this.context = { component: this }
+      this.collections.filterString = LocalCache.getItem(FILTER_KEY)
     },
 
     async mounted() {
@@ -143,6 +159,7 @@
         <FilterInput
           class="mr-4"
           placeholder="Filter"
+          :filter-text="`${collections.filterString}`"
           @filter-changed="filterChanged"
         ></FilterInput>
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">

@@ -1,12 +1,12 @@
 import type { PiniaStore } from 'pinia-generic'
 import { defineGenericStore } from 'pinia-generic'
-import type { PersistedNamedModel } from '@/models/entityModels'
+import type { PersistedModel } from '@/models/entityModels'
 import type BaseService from '@/services/BaseService'
 import { reactive } from 'vue'
 import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
 
-export type BaseModelStore<T extends PersistedNamedModel> = PiniaStore<
+export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   'entityModelStore',
   {
     items: { list: Array<T>; total: number; loading: boolean }
@@ -22,7 +22,7 @@ export type BaseModelStore<T extends PersistedNamedModel> = PiniaStore<
   }
 >
 
-export function baseModelStore<T extends PersistedNamedModel>() {
+export function baseModelStore<T extends PersistedModel>() {
   return defineGenericStore<BaseModelStore<T>>({
     state: {
       items: reactive({ list: [] as Array<T>, total: 0, loading: false })
