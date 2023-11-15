@@ -21,14 +21,14 @@
   const FILTER_KEY = 'stampCollection-filter'
 
   /**
-   * Will use the local cache to set the filter string value, but will hold updates for ~ 2500ms
+   * Will use the local cache to set the filter string value, but will hold updates for ~ 500ms
    * since we may have filter updates coming in at a much higher rate (100-300ms) but it is not necessary
    * to store this in the local cache immediately since the local cache is only used for page refresh
    * restoring the local cache.
    */
   const UpdateLocalCache = _debounce((value: string) => {
     LocalCache.setItem(FILTER_KEY, value)
-  }, 2500)
+  }, 500)
 
   export default defineComponent({
     name: 'StampCollectionsView',
@@ -159,7 +159,7 @@
         <FilterInput
           class="mr-4"
           placeholder="Filter"
-          :filter-text="`${collections.filterString}`"
+          :filter-text="collections.filterString"
           @filter-changed="filterChanged"
         ></FilterInput>
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">

@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 
 const router = createRouter({
+  // @ts-ignore
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {

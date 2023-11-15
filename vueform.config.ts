@@ -5,7 +5,7 @@ import '@vueform/vueform/types/index.d.ts'
 import '@vueform/vueform/themes/vueform/css/index.min.css'
 import tailwind from '@vueform/vueform/themes/tailwind'
 export default {
-    theme: tailwind,
-    locales: { en },
-    locale: 'en',
+  theme: tailwind,
+  locales: { en },
+  locale: 'en'
 }

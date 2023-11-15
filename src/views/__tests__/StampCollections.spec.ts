@@ -8,6 +8,7 @@ import ResizeObserver from 'resize-observer-polyfill'
 
 describe('StampCollections', () => {
   global.ResizeObserver = ResizeObserver
+
   let store = null
   let wrapper: VueWrapper
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ref, onMounted, onUpdated, nextTick } from 'vue'
+  import { ref, onMounted, nextTick } from 'vue'
   import type { ComponentObjectPropsOptions } from 'vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
@@ -28,27 +28,13 @@
     },
     setup(/*props*/) {
       const form$ = ref(null)
-      const updateForm = () => {
-        /* if (!_.isEmpty(props.model)) {
-        const name = form$.value.el$('name')
-        const description = form$.value.el$('description')
-
-        name.update(props.model.name)
-        description.update(props.model.description)
-      }*/
-      }
 
       onMounted(async () => {
-        updateForm()
         await nextTick()
-
         // @ts-ignore
         form$.value.el$('name').focus()
         // @ts-ignore
         form$.value.validate()
-      })
-      onUpdated(() => {
-        updateForm()
       })
       return { form$ }
     }
@@ -60,7 +46,14 @@
     <div class="panel-form-title">
       <span class="sw-icon-stamp-collection"></span>{{ title }}
     </div>
-    <Vueform size="sm" ref="form$" :model-value="model" sync class="panel-form-form">
+    <Vueform
+      size="sm"
+      ref="form$"
+      :model-value="model"
+      sync
+      class="panel-form-form"
+      :endpoint="false"
+    >
       <TextElement
         label="Name"
         name="name"

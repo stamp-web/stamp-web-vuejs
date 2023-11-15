@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
+  import { onBeforeMount, ref, watch } from 'vue'
   import _debounce from 'lodash-es/debounce'
+  import { isNil } from '@/util/object-utils'
 
   const props = defineProps({
     placeholder: String,
@@ -9,18 +10,17 @@
   })
   const emit = defineEmits(['filter-changed'])
 
+  const filterInput = ref()
+  const form$ = ref()
   const model = ref({
     text: ''
   })
-  const filterInput = ref()
-
-  if (props.filterText) {
-    model.value.text = props.filterText
-  }
 
   const filterChanged = _debounce(
     () => {
-      emit('filter-changed', model.value.text)
+      if (!isNil(model.value.text)) {
+        emit('filter-changed', model.value.text)
+      }
     },
     props.updateRate ? +props.updateRate : 250
   )
@@ -36,10 +36,16 @@
     model.value.text = ''
     filterChanged()
   }
+
+  onBeforeMount(() => {
+    if (props.filterText) {
+      model.value.text = props.filterText
+    }
+  })
 </script>
 
 <template>
-  <Vueform sync v-model="model">
+  <Vueform sync v-model="model" ref="form$" :endpoint="false">
     <TextElement
       ref="filterInput"
       :placeholder="`${props.placeholder || 'Filter'}`"

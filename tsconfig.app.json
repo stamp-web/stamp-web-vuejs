@@ -1,7 +1,7 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/models/*.ts", "vueform.config.ts"],
-  "exclude": ["src/**/__tests__/*", "src/**/*.spec.ts"],
+  "exclude": ["src/**/__tests__/*", "src/**/*.spec.ts", "src/vitest-setup.ts"],
   "compilerOptions": {
     "composite": true,
     "isolatedModules ": true,
