@@ -1,5 +1,5 @@
 <template>
-  <AppHeader />
+  <AppHeader class="h-12 max-h-12" />
   <div
     class="content grid flex-col col-start-1 col-end-6 h-full w-full border-t-2 border-[var(--vf-primary)] bg-gray-50"
   >
@@ -11,9 +11,6 @@
 </template>
 
 <script lang="ts">
-  import '../../node_modules/ag-grid-community/styles/ag-grid.css'
-  import '../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
-
   import AppHeader from '@/components/navigation/AppHeader.vue'
   import AppNavigator from '@/components/navigation/AppNavigator.vue'
 

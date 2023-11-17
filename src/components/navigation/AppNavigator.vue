@@ -1,45 +1,16 @@
 <script setup lang="ts">
-  import { RouterLink } from 'vue-router'
+  import AppNavButton from '@/components/navigation/AppNavButton.vue'
 </script>
 <template>
-  <nav class="align-middle bg-gray-900 flex flex-row min-w-fit w-[120px] p-2">
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="text-gray-100 mb-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      to="/"
-      >Home</RouterLink
-    >
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      to="/stampCollections"
-      >Stamp Collections</RouterLink
-    >
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      to="/albums"
-      >Albums</RouterLink
-    >
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="text-gray-100 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      to="/countries"
-      >Countries</RouterLink
-    >
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="mt-auto text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      disabled=""
-      to="/about"
-      >Settings</RouterLink
-    >
-    <RouterLink
-      :exact-active-class="'bg-gray-600 text-gray-50'"
-      class="text-gray-100 mb-1 mt-1 p-2 align-middle text-center w-full rounded hover:bg-gray-700"
-      disabled=""
-      to="/about"
-      >About</RouterLink
-    >
+  <nav class="align-middle bg-gray-900 flex flex-row min-w-fit md:w-[120px] p-2">
+    <AppNavButton title="Home" link="/"></AppNavButton>
+    <AppNavButton title="Stamp Collections" link="/stampCollections"></AppNavButton>
+    <AppNavButton title="Albums" link="/albums"></AppNavButton>
+    <AppNavButton title="Countries" link="/countries"></AppNavButton>
+    <AppNavButton title="Sellers" link="/sellers"></AppNavButton>
+    <AppNavButton title="Catalogues" link="/catalogues"></AppNavButton>
+    <AppNavButton title="Stamps" link="/stamps"></AppNavButton>
+    <AppNavButton title="About" link="/about" class="mt-auto"></AppNavButton>
+    <AppNavButton title="Settings" link="/settings"></AppNavButton>
   </nav>
 </template>

@@ -18,7 +18,7 @@
   import FilterInput from '@/components/inputs/FilterInput.vue'
 
   // look into https://vuejs.org/guide/components/async.html
-  const FILTER_KEY = 'stampCollection-filter'
+  const FILTER_KEY = 'stampCollections-filter'
 
   /**
    * Will use the local cache to set the filter string value, but will hold updates for ~ 500ms
@@ -66,8 +66,7 @@
           new ColumnDefinition('name'),
           ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
           new ColumnDefinition('description')
-        ],
-        rowData: []
+        ]
       }
     },
 
@@ -170,7 +169,7 @@
         </SecondaryButton>
       </div>
       <DataGridComponent
-        class="w-[calc(100% - 1px)]"
+        class=""
         ref="dataGridRef"
         :columnDefs="columnDefs"
         :rowData="collections.filteredList"

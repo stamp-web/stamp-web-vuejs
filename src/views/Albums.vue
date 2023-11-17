@@ -1,47 +1,55 @@
 <script lang="ts">
-  import { reactive, ref, defineComponent, watch } from 'vue'
-  import _defer from 'lodash-es/defer'
+  import { reactive, ref, defineComponent } from 'vue'
   import _isEmpty from 'lodash-es/isEmpty'
-  import { AgGridVue } from 'ag-grid-vue3'
 
   import type { Album } from '@/models/entityModels'
   import { albumStore } from '@/stores/albumStore'
-  import { createInstance } from '@/models/entityModels'
-  import { isNil } from '@/util/object-utils'
+  import DataGridComponent from '@/components/table/DataGridComponent.vue'
+  import { Prompt } from '@/components/Prompt'
+  import LocalCache from '@/stores/LocalCache'
+  import { ColumnDefinition } from '@/components/table/DataGridModels'
+  import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
+  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import FilterInput from '@/components/inputs/FilterInput.vue'
+  import _debounce from 'lodash-es/debounce'
+
+  const FILTER_KEY = 'albums-filter'
+
+  const UpdateLocalCache = _debounce((value: string) => {
+    LocalCache.setItem(FILTER_KEY, value)
+  }, 500)
 
   export default defineComponent({
     name: 'AlbumsView',
     components: {
-      AgGridVue
+      FilterInput,
+      SecondaryButton,
+      PrimaryButton,
+      DataGridComponent
     },
 
     setup() {
-      const gridApi = ref()
+      const dataGridRef = ref()
+      const context = ref()
       const store = albumStore()
-      const albums = reactive({ list: [] as Album[], selected: {} as Album | undefined })
-
-      watch(
-        () => [albums.list],
-        () => {
-          _defer(() => {
-            if (!isNil(gridApi.value)) {
-              gridApi.value.showLoadingOverlay()
-              gridApi.value.setRowData(albums.list)
-              gridApi.value.hideOverlay()
-            }
-          })
-        },
-        { deep: true }
-      )
+      const albums = reactive({
+        list: new Array<Album>(),
+        filteredList: new Array<Album>(),
+        selected: {} as Album | undefined,
+        filterString: ''
+      })
 
       return {
         store,
         albums,
+        dataGridRef,
+        context,
 
-        gridApi,
-        gridOptions: null,
-        columnDefs: Object.freeze([{ field: 'name' }, { field: 'description' }]),
-        rowData: []
+        columnDefs: [
+          new ColumnDefinition('name'),
+          ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
+          new ColumnDefinition('description')
+        ]
       }
     },
 
@@ -52,54 +60,90 @@
     },
 
     methods: {
-      onGridReady(params: any) {
-        this.gridApi = params.api
-        this.gridApi.sizeColumnsToFit()
+      onSelected(selected: Album) {
+        this.albums.selected = selected
       },
 
-      onSelected() {
-        const selectedRows = this.gridApi.getSelectedRows()
-        this.albums.selected = selectedRows.at(0)
+      filterList() {
+        const searchString = this.albums.filterString.toUpperCase()
+        this.albums.filteredList = this.albums.list.filter((item: Album) => {
+          return (
+            item.name.toUpperCase().includes(searchString) ||
+            (item.description && item.description.toUpperCase().includes(searchString))
+          )
+        })
+      },
+
+      filterChanged(filterText: string) {
+        this.albums.filterString = filterText
+        UpdateLocalCache(filterText)
+        this.filterList()
       },
 
       remove() {
-        if (this.isSelected) {
-          this.store.remove(this.albums.selected as Album).then(() => {
-            this.albums.selected = undefined
+        const selectedAlbum = this.albums.selected
+        if (this.isSelected && selectedAlbum) {
+          Prompt.confirm({
+            message: `Delete the album '${selectedAlbum.name}'?`
+          }).then(async (confirmed) => {
+            if (confirmed) {
+              await this.store.remove(this.albums.selected as Album)
+              this.albums.selected = undefined
+              this.filterList()
+            }
           })
         }
       },
 
       create() {
-        let c: Album = createInstance<Album>({
+        /*        let c: Album = createInstance<Album>({
           name: 'album-test-' + new Date().getTime(),
           description: 'test of a description',
           stampCollectionRef: 1
         })
-        this.gridApi.showLoadingOverlay()
         this.store.create(c)
-        this.gridApi.hideOverlay()
+*/
       }
+    },
+
+    beforeMount() {
+      this.context = { component: this }
+      this.albums.filterString = LocalCache.getItem(FILTER_KEY)
     },
 
     async mounted() {
       this.albums.list = await this.store.find()
+      this.filterList()
     }
   })
 </script>
 
 <template>
-  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-col">
-    <ag-grid-vue
-      class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
-      :columnDefs="columnDefs"
-      :rowData="rowData"
-      rowSelection="single"
-      @grid-ready="onGridReady"
-      @selection-changed="onSelected"
-    >
-    </ag-grid-vue>
-    <button @click="remove()">Remove</button>
-    <button @click="create()">Create</button>
+  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
+    <div class="flex-grow flex-auto flex flex-col">
+      <div class="flex mb-1">
+        <FilterInput
+          class="mr-4"
+          placeholder="Filter"
+          :filter-text="albums.filterString"
+          @filter-changed="filterChanged"
+        ></FilterInput>
+        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
+          New Album
+        </PrimaryButton>
+        <SecondaryButton @click="remove()" :disabled="!isSelected" icon="sw-icon-delete">
+          Delete
+        </SecondaryButton>
+      </div>
+      <DataGridComponent
+        class=""
+        ref="dataGridRef"
+        :columnDefs="columnDefs"
+        :rowData="albums.filteredList"
+        :context="context"
+        @selected="onSelected"
+      >
+      </DataGridComponent>
+    </div>
   </div>
 </template>

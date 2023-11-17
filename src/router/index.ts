@@ -1,21 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import MainLayout from '@/layouts/MainLayout.vue'
 
 const router = createRouter({
   // @ts-ignore
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/browse',
       name: 'app',
-      component: MainLayout,
+      component: () => import('@/layouts/MainLayout.vue'),
       children: [
-        {
-          path: '/',
-          name: 'home',
-          component: HomeView
-        },
         {
           path: '/countries',
           name: 'countries',
@@ -27,6 +20,21 @@ const router = createRouter({
           component: () => import('@/views/Albums.vue')
         },
         {
+          path: '/catalogues',
+          name: 'catalogues',
+          component: () => import('@/views/Catalogues.vue')
+        },
+        {
+          path: '/sellers',
+          name: 'sellers',
+          component: () => import('@/views/Sellers.vue')
+        },
+        {
+          path: '/stamps',
+          name: 'stamps',
+          component: () => import('@/views/Stamps.vue')
+        },
+        {
           path: '/stampCollections',
           name: 'stampCollections',
           component: () => import('@/views/StampCollections.vue')
@@ -34,10 +42,19 @@ const router = createRouter({
         {
           path: '/about',
           name: 'about',
-          // route level code-splitting
-          // this generates a separate chunk (About.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
           component: () => import('../views/AboutView.vue')
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'full-display',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: '/',
+          name: 'home',
+          component: () => import('@/views/HomeView.vue')
         }
       ]
     }

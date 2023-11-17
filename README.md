@@ -1,10 +1,21 @@
 # stamp-web-vuejs
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the new generation Stamp Web editor written in Vue 3.  
 
-## Recommended IDE Setup
+## Why Vue?
+While the existing [Stamp Web](https://github.com/stamp-web/stamp-web-aurelia) written in Aurelia 1.x has served as an outstanding application for over 10 years, I wanted to learn Vue and convert the application to this modern JavaScript framework stack.  I love aurelia and continue to use it in any projects.  But Vue was attractive and a perfect opportunity to learn an entirely new framework as well as TypeScript, Vite, Vitest and a whole slew of other technologies.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## What is this Application?
+
+The Stamp Web application is used to manage stamp collections and is in use by myself and a few other collectors worldwide.  It is not a commercial product and does not have any valid commercial propsects, but it does serve as a wonder platform for myself and other contributing developers to learn new technologies while advancing and organizing our collections. On my production server, I currently manage over 40,000 stamps with this number growing constantly.  When you bring up the application you should see a welcome pages simliar to the following:
+
+![Stamp Web home view](https://raw.githubusercontent.com/stamp-web/stamp-web-vuejs/main/media/StampWebHome.png)
+
+From this page you can navigate to other pages that allow you to manage the data.  For example, the Stamp Collections management page looks like the following:
+
+![Stamp Web collections view](https://raw.githubusercontent.com/stamp-web/stamp-web-vuejs/main/media/StampWebCollections.png)
+
+***
 
 ## Type Support for `.vue` Imports in TS
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import TheWelcome from '../components/TheWelcome.vue'
+  import HomeInfo from '../components/HomeInfo.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <main class="border-t-2 border-t-[var(--vf-primary)] border-2 flex flex-row flex-wrap">
+    <HomeInfo />
   </main>
 </template>

@@ -16,6 +16,7 @@
     },
 
     setup() {
+      const context = ref()
       const gridApi = ref()
       const store = countryStore()
       const countries = reactive({
@@ -38,6 +39,7 @@
       return {
         store,
         countries,
+        context,
 
         gridApi,
         gridOptions: null,
@@ -85,7 +87,9 @@
         }
       }
     },
-
+    beforeMount() {
+      this.context = { component: this }
+    },
     mounted() {
       this.store.find().then((result: Country[]) => {
         this.countries.list = result

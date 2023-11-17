@@ -1,5 +1,7 @@
 <script setup lang="ts" generic="T extends PersistedModel">
   import { AgGridVue } from 'ag-grid-vue3'
+  import '../../../node_modules/ag-grid-community/styles/ag-grid.css'
+  import '../../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
   import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
 
   import type { PersistedModel } from '@/models/entityModels'
