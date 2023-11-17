@@ -12,32 +12,32 @@ const router = createRouter({
         {
           path: '/countries',
           name: 'countries',
-          component: () => import('@/views/Countries.vue')
+          component: () => import('@/views/CountriesView.vue')
         },
         {
           path: '/albums',
           name: 'albums',
-          component: () => import('@/views/Albums.vue')
+          component: () => import('@/views/AlbumsView.vue')
         },
         {
           path: '/catalogues',
           name: 'catalogues',
-          component: () => import('@/views/Catalogues.vue')
+          component: () => import('@/views/CataloguesView.vue')
         },
         {
           path: '/sellers',
           name: 'sellers',
-          component: () => import('@/views/Sellers.vue')
+          component: () => import('@/views/SellersView.vue')
         },
         {
           path: '/stamps',
           name: 'stamps',
-          component: () => import('@/views/Stamps.vue')
+          component: () => import('@/views/StampsView.vue')
         },
         {
           path: '/stampCollections',
           name: 'stampCollections',
-          component: () => import('@/views/StampCollections.vue')
+          component: () => import('@/views/StampCollectionsView.vue')
         },
         {
           path: '/about',

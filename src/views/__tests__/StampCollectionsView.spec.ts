@@ -1,13 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-import { countryStore } from '../../stores/countryStore'
 import { mount, VueWrapper } from '@vue/test-utils'
-import Countries from '@/views/Countries.vue'
-import { createInstance } from '../../models/entityModels'
-import type { Country } from '../../models/entityModels'
+import StampCollectionsView from '@/views/StampCollectionsView.vue'
+import { stampCollectionStore } from '../../stores/stampCollectionStore'
+import ResizeObserver from 'resize-observer-polyfill'
 
-describe('Countries', () => {
+describe('StampCollectionsView', () => {
+  global.ResizeObserver = ResizeObserver
+
   let store = null
   let wrapper: VueWrapper
 
@@ -17,11 +18,11 @@ describe('Countries', () => {
       createSpy: vi.fn
     })
     setActivePinia(pinia)
-    store = countryStore()
-    const spyGetCountries = vi.spyOn(store, 'find')
-    spyGetCountries.mockImplementation(() => Promise.resolve([]))
+    store = stampCollectionStore()
+    const spyGetList = vi.spyOn(store, 'find')
+    spyGetList.mockImplementation(() => Promise.resolve([]))
 
-    wrapper = mount(Countries, {
+    wrapper = mount(StampCollectionsView, {
       global: {
         plugins: [pinia]
       }
@@ -29,7 +30,6 @@ describe('Countries', () => {
   })
   it('renders properly', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const c = createInstance<Country>({ id: 5, name: 'test' })
     expect(wrapper.find('.flex.flex-col').exists()).toBe(true)
   })
 })
