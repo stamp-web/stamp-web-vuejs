@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-export class FilterInputPage {
+export class FilterInputCmp {
   readonly page: Page
   readonly clazz: string
 

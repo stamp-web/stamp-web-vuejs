@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test'
 
-export class DataGridComponentPage {
+export class DataGridComponentCmp {
   readonly page: Page
   // @ts-ignore
   tableLocator: Locator

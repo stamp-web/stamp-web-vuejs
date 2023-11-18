@@ -1,7 +1,7 @@
 import { test, expect, Locator } from '@playwright/test'
 import { StampCollectionsViewPage } from '../../pages/views/StampCollectionsView-page'
 import { generateText } from '../../helpers/test-utils'
-import { PromptPage } from '../../pages/components/Prompt-page'
+import { PromptCmp } from '../../pages/components/Prompt-cmp'
 
 // See here how to get started:
 // https://playwright.dev/docs/intro
@@ -32,7 +32,7 @@ test('verify management of stamp collections', async ({ page }) => {
   await rowItem.click()
   await expect(view.getDeleteButton()).toBeEnabled()
   await view.getDeleteButton().click()
-  const prompt: PromptPage = new PromptPage(page)
+  const prompt: PromptCmp = new PromptCmp(page)
 
   expect(await prompt.isVisible()).toBe(true)
   expect(await prompt.getMessage()).toBe(`Delete the collection '${revisedName}'?`)
@@ -70,16 +70,21 @@ const testEditForm = async (
   const editor = await view.getEditor()
   await expect(editor.getTitle()).toHaveText('Edit Stamp Collection')
   expect(await editor.isValid()).toBe(true)
+  await editor.getName().clear()
   await editor.getName().fill(generateText(150))
   expect(await editor.isValid()).toBe(true)
+  await editor.getName().clear()
   await editor.getName().fill(generateText(151))
   expect(await editor.isInvalid()).toBe(true)
+  await editor.getName().clear()
   await editor.getName().fill(name)
   expect(await editor.isValid()).toBe(true)
+  await editor.getDescription().clear()
   await editor.getDescription().fill(generateText(1501))
   expect(await editor.isInvalid()).toBe(true)
+  await editor.getDescription().clear()
   await editor.getDescription().fill('some description to update')
-
+  await editor.getName().clear()
   await editor.getName().fill(revisedName)
   expect(await editor.isValid()).toBe(true)
   await editor.getSaveButton().click()

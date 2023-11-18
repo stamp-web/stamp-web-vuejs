@@ -1,38 +1,38 @@
 import { Locator, Page } from '@playwright/test'
-import { DataGridComponentPage } from '../components/DataGridComponent-page'
-import { StampCollectionEditorPage } from '../components/StampCollectionEditor-page'
-import { FilterInputPage } from '../components/FilterInput-page'
+import { DataGridComponentCmp } from '../components/DataGridComponent-cmp'
+import { StampCollectionEditorCmp } from '../components/StampCollectionEditor-cmp'
+import { FilterInputCmp } from '../components/FilterInput-cmp'
 
 export class StampCollectionsViewPage {
   readonly page: Page
   // @ts-ignore
-  private grid: DataGridComponentPage
+  private grid: DataGridComponentCmp
   // @ts-ignore
-  private editor: StampCollectionEditorPage
+  private editor: StampCollectionEditorCmp
   // @ts-ignore
-  private filter: FilterInputPage
+  private filter: FilterInputCmp
 
   constructor(page: Page) {
     this.page = page
   }
 
-  getGrid(): DataGridComponentPage {
+  getGrid(): DataGridComponentCmp {
     if (!this.grid) {
-      this.grid = new DataGridComponentPage(this.page)
+      this.grid = new DataGridComponentCmp(this.page)
     }
     return this.grid
   }
 
-  getEditor(): StampCollectionEditorPage {
+  getEditor(): StampCollectionEditorCmp {
     if (!this.editor) {
-      this.editor = new StampCollectionEditorPage(this.page)
+      this.editor = new StampCollectionEditorCmp(this.page)
     }
     return this.editor
   }
 
-  getFilter(): FilterInputPage {
+  getFilter(): FilterInputCmp {
     if (!this.filter) {
-      this.filter = new FilterInputPage(this.page, 'file-input')
+      this.filter = new FilterInputCmp(this.page, 'file-input')
     }
     return this.filter
   }

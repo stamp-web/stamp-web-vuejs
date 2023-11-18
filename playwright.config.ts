@@ -15,16 +15,17 @@ const BASEURL = process.env.VITE_E2ETEST_BASEURL || `https://localhost:${PORT}`
 const config: PlaywrightTestConfig = {
   testDir: './e2e',
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: 5000
+    timeout: 7500
   },
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
+  fullyParallel: false,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
@@ -53,19 +54,13 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome']
       }
-    }
-    /* {
+    },
+    {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
       }
-    },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari']
-      }
-    }*/
+    }
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
@@ -112,3 +107,16 @@ export default config
 //     channel: 'chrome',
 //   },
 // },
+/*
+{
+  name: 'Mobile Chrome',
+      use: {
+...devices['Pixel 5']
+}
+},
+{
+  name: 'webkit',
+      use: {
+...devices['Desktop Safari']
+}
+}*/

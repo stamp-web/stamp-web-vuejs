@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test'
 
-export class StampCollectionEditorPage {
+export class StampCollectionEditorCmp {
   readonly page: Page
   // @ts-ignore
   editorLocator: Locator

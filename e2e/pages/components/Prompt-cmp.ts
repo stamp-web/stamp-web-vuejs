@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-export class PromptPage {
+export class PromptCmp {
   readonly page: Page
 
   constructor(page: Page) {
