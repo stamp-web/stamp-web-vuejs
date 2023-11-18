@@ -42,7 +42,7 @@
 </script>
 
 <template>
-  <div class="panel-form bg-white">
+  <div class="panel-form bg-white" role="form">
     <div class="panel-form-title">
       <span class="sw-icon-stamp-collection"></span>{{ title }}
     </div>

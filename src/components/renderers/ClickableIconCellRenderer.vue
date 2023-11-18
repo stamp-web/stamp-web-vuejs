@@ -29,7 +29,7 @@
 
 <template>
   <span
-    :class="`${icon} flex items-center h-6 w-6 hover:text-[var(--vf-primary-darker)] hover:border hover:bg-gray-100 hover:rounded-xl hover:border-current`"
+    :class="`icon-cell ${icon} flex items-center h-6 w-6 hover:text-[var(--vf-primary-darker)] hover:border hover:bg-gray-100 hover:rounded-xl hover:border-current`"
     @click="handleClick()"
   ></span>
 </template>

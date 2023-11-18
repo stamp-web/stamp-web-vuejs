@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ref, defineComponent } from 'vue'
+  import { ref, defineComponent, nextTick } from 'vue'
   import isEmpty from 'lodash-es/isEmpty'
   import cloneDeep from 'lodash-es/cloneDeep'
   import _debounce from 'lodash-es/debounce'
@@ -81,7 +81,8 @@
         this.collections.selected = selected
       },
 
-      filterList() {
+      async filterList() {
+        this.dataGridRef.loadingStarted()
         this.collections.filteredList = this.collections.list.filter(
           (item: StampCollection) => {
             return (
@@ -91,6 +92,8 @@
             )
           }
         )
+        await nextTick()
+        this.dataGridRef.loadingComplete()
       },
 
       filterChanged(filterText: string) {
@@ -145,6 +148,7 @@
     },
 
     async mounted() {
+      this.dataGridRef.loadingStarted()
       this.collections.list = await this.store.find()
       this.filterList()
     }
@@ -156,7 +160,7 @@
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1">
         <FilterInput
-          class="mr-4"
+          class="mr-4 file-input"
           placeholder="Filter"
           :filter-text="collections.filterString"
           @filter-changed="filterChanged"

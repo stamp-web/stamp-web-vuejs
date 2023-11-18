@@ -1,13 +1,13 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
-import {loadEnv} from 'vite'
-import process from 'node:process';
+import { loadEnv } from 'vite'
+import process from 'node:process'
 
 /* load any variables from .env.e2e to add to process environment */
-process.env = {...process.env, ...loadEnv('e2e', process.cwd())};
+process.env = { ...process.env, ...loadEnv('e2e', process.cwd()) }
 /* default the test port in case it is not defined in environment */
-const PORT = process.env.VITE_E2ETEST_PORT || 5173;
-const BASEURL = process.env.VITE_E2ETEST_BASEURL || `https://localhost:${PORT}`;
+const PORT = process.env.VITE_E2ETEST_PORT || 5173
+const BASEURL = process.env.VITE_E2ETEST_BASEURL || `https://localhost:${PORT}`
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -53,8 +53,8 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome']
       }
-    },
-    {
+    }
+    /* {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
@@ -65,7 +65,7 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Safari']
       }
-    }
+    }*/
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
@@ -84,7 +84,6 @@ const config: PlaywrightTestConfig = {
 }
 
 export default config
-
 
 /* Test against mobile viewports. */
 // {

@@ -10,6 +10,7 @@
 
   const gridApi = ref()
   const gridEl = ref()
+  const loading = ref(false)
 
   const props = defineProps({
     rowData: Array<T>,
@@ -25,12 +26,23 @@
     async () => {
       await nextTick()
       if (!isNil(gridApi.value)) {
-        gridApi.value.showLoadingOverlay()
         gridApi.value.setRowData(props.rowData)
-        gridApi.value.hideOverlay()
       }
     },
     { deep: true }
+  )
+
+  watch(
+    () => [[loading.value]],
+    () => {
+      if (!isNil(gridApi.value)) {
+        if (loading.value) {
+          gridApi.value.showLoadingOverlay()
+        } else {
+          gridApi.value.hideOverlay()
+        }
+      }
+    }
   )
 
   const observer = new ResizeObserver(() => {
@@ -39,6 +51,9 @@
 
   const onGridReady = (params: any) => {
     gridApi.value = params.api
+    if (loading.value) {
+      gridApi.value.showLoadingOverlay()
+    }
     resizeColumns()
   }
 
@@ -58,6 +73,14 @@
     }
   }
 
+  const loadingStarted = () => {
+    loading.value = true
+  }
+
+  const loadingComplete = () => {
+    loading.value = false
+  }
+
   onMounted(async () => {
     if (gridEl.value.$el) {
       observer.observe(gridEl.value.$el)
@@ -73,12 +96,12 @@
     observer.disconnect()
   })
 
-  defineExpose({ resizeColumns })
+  defineExpose({ resizeColumns, loadingComplete, loadingStarted })
 </script>
 <template>
   <ag-grid-vue
     ref="gridEl"
-    class="ag-theme-stamp-web grid flex-shrink h-full flex-auto flex-grow min-h-[5rem]"
+    :class="`ag-theme-stamp-web grid flex-shrink h-full flex-auto flex-grow min-h-[5rem] grid-loading-${loading}`"
     :columnDefs="columns"
     :rowData="props.rowData"
     :context="context"
