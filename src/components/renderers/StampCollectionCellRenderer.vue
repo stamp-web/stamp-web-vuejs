@@ -18,6 +18,7 @@
       })
       return filtered[0].name
     }
+    return ''
   })
 
   onBeforeMount(async () => {
