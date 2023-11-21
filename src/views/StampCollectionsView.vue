@@ -63,7 +63,7 @@
         dataGridRef,
 
         columnDefs: [
-          new ColumnDefinition('name'),
+          new ColumnDefinition('name', { sort: 'asc' }),
           ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
           new ColumnDefinition('description')
         ]

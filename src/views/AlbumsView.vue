@@ -16,6 +16,7 @@
   import { createInstance } from '@/models/entityModels'
   import cloneDeep from 'lodash-es/cloneDeep'
   import { TransitionRoot } from '@headlessui/vue'
+  import StampCollectionCellRenderer from '@/components/renderers/StampCollectionCellRenderer.vue'
 
   const FILTER_KEY = 'albums-filter'
 
@@ -56,9 +57,13 @@
         context,
 
         columnDefs: [
-          new ColumnDefinition('name'),
+          new ColumnDefinition('name', { sort: 'asc' }),
           ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
-          new ColumnDefinition('description')
+          new ColumnDefinition('description'),
+          new ColumnDefinition('stampCollectionRef', {
+            cellRenderer: StampCollectionCellRenderer,
+            headerName: 'Stamp Collection'
+          })
         ]
       }
     },

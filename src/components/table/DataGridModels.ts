@@ -9,12 +9,14 @@ export class ColumnDefinition {
   minWidth?: number
   resizable?: boolean = false
   sortable?: boolean = true
+  sort?: string
   suppressMovable?: boolean = true
   suppressSizeToFit?: boolean = false
   width?: number
 
-  constructor(field: string | null) {
+  constructor(field: string | null, props?: Partial<any>) {
     this.field = field
+    Object.assign(this, props)
   }
 
   static createActionIconColumn(icon: string, eventName: string): ColumnDefinition {
