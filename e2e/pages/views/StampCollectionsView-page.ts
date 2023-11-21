@@ -32,7 +32,7 @@ export class StampCollectionsViewPage {
 
   getFilter(): FilterInputCmp {
     if (!this.filter) {
-      this.filter = new FilterInputCmp(this.page, 'file-input')
+      this.filter = new FilterInputCmp(this.page, 'filter-input')
     }
     return this.filter
   }

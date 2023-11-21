@@ -33,6 +33,7 @@ export class DataGridComponentCmp {
     if (await this.isLoading()) {
       await this.page.waitForSelector('.grid-loading-false')
     }
+    await this.page.waitForTimeout(500)
   }
 
   getRowCount(): Promise<Number> {

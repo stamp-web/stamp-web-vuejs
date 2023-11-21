@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ref, defineComponent, nextTick } from 'vue'
+  import { ref, defineComponent } from 'vue'
   import isEmpty from 'lodash-es/isEmpty'
   import cloneDeep from 'lodash-es/cloneDeep'
   import _debounce from 'lodash-es/debounce'
@@ -81,18 +81,17 @@
         this.collections.selected = selected
       },
 
-      async filterList() {
+      filterList() {
         this.dataGridRef.loadingStarted()
+        const searchString = this.collections.filterString.toUpperCase()
         this.collections.filteredList = this.collections.list.filter(
           (item: StampCollection) => {
             return (
-              item.name.includes(this.collections.filterString) ||
-              (item.description &&
-                item.description.includes(this.collections.filterString))
+              item.name.toUpperCase().includes(searchString) ||
+              (item.description && item.description.toUpperCase().includes(searchString))
             )
           }
         )
-        await nextTick()
         this.dataGridRef.loadingComplete()
       },
 
@@ -116,12 +115,12 @@
           })
         }
       },
+      close() {
+        this.showEditor = false
+      },
       create() {
         this.showEditor = true
         this.editingModel = createInstance<StampCollection>({})
-      },
-      close() {
-        this.showEditor = false
       },
       async save() {
         if (this.editingModel.id && this.editingModel.id > 0) {
@@ -160,7 +159,7 @@
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1">
         <FilterInput
-          class="mr-4 file-input"
+          class="mr-4 filter-input"
           placeholder="Filter"
           :filter-text="collections.filterString"
           @filter-changed="filterChanged"
@@ -194,7 +193,7 @@
     >
       <StampCollectionEditor
         :model="editingModel"
-        @cancel="showEditor = false"
+        @cancel="close()"
         @save="save()"
       ></StampCollectionEditor>
     </TransitionRoot>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { ref, onMounted, nextTick } from 'vue'
-  import type { ComponentObjectPropsOptions } from 'vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
 
@@ -13,16 +12,12 @@
     props: ['model'],
     emits: ['cancel', 'save'],
     computed: {
-      // @ts-ignore
-      title: (props) => {
-        // @ts-ignore
+      title: (props: any) => {
         return props.model && props.model.id >= 0
           ? 'Edit Stamp Collection'
           : 'New Stamp Collection'
       },
-      // @ts-ignore
-      invalid: (props: ComponentObjectPropsOptions) => {
-        // @ts-ignore
+      invalid: (props: any) => {
         return props && props.form$ && props.form$.invalid
       }
     },

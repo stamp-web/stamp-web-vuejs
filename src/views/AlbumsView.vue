@@ -5,6 +5,7 @@
   import type { Album } from '@/models/entityModels'
   import { albumStore } from '@/stores/albumStore'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
+  import AlbumEditor from '@/components/editors/AlbumEditor.vue'
   import { Prompt } from '@/components/Prompt'
   import LocalCache from '@/stores/LocalCache'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
@@ -12,6 +13,9 @@
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import FilterInput from '@/components/inputs/FilterInput.vue'
   import _debounce from 'lodash-es/debounce'
+  import { createInstance } from '@/models/entityModels'
+  import cloneDeep from 'lodash-es/cloneDeep'
+  import { TransitionRoot } from '@headlessui/vue'
 
   const FILTER_KEY = 'albums-filter'
 
@@ -23,14 +27,18 @@
     name: 'AlbumsView',
     components: {
       FilterInput,
+      AlbumEditor,
       SecondaryButton,
       PrimaryButton,
+      TransitionRoot,
       DataGridComponent
     },
 
     setup() {
       const dataGridRef = ref()
       const context = ref()
+      const showEditor = ref(false)
+      const editingModel = ref()
       const store = albumStore()
       const albums = reactive({
         list: new Array<Album>(),
@@ -42,6 +50,8 @@
       return {
         store,
         albums,
+        showEditor,
+        editingModel,
         dataGridRef,
         context,
 
@@ -64,7 +74,15 @@
         this.albums.selected = selected
       },
 
+      editRow(model: Album) {
+        if (model) {
+          this.editingModel = cloneDeep(model)
+          this.showEditor = true
+        }
+      },
+
       filterList() {
+        this.dataGridRef.loadingStarted()
         const searchString = this.albums.filterString.toUpperCase()
         this.albums.filteredList = this.albums.list.filter((item: Album) => {
           return (
@@ -72,12 +90,22 @@
             (item.description && item.description.toUpperCase().includes(searchString))
           )
         })
+        this.dataGridRef.loadingComplete()
       },
 
       filterChanged(filterText: string) {
         this.albums.filterString = filterText
         UpdateLocalCache(filterText)
         this.filterList()
+      },
+
+      close() {
+        this.showEditor = false
+      },
+
+      create() {
+        this.editingModel = createInstance<Album>({})
+        this.showEditor = true
       },
 
       remove() {
@@ -95,14 +123,15 @@
         }
       },
 
-      create() {
-        /*        let c: Album = createInstance<Album>({
-          name: 'album-test-' + new Date().getTime(),
-          description: 'test of a description',
-          stampCollectionRef: 1
-        })
-        this.store.create(c)
-*/
+      async save() {
+        if (this.editingModel.id && this.editingModel.id > 0) {
+          await this.store.update(this.editingModel)
+          this.showEditor = false
+        } else {
+          await this.store.create(this.editingModel)
+          this.showEditor = false
+        }
+        this.filterList()
       }
     },
 
@@ -112,6 +141,7 @@
     },
 
     async mounted() {
+      this.dataGridRef.loadingStarted()
       this.albums.list = await this.store.find()
       this.filterList()
     }
@@ -123,7 +153,7 @@
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1">
         <FilterInput
-          class="mr-4"
+          class="mr-4 filter-input"
           placeholder="Filter"
           :filter-text="albums.filterString"
           @filter-changed="filterChanged"
@@ -145,5 +175,17 @@
       >
       </DataGridComponent>
     </div>
+    <TransitionRoot
+      :show="showEditor"
+      enter="transition-opacity duration-75"
+      enter-from="opacity-0"
+      enter-to="opacity-100"
+      leave="transition-opacity duration-150"
+      leave-from="opacity-100"
+      leave-to="opacity-0"
+      class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
+    >
+      <AlbumEditor :model="editingModel" @cancel="close()" @save="save()"></AlbumEditor>
+    </TransitionRoot>
   </div>
 </template>
