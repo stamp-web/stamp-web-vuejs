@@ -18,8 +18,6 @@
   import filterableCollection from '@/components/behaviors/filterableCollection'
   import editableModel from '@/components/behaviors/editableModel'
   import { useRouter } from 'vue-router'
-  import type BaseManagedService from '@/services/BasedManagedService'
-  import { CountModel } from '@/models/countModel'
 
   const router = useRouter()
 
