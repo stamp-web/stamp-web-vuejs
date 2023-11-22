@@ -1,32 +1,19 @@
 <script setup lang="ts">
   import { ref } from 'vue'
 
-  import type { KeyIndexable } from '@/util/ts/key-accessor'
-
   const props = defineProps({
     params: Object as any
   })
 
-  const callback = ref(props.params.callback)
+  const callback = ref(props.params.callbackFn)
   const icon = ref(props.params.icon)
   const tooltip = props.params.tooltip ? props.params.tooltip : null
 
   const handleClick = () => {
-    const context: any = props.params.context
     const node = props.params.node
-    let fn = undefined
-    if (context && context.callbackFn && context.callbackFn instanceof Array) {
+    if (callback.value) {
       // @ts-ignore
-      fn = context.callbackFn.find((f) => {
-        return f.name === callback.value
-      })
-    } else if (context && context.component) {
-      /* Temporarily support older component pattern */
-      const component: Object = context.component
-      fn = (component as KeyIndexable)[callback.value]
-    }
-    if (fn) {
-      fn.call(this, node.data, node.rowIndex)
+      callback.value.call(this, node.data, node.rowIndex)
     }
   }
 </script>

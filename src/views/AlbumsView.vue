@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onBeforeMount, onMounted } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { Operators, Predicate } from 'odata-filter-parser'
 
   import type { Album } from '@/models/entityModels'
@@ -32,25 +32,8 @@
   } = filterableCollection('albums-filter')
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
   const dataGridRef = ref()
-  const context = ref()
   const store = albumStore()
 
-  const columnDefs = [
-    new ColumnDefinition('name', { sort: 'asc' }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', 'setEditModel'),
-    ColumnDefinition.createActionIconColumn(
-      'sw-icon-search',
-      'findStamps',
-      'Find Stamps'
-    ),
-    new ColumnDefinition('description'),
-    new ColumnDefinition('stampCollectionRef', {
-      cellRenderer: StampCollectionCellRenderer,
-      headerName: 'Stamp Collection'
-    })
-  ]
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const findStamps = (model: Album) => {
     let p = new Predicate({
       subject: 'albumRef',
@@ -59,6 +42,17 @@
     })
     router.push({ path: '/stamps', query: { $filter: `${p.serialize()}` } })
   }
+
+  const columnDefs = [
+    new ColumnDefinition('name', { sort: 'asc' }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
+    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
+    new ColumnDefinition('description'),
+    new ColumnDefinition('stampCollectionRef', {
+      cellRenderer: StampCollectionCellRenderer,
+      headerName: 'Stamp Collection'
+    })
+  ]
 
   const filterList = () => {
     dataGridRef.value.loadingStarted()
@@ -101,10 +95,6 @@
     filterList()
   }
 
-  onBeforeMount(() => {
-    context.value = { callbackFn: [setEditModel, findStamps] }
-  })
-
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
     setCollection(await store.find())
@@ -138,7 +128,6 @@
         ref="dataGridRef"
         :columnDefs="columnDefs"
         :rowData="getFilteredList()"
-        :context="context"
         @selected="setSelected"
       >
       </DataGridComponent>

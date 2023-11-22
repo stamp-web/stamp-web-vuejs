@@ -21,7 +21,7 @@ export class ColumnDefinition {
 
   static createActionIconColumn(
     icon: string,
-    eventName?: string,
+    fn?: any,
     tooltip?: string,
     params?: Partial<any>
   ): ColumnDefinition {
@@ -38,7 +38,7 @@ export class ColumnDefinition {
     col.cellRenderer = 'ClickableIconCellRenderer'
     col.cellRendererParams = {
       icon: icon,
-      callback: eventName,
+      callbackFn: fn,
       tooltip: tooltip
     }
     return col

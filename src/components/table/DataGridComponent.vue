@@ -14,8 +14,7 @@
 
   const props = defineProps({
     rowData: Array<T>,
-    columnDefs: Array<ColumnDefinition>,
-    context: Object as any
+    columnDefs: Array<ColumnDefinition>
   })
   const emit = defineEmits(['selected'])
 
@@ -104,7 +103,6 @@
     :class="`ag-theme-stamp-web grid flex-shrink h-full flex-auto flex-grow min-h-[5rem] grid-loading-${loading}`"
     :columnDefs="columns"
     :rowData="props.rowData"
-    :context="context"
     rowSelection="single"
     rowHeight="36"
     suppressRowDeselection="false"

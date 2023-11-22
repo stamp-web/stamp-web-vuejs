@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, onBeforeMount, onMounted } from 'vue'
+  import { ref, onMounted } from 'vue'
 
   import { Prompt } from '@/components/Prompt'
   import { TransitionRoot } from '@headlessui/vue'
@@ -31,18 +31,22 @@
   } = filterableCollection('stampCollections-filter')
 
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
-
   const dataGridRef = ref()
-  const context = ref()
   const store = stampCollectionStore()
+
+  const findStamps = (model: StampCollection) => {
+    let p = new Predicate({
+      subject: 'stampCollectionRef',
+      operator: Operators.EQUALS,
+      value: model.id
+    })
+    router.push({ path: '/stamps', query: { $filter: `${p.serialize()}` } })
+  }
+
   const columnDefs = [
     new ColumnDefinition('name', { sort: 'asc' }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', 'setEditModel'),
-    ColumnDefinition.createActionIconColumn(
-      'sw-icon-search',
-      'findStamps',
-      'Find Stamps'
-    ),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
+    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
     new ColumnDefinition('description')
   ]
 
@@ -88,20 +92,6 @@
     filterList()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const findStamps = (model: StampCollection) => {
-    let p = new Predicate({
-      subject: 'stampCollectionRef',
-      operator: Operators.EQUALS,
-      value: model.id
-    })
-    router.push({ path: '/stamps', query: { $filter: `${p.serialize()}` } })
-  }
-
-  onBeforeMount(() => {
-    context.value = { callbackFn: [setEditModel, findStamps] }
-  })
-
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
     setCollection(await store.find())
@@ -135,7 +125,6 @@
         ref="dataGridRef"
         :columnDefs="columnDefs"
         :rowData="getFilteredList()"
-        :context="context"
         @selected="setSelected"
       >
       </DataGridComponent>
