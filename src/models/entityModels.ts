@@ -4,6 +4,7 @@ export interface PersistedModel {
 export interface PersistedNamedModel extends PersistedModel {
   name: string
   description?: string
+  count?: number
 }
 
 export interface Catalogue extends PersistedNamedModel {

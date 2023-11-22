@@ -1,6 +1,6 @@
-import type { Country } from '../models/entityModels'
-import BaseService from '../services/BaseService'
-class CountryService extends BaseService<Country> {
+import type { Country } from '@/models/entityModels'
+import BaseManagedService from '@/services/BasedManagedService'
+class CountryService extends BaseManagedService<Country> {
   constructor() {
     super()
   }

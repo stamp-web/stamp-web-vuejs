@@ -2,7 +2,7 @@ import type { PiniaStore } from 'pinia-generic'
 import { defineGenericStore } from 'pinia-generic'
 import type { PersistedModel } from '@/models/entityModels'
 import type BaseService from '@/services/BaseService'
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
 
@@ -10,6 +10,7 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   'entityModelStore',
   {
     items: { list: Array<T>; total: number; loading: boolean }
+    inflightPromise: any
   },
   {
     service(): BaseService<T>
@@ -25,7 +26,8 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
 export function baseModelStore<T extends PersistedModel>() {
   return defineGenericStore<BaseModelStore<T>>({
     state: {
-      items: reactive({ list: [] as Array<T>, total: 0, loading: false })
+      items: reactive({ list: [] as Array<T>, total: 0, loading: false }),
+      inflightPromise: undefined
     },
     getters: {
       service(): BaseService<T> {
@@ -45,15 +47,23 @@ export function baseModelStore<T extends PersistedModel>() {
         }
       },
       async find(): Promise<T[]> {
+        // attempt caching for inflight promises.  This will have to be cancelled
+        // for finds that have options
+        if (this.items.loading && this.inflightPromise) {
+          await this.inflightPromise
+          await nextTick()
+        }
         if (this.items.list.length === 0) {
           this.items.loading = true
-          const data: EntityList<T> = await this.service.find()
+          this.inflightPromise = this.service.find()
+          const data: EntityList<T> = await this.inflightPromise
           this.items.list.splice(0, this.items.list.length)
           data.items.forEach((e) => {
             this.items.list.push(createInstance(<T>e))
             this.items.total = data.total
             this.items.loading = false
           })
+          this.inflightPromise = undefined
         }
         return this.items.list as unknown as T[]
       },

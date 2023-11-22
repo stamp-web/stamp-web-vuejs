@@ -1,7 +1,7 @@
-import type { Album } from '../models/entityModels'
-import BaseService from '@/services/BaseService'
+import type { Album } from '@/models/entityModels'
+import BaseManagedService from '@/services/BasedManagedService'
 
-class AlbumService extends BaseService<Album> {
+class AlbumService extends BaseManagedService<Album> {
   constructor() {
     super()
   }

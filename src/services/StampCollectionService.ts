@@ -1,7 +1,7 @@
-import type { StampCollection } from '../models/entityModels'
-import BaseService from '@/services/BaseService'
+import type { StampCollection } from '@/models/entityModels'
+import BaseManagedService from '@/services/BasedManagedService'
 
-class StampCollectionService extends BaseService<StampCollection> {
+class StampCollectionService extends BaseManagedService<StampCollection> {
   constructor() {
     super()
   }
