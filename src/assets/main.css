@@ -34,3 +34,7 @@
 .v-popper__inner {
   font-size: 0.75em;
 }
+
+body div[data-v-app=""] {
+  display: none;
+}

@@ -4,10 +4,11 @@ import { createTestingPinia } from '@pinia/testing'
 import { countryStore } from '../../stores/countryStore'
 import { mount, VueWrapper } from '@vue/test-utils'
 import CountriesView from '@/views/CountriesView.vue'
-import { createInstance } from '../../models/entityModels'
-import type { Country } from '../../models/entityModels'
+import ResizeObserver from 'resize-observer-polyfill'
 
 describe('CountriesView', () => {
+  global.ResizeObserver = ResizeObserver
+
   let store = null
   let wrapper: VueWrapper
 
@@ -21,6 +22,12 @@ describe('CountriesView', () => {
     const spyGetCountries = vi.spyOn(store, 'find')
     spyGetCountries.mockImplementation(() => Promise.resolve([]))
 
+    vi.mock('vue-router', () => ({
+      useRouter: () => ({
+        push: vi.fn()
+      })
+    }))
+
     wrapper = mount(CountriesView, {
       global: {
         plugins: [pinia]
@@ -28,8 +35,6 @@ describe('CountriesView', () => {
     })
   })
   it('renders properly', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const c = createInstance<Country>({ id: 5, name: 'test' })
     expect(wrapper.find('.flex.flex-col').exists()).toBe(true)
   })
 })

@@ -1,6 +1,8 @@
 import type { PersistedNamedModel } from '@/models/entityModels'
 import { reactive } from 'vue'
 import _isEmpty from 'lodash-es/isEmpty'
+import _debounce from 'lodash-es/debounce'
+import LocalCache from '@/stores/LocalCache'
 
 /**
  * The filterableCollection behavior will add a reactive collection field that contains the following:
@@ -12,7 +14,19 @@ import _isEmpty from 'lodash-es/isEmpty'
  *
  *  There are methods added to filterCollection as well as set the selected model
  */
-const filterableCollection = () => {
+const filterableCollection = (filterKey?: string) => {
+  const FILTER_KEY: string = filterKey || 'filter-text'
+
+  /**
+   * Will use the local cache to set the filter string value, but will hold updates for ~ 500ms
+   * since we may have filter updates coming in at a much higher rate (100-300ms) but it is not necessary
+   * to store this in the local cache immediately since the local cache is only used for page refresh
+   * restoring the local cache.
+   */
+  const UpdateLocalCache = _debounce((value: string) => {
+    LocalCache.setItem(FILTER_KEY, value)
+  }, 500)
+
   const collection = reactive({
     list: new Array<PersistedNamedModel>(),
     filteredList: new Array<PersistedNamedModel>(),
@@ -44,11 +58,15 @@ const filterableCollection = () => {
   }
 
   const getFilterString = () => {
+    if (collection.filterString === '') {
+      collection.filterString = LocalCache.getItem(FILTER_KEY) || ''
+    }
     return collection.filterString
   }
 
   const setFilterString = (str: string) => {
     collection.filterString = str
+    UpdateLocalCache(str)
   }
 
   const getSelected = () => {

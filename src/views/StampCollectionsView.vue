@@ -1,8 +1,5 @@
-<script lang="ts">
-  import { ref, defineComponent } from 'vue'
-  import isEmpty from 'lodash-es/isEmpty'
-  import cloneDeep from 'lodash-es/cloneDeep'
-  import _debounce from 'lodash-es/debounce'
+<script setup lang="ts">
+  import { ref, onBeforeMount, onMounted } from 'vue'
 
   import { Prompt } from '@/components/Prompt'
   import { TransitionRoot } from '@headlessui/vue'
@@ -10,147 +7,105 @@
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import type { StampCollection } from '@/models/entityModels'
   import { stampCollectionStore } from '@/stores/stampCollectionStore'
-  import LocalCache from '@/stores/LocalCache'
   import { createInstance } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import FilterInput from '@/components/inputs/FilterInput.vue'
+  import { Operators, Predicate } from 'odata-filter-parser'
+  import { useRouter } from 'vue-router'
 
-  // look into https://vuejs.org/guide/components/async.html
-  const FILTER_KEY = 'stampCollections-filter'
+  import filterableCollection from '@/components/behaviors/filterableCollection'
+  import editableModel from '@/components/behaviors/editableModel'
 
-  /**
-   * Will use the local cache to set the filter string value, but will hold updates for ~ 500ms
-   * since we may have filter updates coming in at a much higher rate (100-300ms) but it is not necessary
-   * to store this in the local cache immediately since the local cache is only used for page refresh
-   * restoring the local cache.
-   */
-  const UpdateLocalCache = _debounce((value: string) => {
-    LocalCache.setItem(FILTER_KEY, value)
-  }, 500)
+  const router = useRouter()
 
-  export default defineComponent({
-    name: 'StampCollectionsView',
-    components: {
-      FilterInput,
-      DataGridComponent,
-      PrimaryButton,
-      SecondaryButton,
-      TransitionRoot,
-      StampCollectionEditor
-    },
+  const {
+    setCollection,
+    filterCollection,
+    setFilterString,
+    getFilteredList,
+    getFilterString,
+    getSelected,
+    setSelected
+  } = filterableCollection('stampCollections-filter')
 
-    setup() {
-      const dataGridRef = ref()
-      const showEditor = ref(false)
-      const editingModel = ref()
-      const context = ref()
-      const store = stampCollectionStore()
-      const collections = ref({
-        list: new Array<StampCollection>(),
-        filteredList: new Array<StampCollection>(),
-        selected: {} as StampCollection | undefined,
-        filterString: ''
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+
+  const dataGridRef = ref()
+  const context = ref()
+  const store = stampCollectionStore()
+  const columnDefs = [
+    new ColumnDefinition('name', { sort: 'asc' }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', 'setEditModel'),
+    ColumnDefinition.createActionIconColumn(
+      'sw-icon-search',
+      'findStamps',
+      'Find Stamps'
+    ),
+    new ColumnDefinition('description')
+  ]
+
+  const filterList = () => {
+    dataGridRef.value.loadingStarted()
+    filterCollection()
+    dataGridRef.value.loadingComplete()
+  }
+
+  const filterChanged = (filterText: string) => {
+    setFilterString(filterText)
+    filterList()
+  }
+
+  const create = () => {
+    setEditModel(createInstance<StampCollection>({}))
+  }
+
+  const remove = () => {
+    const selectedCollection = getSelected() as StampCollection
+    if (selectedCollection) {
+      Prompt.confirm({
+        message: `Delete the collection '${selectedCollection.name}'?`
+      }).then(async (confirmed) => {
+        if (confirmed) {
+          await store.remove(selectedCollection)
+          // @ts-ignore
+          setSelected(undefined)
+          filterList()
+        }
       })
-
-      return {
-        editingModel,
-        showEditor,
-        store,
-        collections,
-        context,
-        dataGridRef,
-
-        columnDefs: [
-          new ColumnDefinition('name', { sort: 'asc' }),
-          ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
-          new ColumnDefinition('description')
-        ]
-      }
-    },
-
-    computed: {
-      isSelected() {
-        return !isEmpty(this.collections.selected)
-      }
-    },
-
-    methods: {
-      onSelected(selected: StampCollection) {
-        this.collections.selected = selected
-      },
-
-      filterList() {
-        this.dataGridRef.loadingStarted()
-        const searchString = this.collections.filterString.toUpperCase()
-        this.collections.filteredList = this.collections.list.filter(
-          (item: StampCollection) => {
-            return (
-              item.name.toUpperCase().includes(searchString) ||
-              (item.description && item.description.toUpperCase().includes(searchString))
-            )
-          }
-        )
-        this.dataGridRef.loadingComplete()
-      },
-
-      filterChanged(filterText: string) {
-        this.collections.filterString = filterText
-        UpdateLocalCache(filterText)
-        this.filterList()
-      },
-
-      remove() {
-        const selectedCollection = this.collections.selected
-        if (this.isSelected && selectedCollection) {
-          Prompt.confirm({
-            message: `Delete the collection '${selectedCollection.name}'?`
-          }).then(async (confirmed) => {
-            if (confirmed) {
-              await this.store.remove(this.collections.selected as StampCollection)
-              this.collections.selected = undefined
-              this.filterList()
-            }
-          })
-        }
-      },
-      close() {
-        this.showEditor = false
-      },
-      create() {
-        this.showEditor = true
-        this.editingModel = createInstance<StampCollection>({})
-      },
-      async save() {
-        if (this.editingModel.id && this.editingModel.id > 0) {
-          await this.store.update(this.editingModel)
-          this.showEditor = false
-        } else {
-          await this.store.create(this.editingModel)
-          this.showEditor = false
-        }
-        this.filterList()
-      },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      editRow(model: StampCollection, index: number) {
-        if (model) {
-          this.editingModel = cloneDeep(model)
-          this.showEditor = true
-        }
-      }
-    },
-
-    beforeMount() {
-      this.context = { component: this }
-      this.collections.filterString = LocalCache.getItem(FILTER_KEY)
-    },
-
-    async mounted() {
-      this.dataGridRef.loadingStarted()
-      this.collections.list = await this.store.find()
-      this.filterList()
     }
+  }
+
+  const save = async () => {
+    const editModel = getEditModel() as StampCollection
+    if (editModel && editModel.id > 0) {
+      await store.update(editModel)
+    } else {
+      await store.create(editModel)
+    }
+    hideEditor()
+    filterList()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const findStamps = (model: StampCollection) => {
+    let p = new Predicate({
+      subject: 'stampCollectionRef',
+      operator: Operators.EQUALS,
+      value: model.id
+    })
+    router.push({ path: '/stamps', query: { $filter: `${p.serialize()}` } })
+  }
+
+  onBeforeMount(() => {
+    context.value = { callbackFn: [setEditModel, findStamps] }
+  })
+
+  onMounted(async () => {
+    dataGridRef.value.loadingStarted()
+    setCollection(await store.find())
+    filterList()
   })
 </script>
 
@@ -161,13 +116,17 @@
         <FilterInput
           class="mr-4 filter-input"
           placeholder="Filter"
-          :filter-text="collections.filterString"
+          :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           New Stamp Collection
         </PrimaryButton>
-        <SecondaryButton @click="remove()" :disabled="!isSelected" icon="sw-icon-delete">
+        <SecondaryButton
+          @click="remove()"
+          :disabled="!getSelected()"
+          icon="sw-icon-delete"
+        >
           Delete
         </SecondaryButton>
       </div>
@@ -175,14 +134,14 @@
         class=""
         ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="collections.filteredList"
+        :rowData="getFilteredList()"
         :context="context"
-        @selected="onSelected"
+        @selected="setSelected"
       >
       </DataGridComponent>
     </div>
     <TransitionRoot
-      :show="showEditor"
+      :show="isEditorShown()"
       enter="transition-opacity duration-75"
       enter-from="opacity-0"
       enter-to="opacity-100"
@@ -192,8 +151,8 @@
       class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
       <StampCollectionEditor
-        :model="editingModel"
-        @cancel="close()"
+        :model="getEditModel()"
+        @cancel="hideEditor()"
         @save="save()"
       ></StampCollectionEditor>
     </TransitionRoot>

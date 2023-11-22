@@ -1,117 +1,161 @@
-<script lang="ts">
-  import { AgGridVue } from 'ag-grid-vue3'
-  import { reactive, ref, defineComponent, watch } from 'vue'
-  import _isEmpty from 'lodash-es/isEmpty'
-  import _defer from 'lodash-es/defer'
+<script setup lang="ts">
+  import { ref, onBeforeMount, onMounted } from 'vue'
 
+  import { Prompt } from '@/components/Prompt'
+  import { TransitionRoot } from '@headlessui/vue'
+  import CountryEditor from '@/components/editors/CountryEditor.vue'
+  import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import type { Country } from '@/models/entityModels'
   import { countryStore } from '@/stores/countryStore'
   import { createInstance } from '@/models/entityModels'
-  import { isNil } from '@/util/object-utils'
+  import { ColumnDefinition } from '@/components/table/DataGridModels'
+  import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
+  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import FilterInput from '@/components/inputs/FilterInput.vue'
+  import { Operators, Predicate } from 'odata-filter-parser'
+  import { useRouter } from 'vue-router'
 
-  export default defineComponent({
-    name: 'CountriesView',
-    components: {
-      AgGridVue
-    },
+  import filterableCollection from '@/components/behaviors/filterableCollection'
+  import editableModel from '@/components/behaviors/editableModel'
 
-    setup() {
-      const context = ref()
-      const gridApi = ref()
-      const store = countryStore()
-      const countries = reactive({
-        list: [] as Country[],
-        selected: {} as Country | undefined
-      })
+  const router = useRouter()
 
-      watch(
-        () => [countries.list],
-        () => {
-          _defer(() => {
-            if (!isNil(gridApi.value)) {
-              gridApi.value.setRowData(countries.list)
-            }
-          })
-        },
-        { deep: true }
-      )
+  const {
+    setCollection,
+    filterCollection,
+    setFilterString,
+    getFilteredList,
+    getFilterString,
+    getSelected,
+    setSelected
+  } = filterableCollection('country-filter')
 
-      return {
-        store,
-        countries,
-        context,
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
 
-        gridApi,
-        gridOptions: null,
-        columnDefs: Object.freeze([{ field: 'name' }, { field: 'description' }]),
-        rowData: []
-      }
-    },
+  const dataGridRef = ref()
+  const context = ref()
+  const store = countryStore()
+  const columnDefs = [
+    new ColumnDefinition('name', { sort: 'asc' }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', 'setEditModel'),
+    ColumnDefinition.createActionIconColumn(
+      'sw-icon-search',
+      'findStamps',
+      'Find Stamps'
+    ),
+    new ColumnDefinition('description')
+  ]
 
-    computed: {
-      isSelected() {
-        return !_isEmpty(this.countries.selected)
-      },
-      selectedName() {
-        return !_isEmpty(this.countries.selected) ? this.countries.selected.name : 'Nope'
-      }
-    },
+  const filterList = () => {
+    dataGridRef.value.loadingStarted()
+    filterCollection()
+    dataGridRef.value.loadingComplete()
+  }
 
-    methods: {
-      onGridReady(params: any) {
-        this.gridApi = params.api
-        this.gridApi.sizeColumnsToFit()
-      },
+  const filterChanged = (filterText: string) => {
+    setFilterString(filterText)
+    filterList()
+  }
 
-      onSelected() {
-        const selectedRows = this.gridApi.getSelectedRows()
-        this.countries.selected = selectedRows.at(0)
-      },
+  const create = () => {
+    setEditModel(createInstance<Country>({}))
+  }
 
-      create() {
-        let c: Country = createInstance<Country>({
-          name: 'aaa-test-' + new Date().getTime(),
-          description: 'test of a description'
-        })
-        this.gridApi.showLoadingOverlay()
-        this.store.create(c).then(() => {
-          this.gridApi.hideOverlay()
-        })
-      },
-
-      remove() {
-        if (this.isSelected) {
-          this.store.remove(this.countries.selected as Country).then(() => {
-            this.countries.selected = undefined
-          })
+  const remove = () => {
+    const selected = getSelected() as Country
+    if (selected) {
+      Prompt.confirm({
+        message: `Delete the country '${selected.name}'?`
+      }).then(async (confirmed) => {
+        if (confirmed) {
+          await store.remove(selected)
+          // @ts-ignore
+          setSelected(undefined)
+          filterList()
         }
-      }
-    },
-    beforeMount() {
-      this.context = { component: this }
-    },
-    mounted() {
-      this.store.find().then((result: Country[]) => {
-        this.countries.list = result
       })
     }
+  }
+
+  const save = async () => {
+    const editModel = getEditModel() as Country
+    if (editModel && editModel.id > 0) {
+      await store.update(editModel)
+    } else {
+      await store.create(editModel)
+    }
+    hideEditor()
+    filterList()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const findStamps = (model: Country) => {
+    let p = new Predicate({
+      subject: 'countryRef',
+      operator: Operators.EQUALS,
+      value: model.id
+    })
+    router.push({ path: '/stamps', query: { $filter: `${p.serialize()}` } })
+  }
+
+  onBeforeMount(() => {
+    context.value = { callbackFn: [setEditModel, findStamps] }
+  })
+
+  onMounted(async () => {
+    dataGridRef.value.loadingStarted()
+    const countries = await store.find()
+    setCollection(countries)
+    filterList()
   })
 </script>
 
 <template>
-  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-col">
-    <span class="sw-icon-country"></span>
-    <ag-grid-vue
-      class="ag-theme-alpine grid flex-shrink flex-auto flex-grow min-h-[12rem]"
-      :columnDefs="columnDefs"
-      :rowData="rowData"
-      rowSelection="single"
-      @grid-ready="onGridReady"
-      @selection-changed="onSelected"
+  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
+    <div class="flex-grow flex-auto flex flex-col">
+      <div class="flex mb-1">
+        <FilterInput
+          class="mr-4 filter-input"
+          placeholder="Filter"
+          :filter-text="getFilterString()"
+          @filter-changed="filterChanged"
+        ></FilterInput>
+        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
+          New Country
+        </PrimaryButton>
+        <SecondaryButton
+          @click="remove()"
+          :disabled="!getSelected()"
+          icon="sw-icon-delete"
+        >
+          Delete
+        </SecondaryButton>
+      </div>
+      <DataGridComponent
+        class=""
+        ref="dataGridRef"
+        :columnDefs="columnDefs"
+        :rowData="getFilteredList()"
+        :context="context"
+        @selected="setSelected"
+      >
+      </DataGridComponent>
+    </div>
+    <TransitionRoot
+      :show="isEditorShown()"
+      enter="transition-opacity duration-75"
+      enter-from="opacity-0"
+      enter-to="opacity-100"
+      leave="transition-opacity duration-150"
+      leave-from="opacity-100"
+      leave-to="opacity-0"
+      class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
-    </ag-grid-vue>
-    <p>{{ selectedName }}</p>
-    <button @click="create()">Create</button>
-    <button @click="remove()" :disabled="!isSelected">Delete</button>
+      <CountryEditor
+        :model="getEditModel()"
+        @cancel="hideEditor()"
+        @save="save()"
+      ></CountryEditor>
+    </TransitionRoot>
   </div>
 </template>

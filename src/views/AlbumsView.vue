@@ -7,12 +7,10 @@
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import AlbumEditor from '@/components/editors/AlbumEditor.vue'
   import { Prompt } from '@/components/Prompt'
-  import LocalCache from '@/stores/LocalCache'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import FilterInput from '@/components/inputs/FilterInput.vue'
-  import _debounce from 'lodash-es/debounce'
   import { createInstance } from '@/models/entityModels'
   import { TransitionRoot } from '@headlessui/vue'
   import StampCollectionCellRenderer from '@/components/renderers/StampCollectionCellRenderer.vue'
@@ -20,12 +18,6 @@
   import filterableCollection from '@/components/behaviors/filterableCollection'
   import editableModel from '@/components/behaviors/editableModel'
   import { useRouter } from 'vue-router'
-
-  const FILTER_KEY = 'albums-filter'
-
-  const UpdateLocalCache = _debounce((value: string) => {
-    LocalCache.setItem(FILTER_KEY, value)
-  }, 500)
 
   const router = useRouter()
 
@@ -37,9 +29,9 @@
     getFilterString,
     getSelected,
     setSelected
-  } = filterableCollection()
+  } = filterableCollection('albums-filter')
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
-  const dataGridRef = ref<typeof DataGridComponent>()
+  const dataGridRef = ref()
   const context = ref()
   const store = albumStore()
 
@@ -69,15 +61,12 @@
   }
 
   const filterList = () => {
-    // @ts-ignore
     dataGridRef.value.loadingStarted()
     filterCollection()
-    // @ts-ignore
     dataGridRef.value.loadingComplete()
   }
   const filterChanged = (filterText: string) => {
     setFilterString(filterText)
-    UpdateLocalCache(filterText)
     filterList()
   }
 
@@ -86,13 +75,13 @@
   }
 
   const remove = () => {
-    const selectedAlbum = getSelected()
+    const selectedAlbum = getSelected() as Album
     if (selectedAlbum) {
       Prompt.confirm({
         message: `Delete the album '${selectedAlbum.name}'?`
       }).then(async (confirmed) => {
         if (confirmed) {
-          await store.remove(getSelected() as Album)
+          await store.remove(selectedAlbum)
           // @ts-ignore
           setSelected(undefined)
           filterList()
@@ -102,24 +91,21 @@
   }
 
   const save = async () => {
-    const editModel = getEditModel()
+    const editModel = getEditModel() as Album
     if (editModel && editModel.id > 0) {
-      await store.update(editModel as Album)
-      hideEditor()
+      await store.update(editModel)
     } else {
-      await store.create(editModel as Album)
-      hideEditor()
+      await store.create(editModel)
     }
+    hideEditor()
     filterList()
   }
 
   onBeforeMount(() => {
-    setFilterString(LocalCache.getItem(FILTER_KEY))
     context.value = { callbackFn: [setEditModel, findStamps] }
   })
 
   onMounted(async () => {
-    // @ts-ignore
     dataGridRef.value.loadingStarted()
     setCollection(await store.find())
     filterList()

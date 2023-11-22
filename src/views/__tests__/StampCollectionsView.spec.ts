@@ -22,6 +22,12 @@ describe('StampCollectionsView', () => {
     const spyGetList = vi.spyOn(store, 'find')
     spyGetList.mockImplementation(() => Promise.resolve([]))
 
+    vi.mock('vue-router', () => ({
+      useRouter: () => ({
+        push: vi.fn()
+      })
+    }))
+
     wrapper = mount(StampCollectionsView, {
       global: {
         plugins: [pinia]
@@ -29,7 +35,6 @@ describe('StampCollectionsView', () => {
     })
   })
   it('renders properly', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     expect(wrapper.find('.flex.flex-col').exists()).toBe(true)
   })
 })
