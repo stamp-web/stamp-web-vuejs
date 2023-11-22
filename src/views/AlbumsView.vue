@@ -1,6 +1,6 @@
-<script lang="ts">
-  import { reactive, ref, defineComponent } from 'vue'
-  import _isEmpty from 'lodash-es/isEmpty'
+<script lang="ts" setup>
+  import { ref, onBeforeMount, onMounted } from 'vue'
+  import { Operators, Predicate } from 'odata-filter-parser'
 
   import type { Album } from '@/models/entityModels'
   import { albumStore } from '@/stores/albumStore'
@@ -14,9 +14,12 @@
   import FilterInput from '@/components/inputs/FilterInput.vue'
   import _debounce from 'lodash-es/debounce'
   import { createInstance } from '@/models/entityModels'
-  import cloneDeep from 'lodash-es/cloneDeep'
   import { TransitionRoot } from '@headlessui/vue'
   import StampCollectionCellRenderer from '@/components/renderers/StampCollectionCellRenderer.vue'
+
+  import filterableCollection from '@/components/behaviors/filterableCollection'
+  import editableModel from '@/components/behaviors/editableModel'
+  import { useRouter } from 'vue-router'
 
   const FILTER_KEY = 'albums-filter'
 
@@ -24,132 +27,102 @@
     LocalCache.setItem(FILTER_KEY, value)
   }, 500)
 
-  export default defineComponent({
-    name: 'AlbumsView',
-    components: {
-      FilterInput,
-      AlbumEditor,
-      SecondaryButton,
-      PrimaryButton,
-      TransitionRoot,
-      DataGridComponent
-    },
+  const router = useRouter()
 
-    setup() {
-      const dataGridRef = ref()
-      const context = ref()
-      const showEditor = ref(false)
-      const editingModel = ref()
-      const store = albumStore()
-      const albums = reactive({
-        list: new Array<Album>(),
-        filteredList: new Array<Album>(),
-        selected: {} as Album | undefined,
-        filterString: ''
+  const {
+    setCollection,
+    filterCollection,
+    setFilterString,
+    getFilteredList,
+    getFilterString,
+    getSelected,
+    setSelected
+  } = filterableCollection()
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+  const dataGridRef = ref<typeof DataGridComponent>()
+  const context = ref()
+  const store = albumStore()
+
+  const columnDefs = [
+    new ColumnDefinition('name', { sort: 'asc' }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', 'setEditModel'),
+    ColumnDefinition.createActionIconColumn(
+      'sw-icon-search',
+      'findStamps',
+      'Find Stamps'
+    ),
+    new ColumnDefinition('description'),
+    new ColumnDefinition('stampCollectionRef', {
+      cellRenderer: StampCollectionCellRenderer,
+      headerName: 'Stamp Collection'
+    })
+  ]
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const findStamps = (model: Album) => {
+    let p = new Predicate({
+      subject: 'albumRef',
+      operator: Operators.EQUALS,
+      value: model.id
+    })
+    router.push({ path: '/stamps', query: { $filter: `${p.serialize()}` } })
+  }
+
+  const filterList = () => {
+    // @ts-ignore
+    dataGridRef.value.loadingStarted()
+    filterCollection()
+    // @ts-ignore
+    dataGridRef.value.loadingComplete()
+  }
+  const filterChanged = (filterText: string) => {
+    setFilterString(filterText)
+    UpdateLocalCache(filterText)
+    filterList()
+  }
+
+  const create = () => {
+    setEditModel(createInstance<Album>({}))
+  }
+
+  const remove = () => {
+    const selectedAlbum = getSelected()
+    if (selectedAlbum) {
+      Prompt.confirm({
+        message: `Delete the album '${selectedAlbum.name}'?`
+      }).then(async (confirmed) => {
+        if (confirmed) {
+          await store.remove(getSelected() as Album)
+          // @ts-ignore
+          setSelected(undefined)
+          filterList()
+        }
       })
-
-      return {
-        store,
-        albums,
-        showEditor,
-        editingModel,
-        dataGridRef,
-        context,
-
-        columnDefs: [
-          new ColumnDefinition('name', { sort: 'asc' }),
-          ColumnDefinition.createActionIconColumn('sw-icon-edit', 'editRow'),
-          new ColumnDefinition('description'),
-          new ColumnDefinition('stampCollectionRef', {
-            cellRenderer: StampCollectionCellRenderer,
-            headerName: 'Stamp Collection'
-          })
-        ]
-      }
-    },
-
-    computed: {
-      isSelected() {
-        return !_isEmpty(this.albums.selected)
-      }
-    },
-
-    methods: {
-      onSelected(selected: Album) {
-        this.albums.selected = selected
-      },
-
-      editRow(model: Album) {
-        if (model) {
-          this.editingModel = cloneDeep(model)
-          this.showEditor = true
-        }
-      },
-
-      filterList() {
-        this.dataGridRef.loadingStarted()
-        const searchString = this.albums.filterString.toUpperCase()
-        this.albums.filteredList = this.albums.list.filter((item: Album) => {
-          return (
-            item.name.toUpperCase().includes(searchString) ||
-            (item.description && item.description.toUpperCase().includes(searchString))
-          )
-        })
-        this.dataGridRef.loadingComplete()
-      },
-
-      filterChanged(filterText: string) {
-        this.albums.filterString = filterText
-        UpdateLocalCache(filterText)
-        this.filterList()
-      },
-
-      close() {
-        this.showEditor = false
-      },
-
-      create() {
-        this.editingModel = createInstance<Album>({})
-        this.showEditor = true
-      },
-
-      remove() {
-        const selectedAlbum = this.albums.selected
-        if (this.isSelected && selectedAlbum) {
-          Prompt.confirm({
-            message: `Delete the album '${selectedAlbum.name}'?`
-          }).then(async (confirmed) => {
-            if (confirmed) {
-              await this.store.remove(this.albums.selected as Album)
-              this.albums.selected = undefined
-              this.filterList()
-            }
-          })
-        }
-      },
-
-      async save() {
-        if (this.editingModel.id && this.editingModel.id > 0) {
-          await this.store.update(this.editingModel)
-          this.showEditor = false
-        } else {
-          await this.store.create(this.editingModel)
-          this.showEditor = false
-        }
-        this.filterList()
-      }
-    },
-
-    beforeMount() {
-      this.context = { component: this }
-      this.albums.filterString = LocalCache.getItem(FILTER_KEY)
-    },
-
-    async mounted() {
-      this.dataGridRef.loadingStarted()
-      this.albums.list = await this.store.find()
-      this.filterList()
     }
+  }
+
+  const save = async () => {
+    const editModel = getEditModel()
+    if (editModel && editModel.id > 0) {
+      await store.update(editModel as Album)
+      hideEditor()
+    } else {
+      await store.create(editModel as Album)
+      hideEditor()
+    }
+    filterList()
+  }
+
+  onBeforeMount(() => {
+    setFilterString(LocalCache.getItem(FILTER_KEY))
+    context.value = { callbackFn: [setEditModel, findStamps] }
+  })
+
+  onMounted(async () => {
+    // @ts-ignore
+    dataGridRef.value.loadingStarted()
+    setCollection(await store.find())
+    filterList()
   })
 </script>
 
@@ -160,13 +133,17 @@
         <FilterInput
           class="mr-4 filter-input"
           placeholder="Filter"
-          :filter-text="albums.filterString"
+          :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           New Album
         </PrimaryButton>
-        <SecondaryButton @click="remove()" :disabled="!isSelected" icon="sw-icon-delete">
+        <SecondaryButton
+          @click="remove()"
+          :disabled="!getSelected()"
+          icon="sw-icon-delete"
+        >
           Delete
         </SecondaryButton>
       </div>
@@ -174,14 +151,14 @@
         class=""
         ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="albums.filteredList"
+        :rowData="getFilteredList()"
         :context="context"
-        @selected="onSelected"
+        @selected="setSelected"
       >
       </DataGridComponent>
     </div>
     <TransitionRoot
-      :show="showEditor"
+      :show="isEditorShown()"
       enter="transition-opacity duration-75"
       enter-from="opacity-0"
       enter-to="opacity-100"
@@ -190,7 +167,11 @@
       leave-to="opacity-0"
       class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
-      <AlbumEditor :model="editingModel" @cancel="close()" @save="save()"></AlbumEditor>
+      <AlbumEditor
+        :model="getEditModel()"
+        @cancel="hideEditor()"
+        @save="save()"
+      ></AlbumEditor>
     </TransitionRoot>
   </div>
 </template>

@@ -19,8 +19,13 @@ export class ColumnDefinition {
     Object.assign(this, props)
   }
 
-  static createActionIconColumn(icon: string, eventName: string): ColumnDefinition {
-    const col = new ColumnDefinition(null)
+  static createActionIconColumn(
+    icon: string,
+    eventName?: string,
+    tooltip?: string,
+    params?: Partial<any>
+  ): ColumnDefinition {
+    const col = new ColumnDefinition(null, params)
     Object.assign(col, {
       cellClass: ['!p-0.25 !flex items-center hover:cursor-pointer focus:outline-none'],
       width: 32,
@@ -33,7 +38,8 @@ export class ColumnDefinition {
     col.cellRenderer = 'ClickableIconCellRenderer'
     col.cellRendererParams = {
       icon: icon,
-      callback: eventName
+      callback: eventName,
+      tooltip: tooltip
     }
     return col
   }

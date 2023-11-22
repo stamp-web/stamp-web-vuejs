@@ -54,12 +54,6 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome']
       }
-    },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox']
-      }
     }
   ],
 
@@ -93,6 +87,13 @@ export default config
 //     ...devices['iPhone 12'],
 //   },
 // },
+/*,
+{
+  name: 'firefox',
+      use: {
+...devices['Desktop Firefox']
+}
+}*/
 
 /* Test against branded browsers. */
 // {

@@ -4,22 +4,32 @@
   import type { StampCollection } from '@/models/entityModels'
 
   const store = stampCollectionStore()
-  const collections = ref()
+  const collections = ref<Array<StampCollection>>()
 
   const props = defineProps({
     params: Object as any
   })
 
+  /**
+   * Returns the computed collection name from the given id of the collection for the cell.
+   * Analysis has shown that while we could cache the last found item, the time differential is
+   * so small, it is not worth the effort to store and process the cache.
+   */
   const collectionName = computed(() => {
-    const value = props.params.value
+    const value = props.params ? props.params.value : -1
+    return findCollectionName(value)
+  })
+
+  const findCollectionName = (value: number) => {
+    let found
     if (collections.value) {
-      const filtered = collections.value.filter((collection: StampCollection) => {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      found = collections.value.find((collection: StampCollection) => {
         return collection.id === value
       })
-      return filtered[0].name
     }
-    return ''
-  })
+    return found ? found.name : ''
+  }
 
   onBeforeMount(async () => {
     collections.value = await store.find()

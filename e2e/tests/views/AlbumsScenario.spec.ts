@@ -1,32 +1,37 @@
 import { test, expect, Locator, Page } from '@playwright/test'
-import { StampCollectionsViewPage } from '../../pages/views/StampCollectionsView-page'
+import { AlbumViewPage } from '../../pages/views/AlbumView-page'
 import { generateText } from '../../helpers/test-utils'
 import { PromptCmp } from '../../pages/components/Prompt-cmp'
-import { StampCollectionTestHelper } from '../../helpers/api-helpers'
-import { StampCollection } from '../../../src/models/entityModels'
-import { StampCollectionEditorCmp } from '../../pages/components/StampCollectionEditor-cmp'
+import { AlbumTestHelper, StampCollectionTestHelper } from '../../helpers/api-helpers'
+import { Album, StampCollection } from '../../../src/models/entityModels'
+import { AlbumEditorCmp } from '../../pages/components/AlbumEditor-cmp'
 
 test.describe('creation tests', () => {
   let name: string
+  let collectionName: string
 
-  test.beforeEach(() => {
-    name = 'createCollection-' + new Date().getTime()
+  test.beforeEach(async ({ request }) => {
+    name = 'createAlbum-' + new Date().getTime()
+    collectionName = `collectionAlbum-` + new Date().getTime()
+    StampCollectionTestHelper.create(request, { name: collectionName })
   })
 
   test.afterEach(async ({ request }) => {
-    await StampCollectionTestHelper.deleteByName(request, name)
+    await AlbumTestHelper.deleteByName(request, name)
+    await StampCollectionTestHelper.deleteByName(request, collectionName)
   })
 
   test('valid create', async ({ page }) => {
-    const view = new StampCollectionsViewPage(page)
+    const view = new AlbumViewPage(page)
     await view.goto()
     const createButton = view.getCreateButton()
     await createButton.click()
     const editor = view.getEditor()
-    await expect(editor.getTitle()).toHaveText('New Stamp Collection')
+    await expect(editor.getTitle()).toHaveText('New Album')
     await expect(editor.getSaveButton()).toBeDisabled()
     expect(await editor.isInvalid()).toBe(true)
     await expect(editor.getName()).toHaveClass(/form-color-input-danger/)
+    await editor.getCollection().select(collectionName)
     await editor.getName().fill(name)
     await editor.getDescription().fill('some test description')
     await expect(editor.getName()).not.toHaveClass(/form-color-input-danger/)
@@ -42,16 +47,29 @@ test.describe('creation tests', () => {
 })
 
 test.describe('delete scenarios', () => {
-  let view: StampCollectionsViewPage
+  let view: AlbumViewPage
   let name: string
+  let collectionName: string
+  // @ts-ignore
+  let collection
 
   test.beforeEach(async ({ request }) => {
-    name = `deleteCollection-${new Date().getTime()}`
-    await StampCollectionTestHelper.create(request, { name })
+    name = `deleteAlbum-${new Date().getTime()}`
+    collectionName = `collectionDelete-${new Date().getTime()}`
+    collection = await StampCollectionTestHelper.create(request, { name: collectionName })
+    await AlbumTestHelper.create(request, {
+      name,
+      stampCollectionRef: collection.id
+    })
+  })
+
+  test.afterEach(async ({ request }) => {
+    // @ts-ignore
+    await StampCollectionTestHelper.delete(request, collection.id)
   })
 
   test('delete verification', async ({ page }) => {
-    view = new StampCollectionsViewPage(page)
+    view = new AlbumViewPage(page)
     await view.goto()
     await view.getFilter().getInput().fill(name)
     await view.getGrid().waitForLoadingComplete()
@@ -61,7 +79,7 @@ test.describe('delete scenarios', () => {
     await view.getDeleteButton().click()
     const prompt: PromptCmp = new PromptCmp(page)
     expect(await prompt.isVisible()).toBe(true)
-    expect(await prompt.getMessage()).toBe(`Delete the collection '${name}'?`)
+    expect(await prompt.getMessage()).toBe(`Delete the album '${name}'?`)
     await prompt.no()
     await view.getGrid().waitForLoadingComplete()
     await view.getDeleteButton().click()
@@ -77,28 +95,31 @@ test.describe('delete scenarios', () => {
 })
 
 test.describe('edit scenarios', () => {
-  let view: StampCollectionsViewPage
-  let editor: StampCollectionEditorCmp
+  let view: AlbumViewPage
+  let editor: AlbumEditorCmp
 
-  let model: StampCollection
+  let collection: StampCollection
+  let model: Album
   let name: string
   let revisedName: string
 
   test.beforeEach(async ({ request }) => {
-    name = 'editCollection-' + new Date().getTime()
-    model = await StampCollectionTestHelper.create(request, {
+    name = 'editAlbum-' + new Date().getTime()
+    const collectionName = 'albumCollection-' + new Date().getTime()
+    collection = await StampCollectionTestHelper.create(request, { name: collectionName })
+    model = await AlbumTestHelper.create(request, {
       name,
-      description: 'some description'
+      stampCollectionRef: collection.id
     })
     revisedName = `a-${name}`
   })
 
   test.afterEach(async ({ request }) => {
-    await StampCollectionTestHelper.delete(request, model.id)
+    await StampCollectionTestHelper.delete(request, collection.id)
   })
 
   async function navigateToEditor(page: Page) {
-    view = new StampCollectionsViewPage(page)
+    view = new AlbumViewPage(page)
     await view.goto()
     await view.getFilter().getInput().fill(name)
     await view.getGrid().waitForLoadingComplete()
@@ -106,7 +127,7 @@ test.describe('edit scenarios', () => {
     await view.getGrid().getAction('sw-icon-edit', selectedRow).click()
 
     editor = view.getEditor()
-    await expect(editor.getTitle()).toHaveText('Edit Stamp Collection')
+    await expect(editor.getTitle()).toHaveText('Edit Album')
   }
 
   test('edit valid fields', async ({ page }) => {

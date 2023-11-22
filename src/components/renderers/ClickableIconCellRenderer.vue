@@ -9,29 +9,38 @@
 
   const callback = ref(props.params.callback)
   const icon = ref(props.params.icon)
+  const tooltip = props.params.tooltip ? props.params.tooltip : null
 
   const handleClick = () => {
-    if (!callback.value) {
-      console.log('no callback was specified')
-      return
-    }
     const context: any = props.params.context
-    if (context && context.component) {
+    const node = props.params.node
+    let fn = undefined
+    if (context && context.callbackFn && context.callbackFn instanceof Array) {
+      // @ts-ignore
+      fn = context.callbackFn.find((f) => {
+        return f.name === callback.value
+      })
+    } else if (context && context.component) {
+      /* Temporarily support older component pattern */
       const component: Object = context.component
-      const fn: Function = (component as KeyIndexable)[callback.value]
-      if (fn) {
-        const node = props.params.node
-        fn.call(this, node.data, node.rowIndex)
-      }
+      fn = (component as KeyIndexable)[callback.value]
+    }
+    if (fn) {
+      fn.call(this, node.data, node.rowIndex)
     }
   }
 </script>
 
 <template>
   <span
+    v-tooltip="tooltip"
     :class="`icon-cell ${icon} flex items-center h-6 w-6 hover:text-[var(--vf-primary-darker)] hover:border hover:bg-gray-100 hover:rounded-xl hover:border-current`"
     @click="handleClick()"
   ></span>
 </template>
 
-<style scoped></style>
+<style scoped>
+  .icon-cell::before {
+    margin-left: 0.25rem;
+  }
+</style>
