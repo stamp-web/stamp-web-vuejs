@@ -5,6 +5,7 @@ import type BaseService from '@/services/BaseService'
 import { nextTick, reactive } from 'vue'
 import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
+import _isEmpty from 'lodash-es/isEmpty'
 
 export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   'entityModelStore',
@@ -46,23 +47,23 @@ export function baseModelStore<T extends PersistedModel>() {
           this.items.total--
         }
       },
-      async find(): Promise<T[]> {
+      async find(options: {} = {}): Promise<T[]> {
         // attempt caching for inflight promises.  This will have to be cancelled
         // for finds that have options
-        if (this.items.loading && this.inflightPromise) {
+        if (this.items.loading && this.inflightPromise && _isEmpty(options)) {
           await this.inflightPromise
           await nextTick()
         }
         if (this.items.list.length === 0) {
           this.items.loading = true
-          this.inflightPromise = this.service.find()
+          this.inflightPromise = this.service.find(options)
           const data: EntityList<T> = await this.inflightPromise
           this.items.list.splice(0, this.items.list.length)
           data.items.forEach((e) => {
             this.items.list.push(createInstance(<T>e))
             this.items.total = data.total
-            this.items.loading = false
           })
+          this.items.loading = false
           this.inflightPromise = undefined
         }
         return this.items.list as unknown as T[]
