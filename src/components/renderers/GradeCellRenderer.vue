@@ -1,18 +1,18 @@
 <script setup lang="ts">
   import { computed } from 'vue'
-  import { ConditionHelper } from '@/models/Condition'
   import { resolvePath } from '@/util/object-utils'
+  import { GradeHelper } from '@/models/Grade'
 
   const props = defineProps({
     params: Object as any
   })
 
-  const condition = computed(() => {
+  const grade = computed(() => {
     const value = +resolvePath(props.params?.data, props.params?.path, -1)
-    return ConditionHelper.toString(value)
+    return GradeHelper.toString(value)
   })
 </script>
 
 <template>
-  <span>{{ condition }}</span>
+  <span>{{ grade }}</span>
 </template>

@@ -1,12 +1,15 @@
 import { APIRequestContext } from '@playwright/test'
 import type {
   Album,
+  Catalogue,
   Country,
+  PersistedModel,
   PersistedNamedModel,
   StampCollection
 } from '../../src/models/entityModels'
+import type { Stamp } from '../../src/models/Stamp'
 
-abstract class entityTestHelper<T extends PersistedNamedModel> {
+abstract class entityTestHelper<T extends PersistedModel> {
   abstract getResourceName(): string
   getCollectionName(): string {
     return this.getResourceName()
@@ -19,6 +22,9 @@ abstract class entityTestHelper<T extends PersistedNamedModel> {
         data: payload
       }
     )
+    console.log(result)
+    const r = await result.json()
+    console.log(r)
     if (result.status() === 201) {
       return result.json()
     } else {
@@ -40,7 +46,7 @@ abstract class entityTestHelper<T extends PersistedNamedModel> {
   async deleteByName(request: APIRequestContext, name: string) {
     const results = await this.find(request)
     const filtered = results[this.getCollectionName()].filter((obj: T) => {
-      return obj.name === name
+      return (obj as unknown as PersistedNamedModel).name === name
     })
     await this.delete(request, filtered.shift().id)
   }
@@ -70,6 +76,21 @@ class countryTestHelper extends entityTestHelper<Country> {
   }
 }
 
+class catalogueTestHelper extends entityTestHelper<Catalogue> {
+  getResourceName(): string {
+    return 'catalogues'
+  }
+}
+
+// @ts-ignore
+class stampTestHelper extends entityTestHelper<Stamp> {
+  getResourceName(): string {
+    return 'stamps'
+  }
+}
+
 export const StampCollectionTestHelper = new stampCollectionTestHelper()
 export const AlbumTestHelper = new albumTestHelper()
 export const CountryTestHelper = new countryTestHelper()
+export const StampTestHelper = new stampTestHelper()
+export const CatalogueTestHelper = new catalogueTestHelper()

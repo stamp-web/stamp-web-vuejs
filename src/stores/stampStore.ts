@@ -30,6 +30,9 @@ export const stampStore = defineStore('stampStore', {
         this.items.total--
       }
     },
+    getCount(): number {
+      return this.items.total
+    },
     async find(options?: {}): Promise<Array<Stamp>> {
       this.items.list.splice(0, this.items.list.length)
       this.items.loading = true

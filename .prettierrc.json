@@ -6,5 +6,6 @@
   "printWidth": 90,
   "trailingComma": "none",
   "vueIndentScriptAndStyle": true,
+  "embeddedLanguageFormatting": "auto",
   "endOfLine": "auto"
 }

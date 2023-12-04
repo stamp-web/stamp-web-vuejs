@@ -1,14 +1,18 @@
-export interface Ownership {
-  id: number
+import type { PersistedModel } from '@/models/entityModels'
+import type { Grade } from '@/models/Grade'
+import type { CurrencyCode } from '@/models/CurrencyCode'
+import type { Condition } from '@/models/Condition'
+
+export interface Ownership extends PersistedModel {
   pricePaid: number
   purchased?: Date
-  grade: number
-  condition: number
+  grade: Grade
+  condition: Condition
   img?: string
   notes?: string
-  code: string
+  code: CurrencyCode
   defects: number
-  deceptions: number
+  deception: number
   cert: boolean
   certImg?: string
   albumRef: number

@@ -2,9 +2,16 @@ import { test, expect, Locator, Page } from '@playwright/test'
 import { CountryViewPage } from '../../pages/views/CountryView-page'
 import { generateText } from '../../helpers/test-utils'
 import { PromptCmp } from '../../pages/components/Prompt-cmp'
-import { CountryTestHelper } from '../../helpers/api-helpers'
-import { Country } from '../../../src/models/entityModels'
+import {
+  CatalogueTestHelper,
+  CountryTestHelper,
+  StampTestHelper
+} from '../../helpers/api-helpers'
+import { Catalogue, Country } from '../../../src/models/entityModels'
 import { CountryEditorCmp } from '../../pages/components/CountryEditor-cmp'
+import { Stamp } from '../../../src/models/Stamp'
+import { CurrencyCode } from '../../../src/models/CurrencyCode'
+import { StampViewPage } from '../../pages/views/StampView-page'
 
 test.describe('creation tests', () => {
   let name: string
@@ -73,6 +80,63 @@ test.describe('delete scenarios', () => {
     await view.getFilter().getInput().fill(name)
     await view.getGrid().waitForLoadingComplete()
     expect(await view.getGrid().getRowCount()).toBe(0)
+  })
+})
+
+test.describe('navigate to stamps', () => {
+  let view: CountryViewPage
+  let name: string
+  let country: Country
+  let catalogue: Catalogue
+
+  test.beforeEach(async ({ request }) => {
+    name = `stampCountry-${new Date().getTime()}`
+    country = await CountryTestHelper.create(request, {
+      name,
+      description: 'some description'
+    })
+    catalogue = await CatalogueTestHelper.create(request, {
+      name: `Michel Specialized-${new Date().getTime()}`,
+      issue: 2023,
+      type: 0,
+      code: CurrencyCode.EUR
+    })
+    const stamp = await StampTestHelper.create(request, {
+      rate: '1d',
+      description: 'red',
+      wantlist: true,
+      countryRef: country.id,
+      catalogueNumbers: [
+        {
+          number: 'test-43c',
+          catalogueRef: catalogue.id,
+          value: 25.54,
+          condition: 0,
+          active: true
+        }
+      ],
+      stampOwnerships: []
+    })
+  })
+
+  test.afterEach(async ({ request }) => {
+    await CountryTestHelper.delete(request, country.id)
+    await CatalogueTestHelper.delete(request, catalogue.id)
+  })
+
+  test('verify navigation to stamp list', async ({ page }) => {
+    view = new CountryViewPage(page)
+    await view.goto()
+    await view.getFilter().getInput().fill(name)
+    await view.getGrid().waitForLoadingComplete()
+    const selectedRow = view.getGrid().getRowByText(name)
+    await view.getGrid().getAction('sw-icon-search', selectedRow).click()
+
+    const stampView = new StampViewPage(page)
+    await stampView.getGrid().waitForLoadingComplete()
+    expect(await stampView.getCount()).toBe(1)
+    const row = stampView.getGrid().getRowByText('test-43c')
+    expect(await row).toBeDefined()
   })
 })
 

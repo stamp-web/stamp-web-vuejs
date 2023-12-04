@@ -7,11 +7,11 @@
   })
 
   const stampDescription = computed(() => {
-    return buildStampName(props.params.data)
+    return buildStampName(props.params?.data)
   })
 
   const buildStampName = (stamp: Stamp) => {
-    return `${stamp.rate} ${stamp.description}`
+    return stamp ? `${stamp.rate ?? ''} ${stamp.description ?? ''}`.trim() : ''
   }
 </script>
 

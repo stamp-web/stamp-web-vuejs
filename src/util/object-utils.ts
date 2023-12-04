@@ -1,11 +1,12 @@
 import type { KeyIndexable } from '@/util/ts/key-accessor'
-import { isObject } from 'lodash-es'
-import { isArrayLikeObject } from 'lodash-es'
-import { has } from 'lodash-es'
-import { isNumber } from 'lodash-es'
+import _isObject from 'lodash-es/isObject'
+import _isArrayLikeObject from 'lodash-es/isArrayLikeObject'
+import _has from 'lodash-es/has'
+import _isNumber from 'lodash-es/isNumber'
 import _set from 'lodash-es/set'
+import { CurrencyCode } from '@/models/CurrencyCode'
 
-export function isNil(obj: any) {
+export function isNil(obj: any): boolean {
   return obj === null || obj === undefined
 }
 
@@ -17,7 +18,7 @@ export function isNil(obj: any) {
  * @param path
  * @param defaultValue
  */
-export function resolvePath(object: any, path: string, defaultValue?: any) {
+export function resolvePath(object: any, path: string, defaultValue?: any): any {
   return path
     .split(/[.[\]'"]/)
     .filter((p) => p)
@@ -32,13 +33,13 @@ export function resolvePath(object: any, path: string, defaultValue?: any) {
  * @param model
  * @param m
  */
-export function augmentModel(model: Object, m: Object) {
+export function augmentModel(model: Object, m: Object): void {
   Object.keys(m).forEach((k) => {
     const value: any = (m as KeyIndexable)[k]
-    const obj = isObject(value)
-    const arr = isArrayLikeObject(value)
-    if (!has(model, k)) {
-      const num = isNumber(value)
+    const obj = _isObject(value)
+    const arr = _isArrayLikeObject(value)
+    if (!_has(model, k)) {
+      const num = _isNumber(value)
       const v = arr ? [] : obj ? {} : num ? 0 : null
       _set(model, k, v)
     } else if (arr) {
@@ -50,4 +51,46 @@ export function augmentModel(model: Object, m: Object) {
       }
     }
   })
+}
+
+export function asCurrencyString(value: number, currency: string): string {
+  const minFractions = currency === CurrencyCode.JPY ? 0 : 2
+  let text = ''
+  if (currency) {
+    text = value.toLocaleString('en', {
+      style: 'currency',
+      currencyDisplay: 'symbol',
+      currency: currency,
+      minimumFractionDigits: minFractions
+    })
+  }
+  return text
+}
+
+export function determineShiftedValues(total: number, highestCount: number) {
+  const values = []
+  let runningTotal = total
+  for (let i = highestCount; i >= 0; i--) {
+    if (runningTotal >> i === 1) {
+      const binValue = Math.pow(2, i)
+      runningTotal = runningTotal - binValue
+      values.push(binValue)
+    }
+  }
+  return values
+}
+
+export class EnumHelper {
+  public static asEnumArray(type: any, value: number) {
+    if (value <= 0 || isNil(value)) {
+      return []
+    }
+    // valued enums contain twice the keys of a value key so we need to divide by 2
+    const v = determineShiftedValues(value, Object.keys(type).length / 2)
+    const enums: any[] = []
+    v.forEach((ordinal: number) => {
+      enums.push(type[type[ordinal]])
+    })
+    return enums
+  }
 }

@@ -1,3 +1,5 @@
+import type { CurrencyCode } from '@/models/CurrencyCode'
+
 export interface PersistedModel {
   id: number
 }
@@ -10,7 +12,7 @@ export interface PersistedNamedModel extends PersistedModel {
 export interface Catalogue extends PersistedNamedModel {
   issue: number
   type: number
-  code: string
+  code: CurrencyCode
 }
 
 export interface Country extends PersistedNamedModel {}

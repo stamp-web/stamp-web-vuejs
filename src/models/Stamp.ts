@@ -1,8 +1,8 @@
 import type { Ownership } from '@/models/Owernship'
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
+import type { PersistedModel } from '@/models/entityModels'
 
-export interface Stamp {
-  id: number
+export interface Stamp extends PersistedModel {
   description?: string
   rate?: string
   printing: number

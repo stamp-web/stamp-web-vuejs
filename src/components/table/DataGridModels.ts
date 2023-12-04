@@ -19,6 +19,17 @@ export class ColumnDefinition {
     Object.assign(this, props)
   }
 
+  static getActionIconProperties() {
+    return {
+      cellClass: ['!p-0.25 !flex items-center hover:cursor-pointer focus:outline-none'],
+      width: 32,
+      maxWidth: 32,
+      minWidth: 32,
+      sortable: false,
+      resizable: false,
+      suppressSizeToFit: true
+    }
+  }
   static createActionIconColumn(
     icon: string,
     fn?: any,
@@ -26,15 +37,7 @@ export class ColumnDefinition {
     params?: Partial<any>
   ): ColumnDefinition {
     const col = new ColumnDefinition(null, params)
-    Object.assign(col, {
-      cellClass: ['!p-0.25 !flex items-center hover:cursor-pointer focus:outline-none'],
-      width: 32,
-      maxWidth: 32,
-      minWidth: 32,
-      sortable: false,
-      resizable: false
-    })
-    col.suppressSizeToFit = true
+    Object.assign(col, ColumnDefinition.getActionIconProperties())
     col.cellRenderer = 'ClickableIconCellRenderer'
     col.cellRendererParams = {
       icon: icon,

@@ -4,6 +4,7 @@
   import type { Stamp } from '@/models/Stamp'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import type { Catalogue } from '@/models/entityModels'
+  import { asCurrencyString } from '@/util/object-utils'
 
   const store = catalogueStore()
   const catalogues = ref<Array<Catalogue>>()
@@ -24,15 +25,7 @@
       })
       if (catalogue) {
         const currency = catalogue.code
-        let minFractions = currency === 'JPY' ? 0 : 2
-        if (+cn.value > 0 && currency) {
-          return cn.value.toLocaleString('en', {
-            style: 'currency',
-            currencyDisplay: 'symbol',
-            currency: currency,
-            minimumFractionDigits: minFractions
-          })
-        }
+        return asCurrencyString(cn.value, currency)
       }
     }
 
