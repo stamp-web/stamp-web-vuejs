@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { TestContext } from 'vitest'
-import { VueWrapper, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 import CatalogueValueCellRenderer from '@/components/renderers/CatalogueValueCellRenderer.vue'
@@ -8,7 +7,6 @@ import { catalogueStore } from '@/stores/catalogueStore'
 import { CurrencyCode } from '@/models/CurrencyCode'
 import { Condition } from '@/models/Condition'
 import type { Catalogue } from '@/models/entityModels'
-import type { ComponentPublicInstance } from 'vue'
 
 describe('StampCollectionCellRenderer', () => {
   let store = null

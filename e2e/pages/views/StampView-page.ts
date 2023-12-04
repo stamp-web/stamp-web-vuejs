@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test'
+import { Page } from '@playwright/test'
 import { DataGridComponentCmp } from '../components/DataGridComponent-cmp'
 
 export class StampViewPage {

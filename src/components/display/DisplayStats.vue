@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed } from 'vue'
 
   const props = defineProps({
     total: Number,
@@ -22,6 +22,6 @@
 
 <template>
   <div class="flex align-middle">
-    <span>Total: {{ startingCount }} - {{ endingCount }} of {{ total }}</span>
+    <span>Total: {{ startingCount }} - {{ endingCount }} of {{ totalCount }}</span>
   </div>
 </template>

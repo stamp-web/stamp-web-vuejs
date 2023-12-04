@@ -9,7 +9,6 @@ import {
 } from '../../helpers/api-helpers'
 import { Catalogue, Country } from '../../../src/models/entityModels'
 import { CountryEditorCmp } from '../../pages/components/CountryEditor-cmp'
-import { Stamp } from '../../../src/models/Stamp'
 import { CurrencyCode } from '../../../src/models/CurrencyCode'
 import { StampViewPage } from '../../pages/views/StampView-page'
 
@@ -101,7 +100,7 @@ test.describe('navigate to stamps', () => {
       type: 0,
       code: CurrencyCode.EUR
     })
-    const stamp = await StampTestHelper.create(request, {
+    await StampTestHelper.create(request, {
       rate: '1d',
       description: 'red',
       wantlist: true,
