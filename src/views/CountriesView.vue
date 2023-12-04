@@ -17,6 +17,7 @@
 
   import filterableCollection from '@/components/behaviors/filterableCollection'
   import editableModel from '@/components/behaviors/editableModel'
+  import stampCount from '@/components/renderers/formatters/StampCountValueFormatter'
 
   const router = useRouter()
 
@@ -47,6 +48,7 @@
     new ColumnDefinition('name', { sort: 'asc' }),
     ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
     ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
+    new ColumnDefinition('count', { maxWidth: 100, valueFormatter: stampCount }),
     new ColumnDefinition('description')
   ]
 
@@ -94,8 +96,8 @@
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
-    const countries = await store.find()
-    setCollection(countries)
+    setCollection(await store.find())
+    await store.getStampCount()
     filterList()
   })
 </script>

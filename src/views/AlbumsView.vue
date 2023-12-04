@@ -18,6 +18,7 @@
   import filterableCollection from '@/components/behaviors/filterableCollection'
   import editableModel from '@/components/behaviors/editableModel'
   import { useRouter } from 'vue-router'
+  import stampCount from '@/components/renderers/formatters/StampCountValueFormatter'
 
   const router = useRouter()
 
@@ -47,6 +48,7 @@
     new ColumnDefinition('name', { sort: 'asc' }),
     ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
     ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
+    new ColumnDefinition('count', { maxWidth: 100, valueFormatter: stampCount }),
     new ColumnDefinition('description'),
     new ColumnDefinition('stampCollectionRef', {
       cellRenderer: StampCollectionCellRenderer,
@@ -98,6 +100,7 @@
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
     setCollection(await store.find())
+    await store.getStampCount()
     filterList()
   })
 </script>

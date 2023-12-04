@@ -28,13 +28,9 @@ export default abstract class BaseService<T extends PersistedModel> {
 
   augmentHeaders(headers?: {}): RawAxiosRequestHeaders {
     const h = headers || {}
-    return merge(
-      h,
-      {
-        'Content-Type': 'application/json'
-      },
-      h
-    ) as RawAxiosRequestHeaders
+    return merge(h, {
+      'Content-Type': 'application/json'
+    }) as RawAxiosRequestHeaders
   }
 
   toParameters(options: Object): string {
