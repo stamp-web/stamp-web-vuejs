@@ -14,10 +14,13 @@
   import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import DisplayStats from '@/components/display/DisplayStats.vue'
+  import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
+  import { preferenceStore } from '@/stores/PreferenceStore'
 
   const route = useRoute()
   const dataGridRef = ref()
   const store = stampStore()
+  const prefStore = preferenceStore()
 
   const pagingInfo = ref({
     active: 0,
@@ -36,7 +39,21 @@
     }
   })
 
+  const prefPaths = ref({
+    imagePath: '/',
+    thumbPath: '/'
+  })
+
   const columnDefs = [
+    new ColumnDefinition('', {
+      cellRenderer: ImagePreviewCellRenderer,
+      cellRendererParams: {
+        path: 'stampOwnerships[0].img',
+        prefs: prefPaths.value
+      },
+      cellClass: ['!p-0.75'],
+      maxWidth: 40
+    }),
     new ColumnDefinition('countryRef', {
       cellRenderer: CountryCellRenderer,
       headerName: 'Country'
@@ -109,6 +126,12 @@
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
+
+    const thumbPref = await prefStore.findByNameAndCategory('thumbPath', 'stamps')
+    const imagePref = await prefStore.findByNameAndCategory('imagePath', 'stamps')
+    prefPaths.value.thumbPath = thumbPref.value ?? '/'
+    prefPaths.value.imagePath = imagePref.value ?? '/'
+
     const query = route.query
     collection.list = await store.find(query)
     calculatePageStats()

@@ -10,7 +10,9 @@ type PreferenceStoreType = PiniaStore<
   'preferenceStore',
   {},
   {},
-  {},
+  {
+    findByNameAndCategory(name: string, category: string): Promise<Preference>
+  },
   BaseModelStore<Preference>
 >
 
@@ -21,6 +23,18 @@ export const preferenceStore = useStore<PreferenceStoreType, BaseModelStore<Pref
     getters: {
       service(): BaseService<Preference> {
         return PreferenceService
+      }
+    },
+    actions: {
+      async findByNameAndCategory(name: string, category: string): Promise<Preference> {
+        if (this.items.list.length <= 0) {
+          await this.find()
+        }
+        return Promise.resolve(
+          this.items.list.find(
+            (item) => item.name === name && item.category === category
+          ) as Preference
+        )
       }
     }
   },
