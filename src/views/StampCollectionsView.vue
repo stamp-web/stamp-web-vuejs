@@ -48,7 +48,7 @@
     new ColumnDefinition('name', { sort: 'asc' }),
     ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
     ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
-    new ColumnDefinition('count', { maxWidth: 100, valueFormatter: stampCount }),
+    new ColumnDefinition('count', { maxWidth: 120, valueFormatter: stampCount }),
     new ColumnDefinition('description')
   ]
 
@@ -115,11 +115,7 @@
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           New Stamp Collection
         </PrimaryButton>
-        <SecondaryButton
-          @click="remove()"
-          :disabled="!getSelected()"
-          icon="sw-icon-delete"
-        >
+        <SecondaryButton @click="remove()" :disabled="!getSelected()" icon="sw-icon-delete">
           Delete
         </SecondaryButton>
       </div>

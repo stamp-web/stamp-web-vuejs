@@ -3,6 +3,8 @@
   import { onMounted, ref, watch } from 'vue'
   import _isEmpty from 'lodash-es/isEmpty'
   import type { KeyIndexable } from '@/util/ts/key-accessor'
+  // @ts-ignore
+  import bus from 'vue3-eventbus'
 
   const props = defineProps({
     showNa: Boolean,
@@ -77,10 +79,26 @@
     return options
   }
 
+  const closeFullImage = () => {
+    while (fullImage.value.firstChild) {
+      fullImage.value.removeChild(fullImage.value.firstChild)
+    }
+    showingFullImage.value = false
+    bus.off('showingImage', handleShowEvent)
+  }
+
+  const handleShowEvent = (cmp: any) => {
+    if (showingFullImage.value) {
+      closeFullImage()
+    }
+  }
+
   const showFullImage = () => {
     if (showingFullImage.value || !hasValidImage.value) {
       return
     }
+    bus.emit('showingImage', fullImage.value)
+    bus.on('showingImage', handleShowEvent)
     const imageUrl = props.fullSizeImageUrl ? props.fullSizeImageUrl : props.imageUrl
     if (imageUrl) {
       loadImage(imageUrl, getFullImageOptions()).then((data: any) => {
@@ -92,19 +110,12 @@
     }
   }
 
-  const closeFullImage = () => {
-    while (fullImage.value.firstChild) {
-      fullImage.value.removeChild(fullImage.value.firstChild)
-    }
-    showingFullImage.value = false
-  }
-
   onMounted(() => {
     processImage()
   })
 </script>
 <template>
-  <div ref="imgBlock" @click="showFullImage"></div>
+  <div ref="imgBlock" @click="showFullImage" class="m-auto"></div>
   <teleport :to="props.containerSelector ?? 'body'" :disabled="!showingFullImage">
     <div
       class="fullImage shadow-lg shadow-slate-600 fixed top-[50%] left-[50%] -translate-y-[50%] -translate-x-[50%] z-40"

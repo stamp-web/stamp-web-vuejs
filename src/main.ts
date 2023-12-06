@@ -9,6 +9,9 @@ import FloatingVue from 'floating-vue'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
+// @ts-ignore
+import eventBus from 'vue3-eventbus'
+
 import App from './App.vue'
 import router from './router'
 import ClickableIconCellRenderer from '@/components/renderers/ClickableIconCellRenderer.vue'
@@ -18,6 +21,7 @@ const app = createApp(App)
   .use(router)
   .use(Vueform, vueformConfig)
   .use(FloatingVue)
+  .use(eventBus)
 /**
  * Globally define cell renderers so they can be used by name without having to import them all in the Grid Component
  */

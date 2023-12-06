@@ -48,7 +48,7 @@
     new ColumnDefinition('name', { sort: 'asc' }),
     ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
     ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
-    new ColumnDefinition('count', { maxWidth: 100, valueFormatter: stampCount }),
+    new ColumnDefinition('count', { maxWidth: 120, valueFormatter: stampCount }),
     new ColumnDefinition('description')
   ]
 
@@ -115,11 +115,7 @@
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           New Country
         </PrimaryButton>
-        <SecondaryButton
-          @click="remove()"
-          :disabled="!getSelected()"
-          icon="sw-icon-delete"
-        >
+        <SecondaryButton @click="remove()" :disabled="!getSelected()" icon="sw-icon-delete">
           Delete
         </SecondaryButton>
       </div>
@@ -142,11 +138,7 @@
       leave-to="opacity-0"
       class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
-      <CountryEditor
-        :model="getEditModel()"
-        @cancel="hideEditor()"
-        @save="save()"
-      ></CountryEditor>
+      <CountryEditor :model="getEditModel()" @cancel="hideEditor()" @save="save()"></CountryEditor>
     </TransitionRoot>
   </div>
 </template>

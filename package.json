@@ -28,7 +28,8 @@
     "sweetalert2": "^11.9.0",
     "vue": "^3.3.7",
     "vue-property-decorator": "^8.0.0",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vue3-eventbus": "^2.0.0"
   },
   "devDependencies": {
     "@pinia/testing": "^0.1.3",

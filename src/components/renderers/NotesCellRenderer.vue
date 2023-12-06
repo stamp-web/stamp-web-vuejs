@@ -57,18 +57,11 @@
       const hasNotes = !_isEmpty(ownership.notes)
       icon = getIcon(hasDeception, hasDefects, hasNotes)
       notes = `${
-        hasDefects
-          ? getAdditionalNotes(ownership.defects, Defects, DefectsHelper, 'Defects')
-          : ''
+        hasDefects ? getAdditionalNotes(ownership.defects, Defects, DefectsHelper, 'Defects') : ''
       }
       ${
         hasDeception
-          ? getAdditionalNotes(
-              ownership.deception,
-              Deception,
-              DeceptionHelper,
-              'Deception'
-            )
+          ? getAdditionalNotes(ownership.deception, Deception, DeceptionHelper, 'Deception')
           : ''
       }
       ${ownership.notes ?? ''}`
@@ -101,12 +94,12 @@
   }
 
   .icon-cell.sw-icon-attention::before {
-    color: #fbbf24;
+    color: #f59e0b;
   }
   .icon-cell.sw-icon-info::before {
-    color: #3b82f6;
+    color: #1d4ed8;
   }
   .icon-cell.sw-icon-defect::before {
-    color: var(--vf-danger);
+    color: #b91c1c;
   }
 </style>

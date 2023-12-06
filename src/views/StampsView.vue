@@ -64,11 +64,13 @@
       headerName: 'Description'
     }),
     new ColumnDefinition('activeCatalogueNumber.number', {
-      headerName: 'Catalogue Number'
+      headerName: 'Catalogue Number',
+      maxWidth: 150
     }),
     new ColumnDefinition('activeCatalogueNumber.value', {
       cellRenderer: CatalogueValueCellRenderer,
-      headerName: 'Catalogue Value'
+      headerName: 'Catalogue Value',
+      maxWidth: 150
     }),
     new ColumnDefinition(
       '',
@@ -88,21 +90,24 @@
       cellRendererParams: {
         path: 'stampOwnerships[0].condition'
       },
-      headerName: 'Condition'
+      headerName: 'Condition',
+      maxWidth: 170
     }),
     new ColumnDefinition('', {
       cellRenderer: GradeCellRenderer,
       cellRendererParams: {
         path: 'stampOwnerships[0].grade'
       },
-      headerName: 'Grade'
+      headerName: 'Grade',
+      maxWidth: 170
     }),
     new ColumnDefinition('', {
       cellRenderer: PricePaidCellRenderer,
       cellRendererParams: {
         path: 'stampOwnerships[0]'
       },
-      headerName: 'Price Paid'
+      headerName: 'Price Paid',
+      maxWidth: 150
     })
   ]
 

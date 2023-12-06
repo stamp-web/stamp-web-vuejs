@@ -41,7 +41,6 @@
       :full-size-image-url="fullSizeImage"
       max-width="32"
       max-height="32"
-      :show-na="true"
     ></image-preview>
   </div>
 </template>
