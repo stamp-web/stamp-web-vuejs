@@ -87,7 +87,7 @@
     bus.off('showingImage', handleShowEvent)
   }
 
-  const handleShowEvent = (cmp: any) => {
+  const handleShowEvent = () => {
     if (showingFullImage.value) {
       closeFullImage()
     }

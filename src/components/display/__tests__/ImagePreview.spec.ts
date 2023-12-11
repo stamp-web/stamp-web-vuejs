@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { shallowMount, mount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
 import ImagePreview from '../ImagePreview.vue'
 import { nextTick } from 'vue'
-import { wrap } from 'lodash-es'
 // @ts-ignore
 import bus from 'vue3-eventbus'
 
@@ -18,7 +17,6 @@ async function waitOnDOMUpdate(count: number = DOM_UPDATES) {
 }
 describe('ImagePreview', () => {
   describe('processImage', () => {
-    let wrapper: VueWrapper
     beforeEach(() => {
       vi.clearAllMocks()
       vi.mock('blueimp-load-image')
@@ -29,6 +27,7 @@ describe('ImagePreview', () => {
       // @ts-ignore
       const fn = (img.default = vi.fn())
       const wrapper = shallowMount(ImagePreview)
+      // @ts-ignore
       wrapper.vm.processImage()
       expect(fn).not.toHaveBeenCalled()
     })
@@ -50,6 +49,7 @@ describe('ImagePreview', () => {
 
       await waitOnDOMUpdate()
       expect(fn).toHaveBeenCalledTimes(1)
+      // @ts-ignore
       expect(wrapper.vm.hasValidImage).toBe(true)
       // @ts-ignore
       expect(wrapper.vm.$refs.imgBlock.firstElementChild).toBe(imgCmp)
@@ -67,6 +67,7 @@ describe('ImagePreview', () => {
       })
       await waitOnDOMUpdate()
       expect(fn).toHaveBeenCalledTimes(1)
+      // @ts-ignore
       expect(wrapper.vm.hasValidImage).toBe(false)
     })
 
@@ -88,6 +89,7 @@ describe('ImagePreview', () => {
       // the second loadImage call requires and additional set of waits
       await waitOnDOMUpdate(5)
       expect(fn).toHaveBeenCalledTimes(2)
+      // @ts-ignore
       expect(wrapper.vm.hasValidImage).toBe(false)
 
       const divBlock = wrapper.vm.$refs.imgBlock as HTMLDivElement
@@ -97,15 +99,13 @@ describe('ImagePreview', () => {
   })
 
   describe('test watch', () => {
-    let wrapper: VueWrapper
-
     it('no valid image', async () => {
       const img = await import('blueimp-load-image')
       const imagePath = 'http://new-imagepath/someimage.png'
       const imgCmp = document.createElement('img')
       imgCmp.src = imagePath
       // @ts-ignore
-      const fn = (img.default = vi.fn().mockResolvedValue({ image: imgCmp }))
+      img.default = vi.fn().mockResolvedValue({ image: imgCmp })
 
       const wrapper = await mount(ImagePreview, {
         propsData: {}
@@ -113,6 +113,7 @@ describe('ImagePreview', () => {
       await waitOnDOMUpdate()
       wrapper.setProps({ imageUrl: imagePath })
       await waitOnDOMUpdate()
+      // @ts-ignore
       expect(wrapper.vm.hasValidImage).toBe(true)
 
       const imgBlock = wrapper.vm.$refs.imgBlock as HTMLDivElement
@@ -122,7 +123,6 @@ describe('ImagePreview', () => {
   })
 
   describe('showFullImage', () => {
-    let wrapper: VueWrapper
     beforeEach(() => {
       vi.clearAllMocks()
       vi.mock('blueimp-load-image')
@@ -135,6 +135,7 @@ describe('ImagePreview', () => {
 
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
+      // @ts-ignore
       wrapper.vm.showFullImage()
       expect(watcher).not.toHaveBeenCalled()
     })
@@ -143,9 +144,11 @@ describe('ImagePreview', () => {
       const wrapper = await mount(ImagePreview, {
         propsData: {}
       })
+      // @ts-ignore
       wrapper.vm.showingFullImage = true
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
+      // @ts-ignore
       wrapper.vm.showFullImage()
       expect(watcher).not.toHaveBeenCalled()
     })
@@ -156,18 +159,21 @@ describe('ImagePreview', () => {
       const imgCmp = document.createElement('img')
       imgCmp.src = imagePath
       // @ts-ignore
-      const fn = (img.default = vi.fn().mockResolvedValue({ image: imgCmp }))
+      img.default = vi.fn().mockResolvedValue({ image: imgCmp })
       const wrapper = await mount(ImagePreview, {
         propsData: {
           imageUrl: imagePath
         }
       })
+      // @ts-ignore
       wrapper.vm.hasValidImage = true
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
+      // @ts-ignore
       wrapper.vm.showFullImage()
       await waitOnDOMUpdate()
       expect(watcher).toHaveBeenCalledTimes(1)
+      // @ts-ignore
       expect(wrapper.vm.showingFullImage).toBe(true)
       // @ts-ignore
       expect(wrapper.vm.$refs.fullImage.firstChild).toBe(imgCmp)
@@ -180,19 +186,22 @@ describe('ImagePreview', () => {
       const imgCmp = document.createElement('img')
       imgCmp.src = fullImagePath
       // @ts-ignore
-      const fn = (img.default = vi.fn().mockResolvedValue({ image: imgCmp }))
+      img.default = vi.fn().mockResolvedValue({ image: imgCmp })
       const wrapper = await mount(ImagePreview, {
         propsData: {
           imageUrl: thumbImagePath,
           fullSizeImageUrl: fullImagePath
         }
       })
+      // @ts-ignore
       wrapper.vm.hasValidImage = true
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
+      // @ts-ignore
       wrapper.vm.showFullImage()
       await waitOnDOMUpdate()
       expect(watcher).toHaveBeenCalledTimes(1)
+      // @ts-ignore
       expect(wrapper.vm.showingFullImage).toBe(true)
       // @ts-ignore
       const fullImage = wrapper.vm.$refs.fullImage as HTMLDivElement
@@ -204,6 +213,7 @@ describe('ImagePreview', () => {
   describe('getOptions', () => {
     it('no options', () => {
       const wrapper = shallowMount(ImagePreview)
+      // @ts-ignore
       const options = wrapper.vm.getOptions()
       expect(options).toStrictEqual({})
     })
@@ -215,6 +225,7 @@ describe('ImagePreview', () => {
           maxHeight: '600'
         }
       })
+      // @ts-ignore
       const options = wrapper.vm.getOptions()
       expect(options?.maxHeight).toBe(600)
       expect(options?.maxWidth).toBe(400)
@@ -226,6 +237,7 @@ describe('ImagePreview', () => {
           maxWidth: '400'
         }
       })
+      // @ts-ignore
       const options = wrapper.vm.getOptions()
       expect(options?.maxHeight).toBeUndefined()
       expect(options?.maxWidth).toBe(400)
@@ -237,6 +249,7 @@ describe('ImagePreview', () => {
           maxHeight: '300'
         }
       })
+      // @ts-ignore
       const options = wrapper.vm.getOptions()
       expect(options?.maxHeight).toBe(300)
       expect(options?.maxWidth).toBeUndefined()
