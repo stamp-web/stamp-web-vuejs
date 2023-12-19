@@ -17,6 +17,7 @@
   import DisplayStats from '@/components/display/DisplayStats.vue'
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
   import { preferenceStore } from '@/stores/PreferenceStore'
+  import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
 
   const route = useRoute()
   const dataGridRef = ref()
@@ -44,6 +45,9 @@
       end: 0
     }
   })
+
+  const { areAllSelected, areNoneSelected, isSelected, selectAll, setSelected, setDeselected } =
+    stampSelectableCollection(collection.list, collection.selected)
 
   const viewDef = ref({
     mode: 'list'
@@ -129,20 +133,6 @@
     return pagingInfo.value.active * pagingInfo.value.size + collection.list.length
   })
 
-  const setSelected = (stamp: Stamp) => {
-    const indx = collection.selected.findIndex((s) => s.id === stamp.id)
-    if (indx < 0) {
-      collection.selected.push(stamp)
-    }
-  }
-
-  const setDeselected = (stamp: Stamp) => {
-    const indx = collection.selected.findIndex((s) => s.id === stamp.id)
-    if (indx >= 0) {
-      collection.selected.splice(indx, 1)
-    }
-  }
-
   const calculatePageStats = () => {
     collection.total = store.getCount()
     pagingInfo.value.total = collection.total / /*$top*/ pagingInfo.value.size + 1
@@ -153,12 +143,9 @@
     viewDef.value.mode = viewType
   }
 
-  const isSelected = (stamp: Stamp): boolean => {
-    return collection.selected.findIndex((s) => s.id === stamp.id) >= 0
-  }
   const getSelectedCardClasses = (stamp: Stamp): string => {
-    return collection.selected.includes(stamp)
-      ? 'border-[var(--vf-link-color)] border-2 shadow-md bg-[#e6f8f5]'
+    return isSelected(stamp)
+      ? '!border-[var(--vf-link-color)] border-2 shadow-md !bg-[#e6f8f5]'
       : ''
   }
 
@@ -175,7 +162,8 @@
     prefPaths.value.imagePath = imagePref.value ?? '/'
 
     const query = route.query
-    collection.list = await store.find(query)
+    const results = await store.find(query)
+    collection.list.splice(0, collection.list.length, ...results.slice(0, results.length))
     calculatePageStats()
   })
 </script>
@@ -186,14 +174,30 @@
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-gridview"
+          :tooltip="viewDef.mode === 'card' ? '' : 'Show card view'"
           @click="setView('card')"
           :disabled="viewDef.mode === 'card'"
         ></SecondaryButton>
         <SecondaryButton
-          class="px-0.5"
+          class="mr-1 px-0.5"
           icon="sw-icon-list"
+          :tooltip="viewDef.mode === 'list' ? '' : 'Show list view'"
           @click="setView('list')"
           :disabled="viewDef.mode === 'list'"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="mr-1 px-0.5"
+          icon="sw-icon-select-all"
+          :tooltip="areAllSelected() ? '' : 'Select all'"
+          @click="selectAll()"
+          :disabled="areAllSelected()"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="px-0.5"
+          icon="sw-icon-clear-all"
+          :tooltip="areNoneSelected() ? '' : 'Clear all selection'"
+          @click="selectAll(false)"
+          :disabled="areNoneSelected()"
         ></SecondaryButton>
       </div>
       <div class="h-full w-full" v-if="viewDef.mode === 'list'">

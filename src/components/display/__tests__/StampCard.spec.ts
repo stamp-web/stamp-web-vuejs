@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { shallowMount, VueWrapper } from '@vue/test-utils'
 import StampCard from '@/components/display/StampCard.vue'
+import { nextTick } from 'vue'
 
 describe('StampCard', () => {
   describe('toggleSelection', () => {
@@ -120,6 +121,25 @@ describe('StampCard', () => {
       vi.spyOn(observer, 'disconnect')
       comp.unmount()
       expect(observer.disconnect).toHaveBeenCalled()
+    })
+  })
+
+  describe('watch', () => {
+    it('ensure watch of selected updates', async () => {
+      const comp = shallowMount(StampCard, {
+        propsData: {
+          stamp: {
+            wantList: false
+          },
+          isSelected: false
+        }
+      })
+      // @ts-ignore
+      expect(comp.vm.status.selected).toBe(false)
+      comp.setProps({ isSelected: true })
+      await nextTick()
+      // @ts-ignore
+      expect(comp.vm.status.selected).toBe(true)
     })
   })
 })

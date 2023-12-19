@@ -27,7 +27,6 @@
   watch(
     () => [[props.rowData]],
     async () => {
-      await nextTick()
       if (!isNil(gridApi.value)) {
         gridApi.value.setRowData(props.rowData)
         gridApi.value.deselectAll()
@@ -37,20 +36,15 @@
     { deep: true }
   )
 
-  const setSelected = async (selected: Array<T>) => {
-    if (selected && selected?.length > 0) {
-      const selectedNodes = new Array<RowNode<T>>()
-      gridApi.value.forEachNode((node: RowNode<T>) => {
-        if (selected.find((d) => d.id === node.data?.id)) {
-          selectedNodes.push(node)
-        }
-      })
-      allowSelectionEvent.value = false
-      gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
-      await nextTick()
-      allowSelectionEvent.value = true
-    }
-  }
+  watch(
+    () => [[props.selectedData]],
+    async () => {
+      if (!isNil(gridApi.value)) {
+        setSelected(props.selectedData ?? new Array<T>())
+      }
+    },
+    { deep: true }
+  )
 
   watch(
     () => [[loading.value]],
@@ -64,6 +58,23 @@
       }
     }
   )
+
+  const setSelected = async (selected: Array<T>) => {
+    if (selected) {
+      const selectedNodes = new Array<RowNode<T>>()
+      if (selected.length > 0) {
+        gridApi.value.forEachNode((node: RowNode<T>) => {
+          if (selected.find((d) => d.id === node.data?.id)) {
+            selectedNodes.push(node)
+          }
+        })
+      }
+      allowSelectionEvent.value = false
+      gridApi.value.deselectAll()
+      gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
+      allowSelectionEvent.value = true
+    }
+  }
 
   const observer = new ResizeObserver(() => {
     resizeColumns()

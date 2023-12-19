@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import ImagePreview from '@/components/display/ImagePreview.vue'
-  import { computed, onMounted, onUnmounted, ref } from 'vue'
+  import { watch, computed, onMounted, onUnmounted, ref } from 'vue'
   import { resolvePath } from '@/util/object-utils'
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
   import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
@@ -21,9 +21,18 @@
 
   const emit = defineEmits(['selected', 'deselected'])
 
-  const toggleSelection = () => {
+  watch(
+    () => [[props.isSelected]],
+    () => {
+      status.value.selected = props.isSelected
+    }
+  )
+
+  const toggleSelection = (event: MouseEvent) => {
     status.value.selected = !status.value.selected
-    emit(status.value.selected ? 'selected' : 'deselected', props.stamp)
+    emit(status.value.selected ? 'selected' : 'deselected', props.stamp, {
+      shiftKey: event?.shiftKey ?? false
+    })
   }
 
   const imageUrl = computed(() => {
@@ -67,7 +76,11 @@
   )
 </script>
 <template>
-  <div @click="toggleSelection" class="flex flex-col bg-gray-200" ref="imageFrame">
+  <div
+    @click="toggleSelection($event)"
+    class="flex flex-col bg-gray-200 select-none"
+    ref="imageFrame"
+  >
     <div
       class="m-2 h-[145px] w-[172px] p-1 bg-gray-900 flex justify-center align-middle"
       v-if="!props.stamp?.wantList && imageVisible"
