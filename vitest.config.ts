@@ -12,6 +12,9 @@ export default defineConfig((configEnv) =>
         environment: 'jsdom',
         reporters: ['verbose', 'junit'],
         mockReset: true,
+        coverage: {
+          reporter: ['text', 'html']
+        },
         outputFile: {
           junit: './test-results/test-output.xml',
           json: './test-results/json-report.json'

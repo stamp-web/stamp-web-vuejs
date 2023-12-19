@@ -1,27 +1,15 @@
 <script setup lang="ts">
-  import { computed } from 'vue'
-
   const props = defineProps({
     total: Number,
     end: Number,
-    start: Number
-  })
-
-  const startingCount = computed(() => {
-    return props.start
-  })
-
-  const endingCount = computed(() => {
-    return props.end
-  })
-
-  const totalCount = computed(() => {
-    return props.total
+    start: Number,
+    selected: Number
   })
 </script>
 
 <template>
-  <div class="flex align-middle">
-    <span>Total: {{ startingCount }} - {{ endingCount }} of {{ totalCount }}</span>
+  <div class="flex align-middle text-0.5sm">
+    <span>Total: {{ props.start }} - {{ props.end }} of {{ props.total }}</span>
+    <span class="ml-4">Selected: {{ selected }}</span>
   </div>
 </template>

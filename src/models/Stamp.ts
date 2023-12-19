@@ -6,7 +6,7 @@ export interface Stamp extends PersistedModel {
   description?: string
   rate?: string
   printing: number
-  wantlist: boolean
+  wantList: boolean
   countryRef: number
   stampOwnerships: Array<Ownership>
   catalogueNumbers: Array<CatalogueNumber>

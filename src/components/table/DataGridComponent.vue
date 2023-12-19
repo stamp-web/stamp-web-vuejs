@@ -7,6 +7,7 @@
   import type { PersistedModel } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
+  import { RowNode } from 'ag-grid-community'
 
   const gridApi = ref()
   const gridEl = ref()
@@ -14,11 +15,14 @@
 
   const props = defineProps({
     rowData: Array<T>,
-    columnDefs: Array<ColumnDefinition>
+    columnDefs: Array<ColumnDefinition>,
+    multiSelect: Boolean,
+    selectedData: Array<T>
   })
-  const emit = defineEmits(['selected'])
+  const emit = defineEmits(['selected', 'deselected'])
 
   const columns = Object.freeze(props.columnDefs)
+  const allowSelectionEvent = ref(true)
 
   watch(
     () => [[props.rowData]],
@@ -26,10 +30,27 @@
       await nextTick()
       if (!isNil(gridApi.value)) {
         gridApi.value.setRowData(props.rowData)
+        gridApi.value.deselectAll()
+        setSelected(props.selectedData ?? new Array<T>())
       }
     },
     { deep: true }
   )
+
+  const setSelected = async (selected: Array<T>) => {
+    if (selected && selected?.length > 0) {
+      const selectedNodes = new Array<RowNode<T>>()
+      gridApi.value.forEachNode((node: RowNode<T>) => {
+        if (selected.find((d) => d.id === node.data?.id)) {
+          selectedNodes.push(node)
+        }
+      })
+      allowSelectionEvent.value = false
+      gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
+      await nextTick()
+      allowSelectionEvent.value = true
+    }
+  }
 
   watch(
     () => [[loading.value]],
@@ -54,14 +75,14 @@
       gridApi.value.showLoadingOverlay()
     }
     resizeColumns()
+    setSelected(props.selectedData ?? new Array<T>())
   }
 
-  const onSelected = () => {
-    const selected: Array<T> = gridApi.value.getSelectedRows()
-    if (selected) {
-      selected.forEach((item: T) => {
-        emit('selected', item)
-      })
+  const onSelected = (event: any) => {
+    const selected = event.node?.data
+    const isSelected = event.node?.isSelected()
+    if (selected && allowSelectionEvent.value) {
+      emit(isSelected ? 'selected' : 'deselected', selected)
     }
   }
 
@@ -103,11 +124,12 @@
     :class="`ag-theme-stamp-web grid flex-shrink h-full flex-auto flex-grow min-h-[5rem] grid-loading-${loading}`"
     :columnDefs="columns"
     :rowData="props.rowData"
-    rowSelection="single"
+    :rowSelection="`${props.multiSelect ? 'multiple' : 'single'}`"
+    rowMultiSelectWithClick="true"
     rowHeight="36"
     suppressRowDeselection="false"
     @grid-ready="onGridReady"
-    @selection-changed="onSelected"
+    @rowSelected="onSelected"
   >
   </ag-grid-vue>
 </template>

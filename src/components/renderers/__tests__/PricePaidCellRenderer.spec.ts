@@ -16,11 +16,11 @@ describe('PricePaidCellRenderer', () => {
       expect(wrapper.vm.pricePaid).toBe('')
     })
 
-    it('stamp wantlist', () => {
+    it('stamp wantList', () => {
       const wrapper = shallowMount(PricePaidCellRenderer, {
         propsData: {
           params: {
-            data: { id: 123, wantlist: true },
+            data: { id: 123, wantList: true },
             path: 'stampOwnerships[0]'
           }
         }

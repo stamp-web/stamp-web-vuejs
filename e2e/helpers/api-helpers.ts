@@ -16,15 +16,10 @@ abstract class entityTestHelper<T extends PersistedModel> {
   }
 
   async create(request: APIRequestContext, payload: any) {
-    const result = await request.post(
-      `/stamp-webservices/rest/${this.getResourceName()}`,
-      {
-        data: payload
-      }
-    )
-    console.log(result)
-    const r = await result.json()
-    console.log(r)
+    const result = await request.post(`/stamp-webservices/rest/${this.getResourceName()}`, {
+      data: payload
+    })
+    await result.json()
     if (result.status() === 201) {
       return result.json()
     } else {
@@ -33,9 +28,7 @@ abstract class entityTestHelper<T extends PersistedModel> {
   }
 
   async delete(request: APIRequestContext, id: number) {
-    const result = await request.delete(
-      `/stamp-webservices/rest/${this.getResourceName()}/${id}`
-    )
+    const result = await request.delete(`/stamp-webservices/rest/${this.getResourceName()}/${id}`)
     if (result.status() === 204) {
       return
     } else {

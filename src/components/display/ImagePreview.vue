@@ -54,7 +54,7 @@
         loadImageByPath(props.imageUrl, options).catch(() => {
           hasValidImage.value = false
           if (props.showNa) {
-            const noPath = new URL('../../assets/images/not-available.jpg', import.meta.url).href
+            const noPath = new URL('../../assets/images/not-available.png', import.meta.url).href
             loadImageByPath(noPath, options).catch(() => {
               // do nothing and swallow error
             })
@@ -115,7 +115,7 @@
   })
 </script>
 <template>
-  <div ref="imgBlock" @click="showFullImage" class="m-auto"></div>
+  <div ref="imgBlock" @click="showFullImage" class="m-auto bg-transparent"></div>
   <teleport :to="props.containerSelector ?? 'body'" :disabled="!showingFullImage">
     <div
       class="fullImage shadow-lg shadow-slate-600 fixed top-[50%] left-[50%] -translate-y-[50%] -translate-x-[50%] z-40"

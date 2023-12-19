@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import { useRoute } from 'vue-router'
-  import { computed, onMounted, reactive, ref } from 'vue'
+  import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
   import type { Stamp } from '@/models/Stamp'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
+  import StampCard from '@/components/display/StampCard.vue'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { stampStore } from '@/stores/stampStore'
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
@@ -22,6 +23,11 @@
   const store = stampStore()
   const prefStore = preferenceStore()
 
+  const stampView = ref()
+  const cardLayout = ref()
+  const buttonToolbar = ref()
+  const footer = ref()
+
   const pagingInfo = ref({
     active: 0,
     total: 0,
@@ -30,13 +36,17 @@
   const collection = reactive({
     list: new Array<Stamp>(),
     total: 0,
-    selected: {} as Stamp,
+    selected: new Array<Stamp>(),
     pagingInfo: {
       current: 1,
       limit: 1000,
       start: 0,
       end: 0
     }
+  })
+
+  const viewDef = ref({
+    mode: 'list'
   })
 
   const prefPaths = ref({
@@ -120,7 +130,17 @@
   })
 
   const setSelected = (stamp: Stamp) => {
-    collection.selected = stamp
+    const indx = collection.selected.findIndex((s) => s.id === stamp.id)
+    if (indx < 0) {
+      collection.selected.push(stamp)
+    }
+  }
+
+  const setDeselected = (stamp: Stamp) => {
+    const indx = collection.selected.findIndex((s) => s.id === stamp.id)
+    if (indx >= 0) {
+      collection.selected.splice(indx, 1)
+    }
   }
 
   const calculatePageStats = () => {
@@ -128,6 +148,23 @@
     pagingInfo.value.total = collection.total / /*$top*/ pagingInfo.value.size + 1
     pagingInfo.value.active = /*$skip*/ 0 / /*$top*/ pagingInfo.value.size
   }
+
+  const setView = async (viewType: string): Promise<void> => {
+    viewDef.value.mode = viewType
+  }
+
+  const isSelected = (stamp: Stamp): boolean => {
+    return collection.selected.findIndex((s) => s.id === stamp.id) >= 0
+  }
+  const getSelectedCardClasses = (stamp: Stamp): string => {
+    return collection.selected.includes(stamp)
+      ? 'border-[var(--vf-link-color)] border-2 shadow-md bg-[#e6f8f5]'
+      : ''
+  }
+
+  onUnmounted(() => {
+    //resizeObserver.disconnect()
+  })
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
@@ -143,27 +180,64 @@
   })
 </script>
 <template>
-  <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
-    <div class="flex-grow flex-auto flex flex-col">
-      <div class="flex mb-1">
-        <SecondaryButton icon="sw-icon-gridview" disabled></SecondaryButton>
-        <SecondaryButton icon="sw-icon-list" disabled></SecondaryButton>
+  <div class="col-start-2 col-end-6 flex p-2 pr-0 flex-grow h-full overflow-y-auto" ref="stampView">
+    <div class="flex-grow flex-auto flex flex-col h-full">
+      <div class="flex mb-1" ref="buttonToolbar">
+        <SecondaryButton
+          class="mr-1 px-0.5"
+          icon="sw-icon-gridview"
+          @click="setView('card')"
+          :disabled="viewDef.mode === 'card'"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="px-0.5"
+          icon="sw-icon-list"
+          @click="setView('list')"
+          :disabled="viewDef.mode === 'list'"
+        ></SecondaryButton>
       </div>
-      <DataGridComponent
-        class=""
-        ref="dataGridRef"
-        :columnDefs="columnDefs"
-        :rowData="collection.list"
-        @selected="setSelected"
+      <div class="h-full w-full" v-if="viewDef.mode === 'list'">
+        <DataGridComponent
+          ref="dataGridRef"
+          :columnDefs="columnDefs"
+          :multi-select="true"
+          :rowData="collection.list"
+          :selected-data="collection.selected"
+          @selected="setSelected"
+          @deselected="setDeselected"
+        >
+        </DataGridComponent>
+      </div>
+      <div
+        class="flex-grow flex flex-grow-0 flex-shrink-0 flex-row flex-auto max-h-[40rem]"
+        v-if="viewDef.mode === 'card'"
+        ref="cardLayout"
       >
-      </DataGridComponent>
-      <div class="flex mb-1 ml-auto">
+        <div class="flex flex-wrap flex-grow h-full flex-row overflow-y-auto">
+          <template v-for="stamp in collection.list" :key="stamp.id">
+            <stamp-card
+              :class="`stampcard m-2 ml-0 mb-0 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]
+          brightness-100 hover:brightness-95 ${getSelectedCardClasses(stamp)}`"
+              :stamp="stamp"
+              :pref-paths="prefPaths"
+              :is-selected="isSelected(stamp)"
+              path="stampOwnerships[0].img"
+              @selected="setSelected"
+              @deselected="setDeselected"
+            ></stamp-card>
+          </template>
+        </div>
+      </div>
+
+      <div class="flex mb-1 ml-auto mt-1" ref="footer">
         <display-stats
           :start="startingCount"
           :end="endingCount"
           :total="collection.total"
+          :selected="collection.selected.length"
         ></display-stats>
       </div>
     </div>
   </div>
 </template>
+<style></style>

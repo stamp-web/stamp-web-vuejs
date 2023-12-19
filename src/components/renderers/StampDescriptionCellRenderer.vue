@@ -3,11 +3,12 @@
   import type { Stamp } from '@/models/Stamp'
 
   const props = defineProps({
-    params: Object as any
+    params: Object as any,
+    stamp: Object as any
   })
 
   const stampDescription = computed(() => {
-    return buildStampName(props.params?.data)
+    return buildStampName(props.stamp ? props.stamp : props.params?.data)
   })
 
   const buildStampName = (stamp: Stamp) => {

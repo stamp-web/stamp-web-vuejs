@@ -21,13 +21,13 @@ describe('NotesCellRenderer', () => {
       expectNoNotes(wrapper)
     })
 
-    it('wantlist stamp in row', () => {
+    it('wantList stamp in row', () => {
       const wrapper = shallowMount(NotesCellRenderer, {
         propsData: {
           params: {
             data: {
               id: 123,
-              wantlist: true,
+              wantList: true,
               description: 'red'
             },
             path: 'stampOwnerships[0]'

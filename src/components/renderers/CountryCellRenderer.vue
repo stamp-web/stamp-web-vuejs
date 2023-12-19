@@ -7,14 +7,20 @@
   const countries = ref<Array<Country>>()
 
   const props = defineProps({
-    params: Object as any
+    params: Object as any,
+    countryRef: Number
   })
 
   /**
    * Returns the computed country name from the given id of the country for the cell.
    */
   const countryName = computed(() => {
-    const value = props.params ? props.params.value : -1
+    const value =
+      props.countryRef && props.countryRef > 0
+        ? props.countryRef
+        : props.params
+          ? props.params.value
+          : -1
     return findCountryName(value)
   })
 
