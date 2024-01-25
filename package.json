@@ -1,6 +1,6 @@
 {
   "name": "stamp-web-vuejs",
-  "version": "0.0.0",
+  "version": "7.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -25,7 +25,7 @@
     "odata-filter-parser": "^0.5.4",
     "pinia": "^2.1.7",
     "pinia-generic": "^0.1.4",
-    "sweetalert2": "^11.9.0",
+    "sweetalert2": "^11.10.4",
     "vue": "^3.3.7",
     "vue-property-decorator": "^8.0.0",
     "vue-router": "^4.2.5",
