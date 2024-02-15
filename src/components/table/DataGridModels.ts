@@ -1,8 +1,11 @@
 export class ColumnDefinition {
   cellClass?: Array<String>
   cellRenderer?: string
+  colId?: string
+  comparator?: object
   cellRendererParams?: object
   field: string | null
+  headerComponentParams?: object
   headerName?: string
   headerTooltip?: string
   maxWidth?: number

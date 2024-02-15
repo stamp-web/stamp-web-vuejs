@@ -1,5 +1,7 @@
 <script setup lang="ts" generic="T extends PersistedModel">
   import { AgGridVue } from 'ag-grid-vue3'
+  import type { SortChangedEvent } from 'ag-grid-community'
+  import { RowNode } from 'ag-grid-community'
   import '../../../node_modules/ag-grid-community/styles/ag-grid.css'
   import '../../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
   import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
@@ -7,7 +9,6 @@
   import type { PersistedModel } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
-  import { RowNode } from 'ag-grid-community'
 
   const gridApi = ref()
   const gridEl = ref()
@@ -19,7 +20,7 @@
     multiSelect: Boolean,
     selectedData: Array<T>
   })
-  const emit = defineEmits(['selected', 'deselected'])
+  const emit = defineEmits(['selected', 'deselected', 'sortChanged'])
 
   const columns = Object.freeze(props.columnDefs)
   const allowSelectionEvent = ref(true)
@@ -97,6 +98,13 @@
     }
   }
 
+  const onSortChanged = (event: SortChangedEvent<any>) => {
+    emit(
+      'sortChanged',
+      event.columnApi.getColumnState().find((col) => col.sort)
+    )
+  }
+
   const resizeColumns = async () => {
     await nextTick()
     if (gridApi.value) {
@@ -138,6 +146,7 @@
     :rowSelection="`${props.multiSelect ? 'multiple' : 'single'}`"
     rowMultiSelectWithClick="true"
     rowHeight="36"
+    @sortChanged="onSortChanged"
     suppressRowDeselection="false"
     @grid-ready="onGridReady"
     @rowSelected="onSelected"

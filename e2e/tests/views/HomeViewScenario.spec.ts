@@ -5,5 +5,6 @@ import { test, expect } from '@playwright/test'
 test('Visit the app root that contains info items', async ({ page }) => {
   await page.goto('/')
   expect(await page.locator('div#app h1')).toHaveText('Stamp Web Editor')
+  expect(await page.locator('main')).toBeVisible()
   expect(await page.locator('main').locator('div.info-item').count()).toBe(6)
 })

@@ -41,5 +41,7 @@
 </script>
 
 <template>
-  <span>{{ countryName }}</span>
+  <span class="overflow-hidden overflow-ellipsis block" v-tooltip.top-start="countryName">{{
+    countryName
+  }}</span>
 </template>

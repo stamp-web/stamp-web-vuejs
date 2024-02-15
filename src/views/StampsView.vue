@@ -1,13 +1,12 @@
 <script setup lang="ts">
   import { useRoute } from 'vue-router'
-  import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+  import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
   import type { Stamp } from '@/models/Stamp'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { stampStore } from '@/stores/stampStore'
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
-  import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
   import CatalogueValueCellRenderer from '@/components/renderers/CatalogueValueCellRenderer.vue'
   import ConditionCellRenderer from '@/components/renderers/ConditionCellRenderer.vue'
   import GradeCellRenderer from '@/components/renderers/GradeCellRenderer.vue'
@@ -18,6 +17,8 @@
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
   import { preferenceStore } from '@/stores/PreferenceStore'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
+  import { OdataUtil } from '@/util/odata-util'
+  import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
 
   const route = useRoute()
   const dataGridRef = ref()
@@ -58,6 +59,10 @@
     thumbPath: '/'
   })
 
+  const noSort = () => {
+    return 0
+  }
+
   const columnDefs = [
     new ColumnDefinition('', {
       cellRenderer: ImagePreviewCellRenderer,
@@ -66,25 +71,43 @@
         prefs: prefPaths.value
       },
       cellClass: ['!p-0.75'],
-      maxWidth: 40
+      maxWidth: 40,
+      sortable: false
     }),
     new ColumnDefinition('countryRef', {
+      cellClass: ['!pr-0.25'],
       cellRenderer: CountryCellRenderer,
-      headerName: 'Country'
+      headerName: 'Country',
+      sortable: false
+    }),
+    new ColumnDefinition('rate', {
+      cellClass: ['!pr-0.25'],
+      headerName: 'Rate',
+      maxWidth: 150,
+      sortable: true
     }),
     new ColumnDefinition('description', {
-      sort: 'asc',
-      cellRenderer: StampDescriptionCellRenderer,
-      headerName: 'Description'
+      cellClass: ['!pr-0.25'],
+      colId: 'description',
+      headerName: 'Description',
+      sortable: true,
+      cellRenderer: BasicCellValueRenderer
     }),
     new ColumnDefinition('activeCatalogueNumber.number', {
+      cellClass: ['!pr-0.25'],
+      colId: 'number',
+      comparator: noSort,
       headerName: 'Catalogue Number',
-      maxWidth: 150
+      maxWidth: 150,
+      sortable: true
     }),
     new ColumnDefinition('activeCatalogueNumber.value', {
+      cellClass: ['!pr-0.25'],
       cellRenderer: CatalogueValueCellRenderer,
+      colId: 'value',
       headerName: 'Catalogue Value',
-      maxWidth: 150
+      maxWidth: 150,
+      sortable: true
     }),
     new ColumnDefinition(
       '',
@@ -94,28 +117,37 @@
           cellRendererParams: {
             path: 'stampOwnerships[0]'
           },
-          headerName: 'Notes'
+          headerName: 'Notes',
+          sortable: false
         },
         ColumnDefinition.getActionIconProperties()
       )
     ),
     new ColumnDefinition('', {
+      cellClass: ['!pr-0.25'],
       cellRenderer: ConditionCellRenderer,
       cellRendererParams: {
         path: 'stampOwnerships[0].condition'
       },
+      colId: 'condition',
       headerName: 'Condition',
-      maxWidth: 170
+      maxWidth: 170,
+      sortable: true
     }),
     new ColumnDefinition('', {
+      cellClass: ['!pr-0.25'],
       cellRenderer: GradeCellRenderer,
       cellRendererParams: {
         path: 'stampOwnerships[0].grade'
       },
+      colId: 'grade',
       headerName: 'Grade',
-      maxWidth: 170
+      maxWidth: 170,
+      sortable: true
     }),
     new ColumnDefinition('', {
+      cellClass: ['!pr-0.25'],
+      colId: 'pricePaid',
       cellRenderer: PricePaidCellRenderer,
       cellRendererParams: {
         path: 'stampOwnerships[0]'
@@ -149,6 +181,23 @@
       : ''
   }
 
+  const onSortChanged = (columnDef: any) => {
+    let query = structuredClone(route.query)
+    if (columnDef?.sort) {
+      const sorts = OdataUtil.createSort(columnDef.colId, columnDef.sort)
+      query = { ...query, ...sorts }
+    }
+    findWithQuery(query)
+  }
+
+  const findWithQuery = async (query: any) => {
+    const results = await store.find(query)
+    collection.list = [] //.splice(0, collection.list.length)
+    await nextTick()
+    collection.list = results
+    calculatePageStats()
+  }
+
   onUnmounted(() => {
     //resizeObserver.disconnect()
   })
@@ -162,9 +211,7 @@
     prefPaths.value.imagePath = imagePref.value ?? '/'
 
     const query = route.query
-    const results = await store.find(query)
-    collection.list.splice(0, collection.list.length, ...results.slice(0, results.length))
-    calculatePageStats()
+    findWithQuery(query)
   })
 </script>
 <template>
@@ -209,6 +256,7 @@
           :selected-data="collection.selected"
           @selected="setSelected"
           @deselected="setDeselected"
+          @sortChanged="onSortChanged"
         >
         </DataGridComponent>
       </div>

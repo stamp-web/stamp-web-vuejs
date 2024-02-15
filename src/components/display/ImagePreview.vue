@@ -80,7 +80,7 @@
   }
 
   const closeFullImage = () => {
-    while (fullImage.value.firstChild) {
+    while (fullImage.value?.firstChild) {
       fullImage.value.removeChild(fullImage.value.firstChild)
     }
     showingFullImage.value = false
