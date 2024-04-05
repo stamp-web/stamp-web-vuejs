@@ -103,7 +103,10 @@
     <div class="flex text-[0.65rem] m-2 mt-0.5 mb-0">
       <span class="truncate leading-3 align-middle inline-block h-[1rem]">
         {{ props.stamp?.activeCatalogueNumber?.number }}&nbsp;
-        <country-cell-renderer :countryRef="props.stamp?.countryRef"></country-cell-renderer>
+        <country-cell-renderer
+          :countryRef="props.stamp?.countryRef"
+          embedded="true"
+        ></country-cell-renderer>
       </span>
 
       <notes-cell-renderer

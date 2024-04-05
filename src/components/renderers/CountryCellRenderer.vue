@@ -5,10 +5,12 @@
 
   const store = countryStore()
   const countries = ref<Array<Country>>()
+  const isEmbedded = ref(false)
 
   const props = defineProps({
     params: Object as any,
-    countryRef: Number
+    countryRef: Number,
+    embedded: String
   })
 
   /**
@@ -37,11 +39,14 @@
 
   onBeforeMount(async () => {
     countries.value = await store.find()
+    isEmbedded.value = new Boolean(props.embedded).valueOf()
   })
 </script>
 
 <template>
-  <span class="overflow-hidden overflow-ellipsis block" v-tooltip.top-start="countryName">{{
-    countryName
-  }}</span>
+  <span
+    :class="`overflow-hidden overflow-ellipsis ${isEmbedded ? 'contents' : 'block'}`"
+    v-tooltip.top-start="countryName"
+    >{{ countryName }}</span
+  >
 </template>

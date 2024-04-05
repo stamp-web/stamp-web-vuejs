@@ -99,6 +99,7 @@
       comparator: noSort,
       headerName: 'Catalogue Number',
       maxWidth: 150,
+      sort: 'asc',
       sortable: true
     }),
     new ColumnDefinition('activeCatalogueNumber.value', {
@@ -210,7 +211,7 @@
     prefPaths.value.thumbPath = thumbPref.value ?? '/'
     prefPaths.value.imagePath = imagePref.value ?? '/'
 
-    const query = route.query
+    const query = { ...route.query, ...OdataUtil.createSort('number', 'asc') }
     findWithQuery(query)
   })
 </script>
