@@ -3,6 +3,7 @@
   import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
   import type { Stamp } from '@/models/Stamp'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
+  import PagingComponent from '@/components/table/PagingComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { stampStore } from '@/stores/stampStore'
@@ -17,6 +18,7 @@
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
   import { preferenceStore } from '@/stores/PreferenceStore'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
+  import pagingInfo from '@/components/behaviors/pageInfo'
   import { OdataUtil } from '@/util/odata-util'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
 
@@ -24,31 +26,30 @@
   const dataGridRef = ref()
   const store = stampStore()
   const prefStore = preferenceStore()
-
+  const query = ref()
   const stampView = ref()
   const cardLayout = ref()
   const buttonToolbar = ref()
   const footer = ref()
 
-  const pagingInfo = ref({
-    active: 0,
-    total: 0,
-    size: 1000
-  })
   const collection = reactive({
     list: new Array<Stamp>(),
     total: 0,
-    selected: new Array<Stamp>(),
-    pagingInfo: {
-      current: 1,
-      limit: 1000,
-      start: 0,
-      end: 0
-    }
+    selected: new Array<Stamp>()
   })
 
   const { areAllSelected, areNoneSelected, isSelected, selectAll, setSelected, setDeselected } =
     stampSelectableCollection(collection.list, collection.selected)
+
+  const {
+    endingCount,
+    startingCount,
+    calculatePagingStats,
+    setActivePage,
+    getPageSize,
+    getActivePage,
+    getPageCount
+  } = pagingInfo(collection.list)
 
   const viewDef = ref({
     mode: 'list'
@@ -158,18 +159,9 @@
     })
   ]
 
-  const startingCount = computed(() => {
-    return pagingInfo.value.active * pagingInfo.value.size + 1
-  })
-
-  const endingCount = computed(() => {
-    return pagingInfo.value.active * pagingInfo.value.size + collection.list.length
-  })
-
-  const calculatePageStats = () => {
+  const setupStats = () => {
     collection.total = store.getCount()
-    pagingInfo.value.total = collection.total / /*$top*/ pagingInfo.value.size + 1
-    pagingInfo.value.active = /*$skip*/ 0 / /*$top*/ pagingInfo.value.size
+    calculatePagingStats(collection.total)
   }
 
   const setView = async (viewType: string): Promise<void> => {
@@ -183,20 +175,30 @@
   }
 
   const onSortChanged = (columnDef: any) => {
-    let query = structuredClone(route.query)
     if (columnDef?.sort) {
       const sorts = OdataUtil.createSort(columnDef.colId, columnDef.sort)
-      query = { ...query, ...sorts }
+      query.value.sorts = sorts
     }
-    findWithQuery(query)
+    gotoPage(1)
   }
 
-  const findWithQuery = async (query: any) => {
-    const results = await store.find(query)
+  const findWithQuery = async (theQuery: any) => {
+    const results = await store.find(theQuery)
     collection.list = [] //.splice(0, collection.list.length)
     await nextTick()
     collection.list = results
-    calculatePageStats()
+    setupStats()
+  }
+
+  const gotoPage = (page: number) => {
+    setActivePage(page)
+    setQueryPagingParams((getActivePage() - 1) * getPageSize(), getPageSize())
+    findWithQuery(query.value)
+  }
+
+  const setQueryPagingParams = (skip: number, size: number) => {
+    query.value.$top = size
+    query.value.$skip = skip
   }
 
   onUnmounted(() => {
@@ -211,27 +213,33 @@
     prefPaths.value.thumbPath = thumbPref.value ?? '/'
     prefPaths.value.imagePath = imagePref.value ?? '/'
 
-    const query = { ...route.query, ...OdataUtil.createSort('number', 'asc') }
-    findWithQuery(query)
+    query.value = {
+      ...structuredClone(route.query),
+      ...OdataUtil.createSort('number', 'asc')
+    }
+    gotoPage(1)
   })
 </script>
 <template>
-  <div class="col-start-2 col-end-6 flex p-2 pr-0 flex-grow h-full overflow-y-auto" ref="stampView">
-    <div class="flex-grow flex-auto flex flex-col h-full">
-      <div class="flex mb-1" ref="buttonToolbar">
-        <SecondaryButton
-          class="mr-1 px-0.5"
-          icon="sw-icon-gridview"
-          :tooltip="viewDef.mode === 'card' ? '' : 'Show card view'"
-          @click="setView('card')"
-          :disabled="viewDef.mode === 'card'"
-        ></SecondaryButton>
+  <div
+    class="col-start-2 col-end-6 flex p-2 pr-0 flex-grow h-full overflow-y-hidden"
+    ref="stampView"
+  >
+    <div class="flex-grow flex-auto flex flex-col h-full overflow-y-hidden">
+      <div class="flex mb-1 h-[32.5px]" ref="buttonToolbar">
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-list"
           :tooltip="viewDef.mode === 'list' ? '' : 'Show list view'"
           @click="setView('list')"
           :disabled="viewDef.mode === 'list'"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="mr-1 px-0.5"
+          icon="sw-icon-gridview"
+          :tooltip="viewDef.mode === 'card' ? '' : 'Show card view'"
+          @click="setView('card')"
+          :disabled="viewDef.mode === 'card'"
         ></SecondaryButton>
         <SecondaryButton
           class="mr-1 px-0.5"
@@ -262,14 +270,14 @@
         </DataGridComponent>
       </div>
       <div
-        class="flex-grow flex flex-grow-0 flex-shrink-0 flex-row flex-auto max-h-[40rem]"
+        class="flex-grow flex flex-grow-0 flex-shrink-0 flex-row flex-auto overflow-y-auto max-h-[calc(100%_-_65px)] min-h-[calc(100%_-_65px)] border border-gray-300"
         v-if="viewDef.mode === 'card'"
         ref="cardLayout"
       >
-        <div class="flex flex-wrap flex-grow h-full flex-row overflow-y-auto">
+        <div class="flex flex-wrap flex-grow h-full flex-row overflow-y-auto pt-1 pl-1">
           <template v-for="stamp in collection.list" :key="stamp.id">
             <stamp-card
-              :class="`stampcard m-2 ml-0 mb-0 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]
+              :class="`stampcard m-1 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]
           brightness-100 hover:brightness-95 ${getSelectedCardClasses(stamp)}`"
               :stamp="stamp"
               :pref-paths="prefPaths"
@@ -282,8 +290,19 @@
         </div>
       </div>
 
-      <div class="flex mb-1 ml-auto mt-1" ref="footer">
+      <div class="flex mb-1 mt-1 h-[22.5px]" ref="footer">
+        <paging-component
+          class="mr-auto"
+          :total-pages="getPageCount()"
+          :page-num="getActivePage()"
+          @first="gotoPage(1)"
+          @back="gotoPage(getActivePage() - 1)"
+          @next="gotoPage(getActivePage() + 1)"
+          @last="gotoPage(getPageCount())"
+        >
+        </paging-component>
         <display-stats
+          class="mr-1"
           :start="startingCount"
           :end="endingCount"
           :total="collection.total"

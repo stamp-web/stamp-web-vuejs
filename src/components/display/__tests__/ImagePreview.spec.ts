@@ -215,7 +215,7 @@ describe('ImagePreview', () => {
       const wrapper = shallowMount(ImagePreview)
       // @ts-ignore
       const options = wrapper.vm.getOptions()
-      expect(options).toStrictEqual({})
+      expect(options).toStrictEqual({ canvas: true })
     })
 
     it('with height and width options', () => {

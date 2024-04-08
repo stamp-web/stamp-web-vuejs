@@ -44,6 +44,7 @@
     if (props.maxHeight) {
       options.maxHeight = parseInt(props.maxHeight)
     }
+    options.canvas = true
     return options
   }
   const processImage = () => {

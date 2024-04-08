@@ -19,7 +19,7 @@
   })
 
   const buildCatalogueValue = (cn: CatalogueNumber) => {
-    if (catalogues.value) {
+    if (catalogues.value && cn) {
       const catalogue = (catalogues.value as Array<Catalogue>).find((c: Catalogue) => {
         return c.id === cn.catalogueRef
       })
