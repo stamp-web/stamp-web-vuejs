@@ -57,6 +57,7 @@ export default ({ mode }) => {
     // @ts-ignore
     plugins: config.plugins,
     base: '',
+    __INTLIFY_JIT_COMPILATION__: true,
     build: {
       rollupOptions: {
         output: {
