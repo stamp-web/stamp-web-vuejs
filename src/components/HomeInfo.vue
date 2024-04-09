@@ -1,5 +1,8 @@
 <script setup lang="ts">
   import InfoItem from '@/components/navigation/InfoItem.vue'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 </script>
 
 <template>
@@ -8,54 +11,47 @@
     <template #icon>
       <span class="sw-icon-stamp-collection"></span>
     </template>
-    <template #heading>Stamp Collections</template>
-    Stamp Collections is where you can manage your Stamp Collections allowing you to
-    organize your albums.
+    <template #heading>{{ t('models.stamp-collections.name') }}</template>
+    {{ t('models.stamp-collections.description') }}
   </InfoItem>
 
   <InfoItem link="/albums">
     <template #icon>
       <span class="sw-icon-album"></span>
     </template>
-    <template #heading>Albums</template>
-    Albums are used to store your stamps within a binder and make up part of a Stamp
-    Collection.
+    <template #heading>{{ t('models.albums.name') }}</template>
+    {{ t('models.albums.description') }}
   </InfoItem>
 
   <InfoItem link="/countries">
     <template #icon>
       <span class="sw-icon-country"></span>
     </template>
-    <template #heading>Countries</template>
-    Country represents the official postal authority that issued stamps for postal
-    purposed. These include post offices in foreign countries and postal services
-    organised by military occupations, colonies and revolutionary movements. official
-    tools and libraries for your project:
+    <template #heading>{{ t('models.countries.name') }}</template>
+    {{ t('models.countries.description') }}
   </InfoItem>
 
   <InfoItem link="/sellers">
     <template #icon>
       <span class="sw-icon-seller"></span>
     </template>
-    <template #heading>Sellers</template>
-    Sellers represent the selling agent for stamps and philatelic items. The seller could
-    be an auction house, stamp dealer, association/society or an individual
+    <template #heading>{{ t('models.sellers.name') }}</template>
+    {{ t('models.sellers.description') }}
   </InfoItem>
 
   <InfoItem link="/catalogues">
     <template #icon>
       <span class="sw-icon-catalogue"></span>
     </template>
-    <template #heading>Catalogues</template>
-    The stamp catalogue is a reference book that lists the stamps of a country or region
-    and provides information on their values, design and history.
+    <template #heading>{{ t('models.catalogues.name') }}</template>
+    {{ t('models.catalogues.description') }}
   </InfoItem>
 
   <InfoItem link="/stamps">
     <template #icon>
       <span class="sw-icon-stamp"></span>
     </template>
-    <template #heading>Stamps</template>
-    Stamps represent the physical postal item issued by an official postal authority.
+    <template #heading>{{ t('models.stamps.name') }}</template>
+    {{ t('models.stamps.description') }}
   </InfoItem>
 </template>

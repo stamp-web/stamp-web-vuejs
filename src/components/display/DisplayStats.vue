@@ -1,4 +1,8 @@
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
+
   const props = defineProps({
     total: Number,
     end: Number,
@@ -9,7 +13,9 @@
 
 <template>
   <div class="flex align-middle text-0.5sm">
-    <span>Total: {{ props.start }} - {{ props.end }} of {{ props.total }}</span>
-    <span class="ml-4">Selected: {{ selected }}</span>
+    <span>{{
+      t('display.total-selected', { start: props.start, end: props.end, total: props.total })
+    }}</span>
+    <span class="ml-4">{{ t('display.selected-count', { count: selected }) }}</span>
   </div>
 </template>

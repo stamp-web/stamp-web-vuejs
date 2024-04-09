@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { useRoute } from 'vue-router'
-  import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+  import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+  import { useI18n } from 'vue-i18n'
+
   import type { Stamp } from '@/models/Stamp'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
@@ -21,6 +23,8 @@
   import pagingInfo from '@/components/behaviors/pageInfo'
   import { OdataUtil } from '@/util/odata-util'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
+
+  const { t } = useI18n()
 
   const route = useRoute()
   const dataGridRef = ref()
@@ -46,10 +50,11 @@
     startingCount,
     calculatePagingStats,
     setActivePage,
+    setItemList,
     getPageSize,
     getActivePage,
     getPageCount
-  } = pagingInfo(collection.list)
+  } = pagingInfo()
 
   const viewDef = ref({
     mode: 'list'
@@ -78,19 +83,19 @@
     new ColumnDefinition('countryRef', {
       cellClass: ['!pr-0.25'],
       cellRenderer: CountryCellRenderer,
-      headerName: 'Country',
+      headerName: t('table-columns.country'),
       sortable: false
     }),
     new ColumnDefinition('rate', {
       cellClass: ['!pr-0.25'],
-      headerName: 'Rate',
+      headerName: t('table-columns.rate'),
       maxWidth: 150,
       sortable: true
     }),
     new ColumnDefinition('description', {
       cellClass: ['!pr-0.25'],
       colId: 'description',
-      headerName: 'Description',
+      headerName: t('table-columns.description'),
       sortable: true,
       cellRenderer: BasicCellValueRenderer
     }),
@@ -98,7 +103,7 @@
       cellClass: ['!pr-0.25'],
       colId: 'number',
       comparator: noSort,
-      headerName: 'Catalogue Number',
+      headerName: t('table-columns.catalogue-number'),
       maxWidth: 150,
       sort: 'asc',
       sortable: true
@@ -107,23 +112,20 @@
       cellClass: ['!pr-0.25'],
       cellRenderer: CatalogueValueCellRenderer,
       colId: 'value',
-      headerName: 'Catalogue Value',
+      headerName: t('table-columns.catalogue-value'),
       maxWidth: 150,
       sortable: true
     }),
     new ColumnDefinition(
       '',
-      Object.assign(
-        {
-          cellRenderer: NotesCellRenderer,
-          cellRendererParams: {
-            path: 'stampOwnerships[0]'
-          },
-          headerName: 'Notes',
-          sortable: false
+      Object.assign(ColumnDefinition.getActionIconProperties(), {
+        cellRenderer: NotesCellRenderer,
+        cellRendererParams: {
+          path: 'stampOwnerships[0]'
         },
-        ColumnDefinition.getActionIconProperties()
-      )
+        headerName: t('table-columns.notes'),
+        sortable: false
+      })
     ),
     new ColumnDefinition('', {
       cellClass: ['!pr-0.25'],
@@ -132,7 +134,7 @@
         path: 'stampOwnerships[0].condition'
       },
       colId: 'condition',
-      headerName: 'Condition',
+      headerName: t('table-columns.condition'),
       maxWidth: 170,
       sortable: true
     }),
@@ -143,7 +145,7 @@
         path: 'stampOwnerships[0].grade'
       },
       colId: 'grade',
-      headerName: 'Grade',
+      headerName: t('table-columns.grade'),
       maxWidth: 170,
       sortable: true
     }),
@@ -154,7 +156,7 @@
       cellRendererParams: {
         path: 'stampOwnerships[0]'
       },
-      headerName: 'Price Paid',
+      headerName: t('table-columns.price-paid'),
       maxWidth: 150
     })
   ]
@@ -187,6 +189,7 @@
     collection.list = [] //.splice(0, collection.list.length)
     await nextTick()
     collection.list = results
+    setItemList(collection.list)
     setupStats()
   }
 
@@ -230,28 +233,28 @@
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-list"
-          :tooltip="viewDef.mode === 'list' ? '' : 'Show list view'"
+          :tooltip="viewDef.mode === 'list' ? '' : t('actions.show-list-view')"
           @click="setView('list')"
           :disabled="viewDef.mode === 'list'"
         ></SecondaryButton>
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-gridview"
-          :tooltip="viewDef.mode === 'card' ? '' : 'Show card view'"
+          :tooltip="viewDef.mode === 'card' ? '' : t('actions.show-card-view')"
           @click="setView('card')"
           :disabled="viewDef.mode === 'card'"
         ></SecondaryButton>
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-select-all"
-          :tooltip="areAllSelected() ? '' : 'Select all'"
+          :tooltip="areAllSelected() ? '' : t('actions.select-all')"
           @click="selectAll()"
           :disabled="areAllSelected()"
         ></SecondaryButton>
         <SecondaryButton
           class="px-0.5"
           icon="sw-icon-clear-all"
-          :tooltip="areNoneSelected() ? '' : 'Clear all selection'"
+          :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="selectAll(false)"
           :disabled="areNoneSelected()"
         ></SecondaryButton>

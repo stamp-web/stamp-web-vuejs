@@ -1,10 +1,11 @@
 import { computed, ref } from 'vue'
 
-const pageInfo = (list: Array<Object>) => {
+const pageInfo = () => {
   const info = ref({
     active: 1, // current page
     total: 1, // total pages
-    size: 1000
+    size: 1000,
+    list: new Array<Object>()
   })
 
   const setActivePage = (page: number): void => {
@@ -17,6 +18,10 @@ const pageInfo = (list: Array<Object>) => {
 
   const setPageSize = (size: number): void => {
     info.value.size = Math.max(size, 10)
+  }
+
+  const setItemList = (list: Array<Object>) => {
+    info.value.list = list
   }
 
   const getActivePage = (): number => {
@@ -41,7 +46,7 @@ const pageInfo = (list: Array<Object>) => {
   })
 
   const endingCount = computed(() => {
-    return (info.value.active - 1) * info.value.size + list.length
+    return (info.value.active - 1) * info.value.size + info.value.list.length
   })
 
   return {
@@ -50,6 +55,7 @@ const pageInfo = (list: Array<Object>) => {
     setActivePage,
     setPageCount,
     setPageSize,
+    setItemList,
     getPageSize,
     getPageCount,
     getActivePage,

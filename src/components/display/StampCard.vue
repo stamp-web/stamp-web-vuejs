@@ -5,6 +5,9 @@
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
   import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
   import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   const props = defineProps({
     stamp: Object as any,
@@ -97,7 +100,7 @@
       class="h-[150px] w-full align-middle text-center leading-[150px] inline-block italic text-[0.75rem]"
       v-if="props.stamp?.wantList === true"
     >
-      Wantlist Item
+      {{ t('display.wantlist-item') }}
     </div>
 
     <div class="flex text-[0.65rem] m-2 mt-0.5 mb-0">

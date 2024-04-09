@@ -61,7 +61,7 @@ test.describe('delete scenarios', () => {
     await view.getDeleteButton().click()
     const prompt: PromptCmp = new PromptCmp(page)
     expect(await prompt.isVisible()).toBe(true)
-    expect(await prompt.getMessage()).toBe(`Delete the collection '${name}'?`)
+    expect(await prompt.getMessage()).toBe(`Delete the stamp collection '${name}'?`)
     await prompt.no()
     await view.getGrid().waitForLoadingComplete()
     await view.getDeleteButton().click()

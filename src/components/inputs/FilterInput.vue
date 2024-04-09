@@ -2,6 +2,9 @@
   import { onBeforeMount, ref, watch } from 'vue'
   import _debounce from 'lodash-es/debounce'
   import { isNil } from '@/util/object-utils'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   const props = defineProps({
     placeholder: String,
@@ -48,7 +51,7 @@
   <Vueform sync v-model="model" ref="form$" :endpoint="false">
     <TextElement
       ref="filterInput"
-      :placeholder="`${props.placeholder || 'Filter'}`"
+      :placeholder="`${props.placeholder || t('form.filter-placeholder')}`"
       size="sm"
       autocomplete="none"
       :floating="false"

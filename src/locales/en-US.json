@@ -1,0 +1,96 @@
+{
+  "actions": {
+    "clear-selection": "Clear All Selections",
+    "delete": "Delete",
+    "edit": "Edit",
+    "find-stamps": "Find Stamps",
+    "new-album": "New Album",
+    "new-country": "New Country",
+    "new-stamp-collection": "New Stamp Collection",
+    "no": "No",
+    "select-all": "Select All",
+    "show-card-view": "Show Card View",
+    "show-list-view": "Show List View",
+    "yes": "Yes"
+  },
+  "cell": {
+    "stamp-count": "1 Stamp | {count} Stamps"
+  },
+  "display": {
+    "selected-count": "Selected: {count}",
+    "total-selected": "Total: {start} - {end} of {total}",
+    "wantlist-item": "Wantlist Item"
+  },
+  "form": {
+    "filter-placeholder": "Filter"
+  },
+  "messages": {
+    "delete-album": "Delete the album '{album}'?",
+    "delete-country": "Delete the country '{country}'?",
+    "delete-collection": "Delete the stamp collection '{collection}'?"
+  },
+  "models": {
+    "albums": {
+      "name": "Albums",
+      "description": "Albums are used to store your stamps within a binder and make up part of a Stamp Collection."
+    },
+    "catalogues": {
+      "name": "Catalogues",
+      "description": "The stamp catalogue is a reference book that lists the stamps of a country or region and provides information on their values, design and history."
+    },
+    "countries": {
+      "name": "Countries",
+      "description": "Country represents the official postal authority that issued stamps for postal purposes. These include post offices in foreign countries and postal services organised by military occupations, colonies and revolutionary movements."
+    },
+    "sellers": {
+      "name": "Sellers",
+      "description": "Sellers represent the selling agent for stamps and philatelic items. The seller could be an\n    auction house, stamp dealer, association/society or an individual."
+    },
+    "stamps": {
+      "name": "Stamps",
+      "description": "Stamps represent the physical postal item issued by an official postal authority."
+    },
+    "stamp-collections": {
+      "name": "Stamp Collections",
+      "description": "Stamp Collections is where you can manage your Stamp Collections allowing you to organize your albums."
+    }
+
+  },
+  "navigation": {
+    "about": "About",
+    "albums": "Albums",
+    "catalogues": "Catalogues",
+    "countries": "Countries",
+    "home": "Home",
+    "plate-flaws": "Plate Flaws",
+    "sellers": "Sellers",
+    "settings": "Settings",
+    "stamp-collections": "Stamp Collections",
+    "stamp-web": "Stamp Web",
+    "stamps": "Stamps"
+  },
+  "paging": {
+    "back": "Previous Page",
+    "first": "First Page",
+    "last": "Last Page",
+    "next": "Next Page",
+    "page": "Page {start} of {end}"
+  },
+  "table-columns": {
+    "catalogue-number": "Catalogue Number",
+    "catalogue-value": "Catalogue Value",
+    "condition": "Condition",
+    "count": "Count",
+    "country": "Country",
+    "description": "Description",
+    "grade": "Grade",
+    "name": "Name",
+    "notes": "Notes",
+    "price-paid": "Price Paid",
+    "rate": "Rate",
+    "stamp-collection": "Stamp Collection"
+  },
+  "titles": {
+    "stamp-web-editor": "Stamp Web Editor"
+  }
+}

@@ -18,7 +18,9 @@
   import filterableCollection from '@/components/behaviors/filterableCollection'
   import editableModel from '@/components/behaviors/editableModel'
   import stampCount from '@/components/renderers/formatters/StampCountValueFormatter'
+  import { useI18n } from 'vue-i18n'
 
+  const { t } = useI18n()
   const router = useRouter()
 
   const {
@@ -45,11 +47,15 @@
   }
 
   const columnDefs = [
-    new ColumnDefinition('name', { sort: 'asc' }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel),
-    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, 'Find Stamps'),
-    new ColumnDefinition('count', { maxWidth: 120, valueFormatter: stampCount }),
-    new ColumnDefinition('description')
+    new ColumnDefinition('name', { sort: 'asc', headerName: t('table-columns.name') }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
+    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, t('actions.find-stamps')),
+    new ColumnDefinition('count', {
+      maxWidth: 120,
+      valueFormatter: stampCount,
+      headerName: t('table-columns.count')
+    }),
+    new ColumnDefinition('description', { headerName: t('table-columns.description') })
   ]
 
   const filterList = () => {
@@ -71,7 +77,7 @@
     const selected = getSelected() as Country
     if (selected) {
       Prompt.confirm({
-        message: `Delete the country '${selected.name}'?`
+        message: t('messages.delete-country', { country: selected.name })
       }).then(async (confirmed) => {
         if (confirmed) {
           await store.remove(selected)
@@ -108,15 +114,15 @@
       <div class="flex mb-1">
         <FilterInput
           class="mr-4 filter-input"
-          placeholder="Filter"
+          :placeholder="t('form.filter-placeholder')"
           :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
-          New Country
+          {{ t('actions.new-country') }}
         </PrimaryButton>
         <SecondaryButton @click="remove()" :disabled="!getSelected()" icon="sw-icon-delete">
-          Delete
+          {{ t('actions.delete') }}
         </SecondaryButton>
       </div>
       <DataGridComponent

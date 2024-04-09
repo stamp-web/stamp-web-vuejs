@@ -27,6 +27,7 @@
     "pinia-generic": "^0.1.4",
     "sweetalert2": "^11.10.4",
     "vue": "^3.3.7",
+    "vue-i18n": "^9.11.0",
     "vue-property-decorator": "^8.0.0",
     "vue-router": "^4.2.5",
     "vue3-eventbus": "^2.0.0"
