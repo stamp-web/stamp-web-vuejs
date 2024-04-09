@@ -6,6 +6,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import process from 'node:process'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
+import replace from '@rollup/plugin-replace'
 
 // https://vitejs.dev/config/
 // @ts-ignore
@@ -57,17 +58,35 @@ export default ({ mode }) => {
     // @ts-ignore
     plugins: config.plugins,
     base: '',
-    __INTLIFY_JIT_COMPILATION__: true,
     build: {
       rollupOptions: {
         output: {
-          /*manualChunks: {
-            grid: ['ag-grid-vue3', 'ag-grid-community'],
+          manualChunks: {
+            grid: ['ag-grid-vue3'],
+            gridcm: ['ag-grid-community'],
             vueform: ['@vueform/vueform'],
             prompts: ['sweetalert2'],
-            util: ['lodash-es', 'axios']
-          }*/
-        }
+            util: [
+              'lodash-es/debounce',
+              'lodash-es/isEmpty',
+              'lodash-es/cloneDeep',
+              'odata-filter-parser'
+            ],
+            fetch: ['axios'],
+            vueCore: ['vue', 'vue-router', 'vue3-eventbus'],
+            pinia: ['pinia', 'pinia-generic'],
+            i18n: ['vue-i18n'],
+            tooltip: ['floating-vue'],
+            images: ['blueimp-load-image']
+          }
+        },
+        plugins: [
+          replace({
+            preventAssignment: true,
+            __INTLIFY_JIT_COMPILATION__: false,
+            __INTLIFY_DROP_MESSAGE_COMPILER__: true
+          })
+        ]
       }
     },
     optimizeDeps: {
