@@ -83,8 +83,8 @@ export default ({ mode }) => {
         plugins: [
           replace({
             preventAssignment: true,
-            __INTLIFY_JIT_COMPILATION__: false,
-            __INTLIFY_DROP_MESSAGE_COMPILER__: true
+            __INTLIFY_JIT_COMPILATION__: true,
+            __INTLIFY_DROP_MESSAGE_COMPILER__: false
           })
         ]
       }
