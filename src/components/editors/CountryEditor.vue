@@ -1,37 +1,35 @@
-<script lang="ts">
-  import { ref, onMounted, nextTick } from 'vue'
+<script lang="ts" setup>
+  import { ref, onMounted, nextTick, computed } from 'vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import localeUtil from '@/util/locale-utils'
+  import type { Country } from '@/models/entityModels'
 
-  export default {
-    name: 'CountryEditor',
-    components: {
-      SecondaryButton,
-      PrimaryButton
-    },
-    props: ['model'],
-    emits: ['cancel', 'save'],
-    computed: {
-      title: (props: any) => {
-        return props.model && props.model.id >= 0 ? 'Edit Country' : 'New Country'
-      },
-      invalid: (props: any) => {
-        return props && props.form$ && props.form$.invalid
-      }
-    },
-    setup(/*props*/) {
-      const form$ = ref(null)
+  const props = defineProps({
+    // @ts-ignore
+    model: {} as Country
+  })
 
-      onMounted(async () => {
-        await nextTick()
-        // @ts-ignore
-        form$.value.el$('name').focus()
-        // @ts-ignore
-        form$.value.validate()
-      })
-      return { form$ }
+  defineEmits(['cancel', 'save'])
+
+  const form$ = ref()
+
+  const title = computed(() => {
+    return localeUtil.t(
+      props.model && props.model.id >= 0 ? 'titles.edit-country' : 'titles.new-country'
+    )
+  })
+  const invalid = computed(() => {
+    return form$.value && form$.value.invalid
+  })
+
+  onMounted(async () => {
+    await nextTick()
+    if (form$.value.el$) {
+      form$.value.el$('name').focus()
+      form$.value.validate()
     }
-  }
+  })
 </script>
 
 <template>
@@ -46,23 +44,25 @@
       :endpoint="false"
     >
       <TextElement
-        label="Name"
+        :label="localeUtil.t('form.name')"
         name="name"
         autocomplete="none"
         rules="required|max:150"
       />
       <TextareaElement
-        label="Description"
+        :label="localeUtil.t('form.description')"
         name="description"
         rules="max:1500"
         :autogrow="false"
       />
     </Vueform>
     <div class="panel-form-buttonbar">
-      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)"
-        >Save</PrimaryButton
-      >
-      <SecondaryButton @click="$emit('cancel')">Cancel</SecondaryButton>
+      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)">{{
+        localeUtil.t('actions.save')
+      }}</PrimaryButton>
+      <SecondaryButton @click="$emit('cancel')">{{
+        localeUtil.t('actions.cancel')
+      }}</SecondaryButton>
     </div>
   </div>
 </template>

@@ -1,3 +1,6 @@
+import localeUtil from '@/util/locale-utils'
+import { EnumHelper } from '@/util/object-utils'
+
 export const enum Grade {
   XF = 0,
   VF = 1,
@@ -10,30 +13,8 @@ export const enum Grade {
 
 export class GradeHelper {
   static toString(value: number): string {
-    let text = ''
-    switch (value) {
-      case Grade.XF:
-        text = 'Extra-Fine (XF)'
-        break
-      case Grade.VF:
-        text = 'Very-Fine (VF)'
-        break
-      case Grade.FVF:
-        text = 'Fine-Very-Fine (FVF)'
-        break
-      case Grade.F:
-        text = 'Fine (F)'
-        break
-      case Grade.VG:
-        text = 'Very-Good (VG)'
-        break
-      case Grade.D:
-        text = 'Damaged (D)'
-        break
-      case Grade.CTS:
-        text = 'Cut-To-Shape (CTS)'
-        break
-    }
-    return text
+    // @ts-ignore
+    const g = EnumHelper.enumToString(Grade, value)
+    return g ? localeUtil.t(`grade.${g}`) : ''
   }
 }

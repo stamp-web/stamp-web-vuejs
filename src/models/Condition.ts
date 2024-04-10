@@ -1,3 +1,6 @@
+import localeUtil from '@/util/locale-utils'
+import { EnumHelper } from '@/util/object-utils'
+
 export const enum Condition {
   MINT = 0,
   MINT_NH = 1,
@@ -11,36 +14,8 @@ export const enum Condition {
 }
 export class ConditionHelper {
   static toString(value: number): string {
-    let text = ''
-    switch (value) {
-      case Condition.MINT:
-        text = 'Mint'
-        break
-      case Condition.MINT_NH:
-        text = 'Mint (NH)'
-        break
-      case Condition.MINT_NG:
-        text = 'Mint (No gum)'
-        break
-      case Condition.MINT_HH:
-        text = 'Mint (heavily hinged)'
-        break
-      case Condition.CTO:
-        text = 'Cancel to Order'
-        break
-      case Condition.USED:
-        text = 'Used'
-        break
-      case Condition.COVER:
-        text = 'Used on Cover'
-        break
-      case Condition.MANUSCRIPT:
-        text = 'Manuscript Cancel'
-        break
-      case Condition.ON_PAPER:
-        text = 'Used on Paper'
-        break
-    }
-    return text
+    // @ts-ignore
+    const g = EnumHelper.enumToString(Condition, value)
+    return g ? localeUtil.t(`condition.${g}`) : ''
   }
 }

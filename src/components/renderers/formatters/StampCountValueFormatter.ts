@@ -1,4 +1,4 @@
+import localeUtil from '@/util/locale-utils'
 export default function stampCount(rowObject: any) {
-  const count = rowObject.value
-  return count > 1 ? `${count} Stamps` : count > 0 ? `${count} Stamp` : ''
+  return localeUtil.t('cell.stamp-count', { count: rowObject.value || 0 })
 }

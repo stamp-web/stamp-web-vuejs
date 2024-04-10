@@ -23,6 +23,7 @@
   import pagingInfo from '@/components/behaviors/pageInfo'
   import { OdataUtil } from '@/util/odata-util'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
+  import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
 
   const { t } = useI18n()
 
@@ -30,7 +31,12 @@
   const dataGridRef = ref()
   const store = stampStore()
   const prefStore = preferenceStore()
-  const query = ref()
+  const query = ref({
+    $skip: 1000,
+    $top: 0,
+    $filter: '',
+    $orderby: ''
+  })
   const stampView = ref()
   const cardLayout = ref()
   const buttonToolbar = ref()
@@ -50,6 +56,7 @@
     startingCount,
     calculatePagingStats,
     setActivePage,
+    setPageSize,
     setItemList,
     getPageSize,
     getActivePage,
@@ -178,8 +185,7 @@
 
   const onSortChanged = (columnDef: any) => {
     if (columnDef?.sort) {
-      const sorts = OdataUtil.createSort(columnDef.colId, columnDef.sort)
-      query.value.sorts = sorts
+      query.value.$orderby = OdataUtil.createSort(columnDef.colId, columnDef.sort)
     }
     gotoPage(1)
   }
@@ -204,6 +210,13 @@
     query.value.$skip = skip
   }
 
+  const pageSizeChanges = (pageSize: number) => {
+    if (getPageSize() !== pageSize) {
+      setPageSize(pageSize)
+      gotoPage(1)
+    }
+  }
+
   onUnmounted(() => {
     //resizeObserver.disconnect()
   })
@@ -216,10 +229,11 @@
     prefPaths.value.thumbPath = thumbPref.value ?? '/'
     prefPaths.value.imagePath = imagePref.value ?? '/'
 
+    // @ts-ignore
     query.value = {
-      ...structuredClone(route.query),
-      ...OdataUtil.createSort('number', 'asc')
+      ...structuredClone(route.query)
     }
+    query.value.$orderby = OdataUtil.createSort('number', 'asc')
     gotoPage(1)
   })
 </script>
@@ -258,6 +272,11 @@
           @click="selectAll(false)"
           :disabled="areNoneSelected()"
         ></SecondaryButton>
+        <PagingSizeInput
+          class="ml-2"
+          @page-size-changed="pageSizeChanges"
+          :page-size="getPageSize()"
+        ></PagingSizeInput>
       </div>
       <div class="h-full w-full" v-if="viewDef.mode === 'list'">
         <DataGridComponent

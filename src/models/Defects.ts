@@ -1,3 +1,5 @@
+import localeUtil from '@/util/locale-utils'
+import { EnumHelper } from '@/util/object-utils'
 export enum Defects {
   THIN = 2,
   TORN = 4,
@@ -22,66 +24,8 @@ export enum Defects {
 
 export class DefectsHelper {
   public static toString(value: number): string {
-    let text = ''
-    switch (value) {
-      case Defects.THIN:
-        text = 'Thinned'
-        break
-      case Defects.TORN:
-        text = 'Torn'
-        break
-      case Defects.TONED_PAPER:
-        text = 'Paper Toned'
-        break
-      case Defects.CREASED:
-        text = 'Creased'
-        break
-      case Defects.SCUFFED:
-        text = 'Scuff Marks'
-        break
-      case Defects.PINHOLE:
-        text = 'Pinhole'
-        break
-      case Defects.SHORT_PERF:
-        text = 'Short Perforations'
-        break
-      case Defects.STUNTED_PERF:
-        text = 'Stunted Perforations'
-        break
-      case Defects.CLIPPED:
-        text = 'Paper Clipped'
-        break
-      case Defects.FADING:
-        text = 'Color Fading'
-        break
-      case Defects.BLEEDING:
-        text = 'Color Bleeding'
-        break
-      case Defects.INK_STAIN:
-        text = 'Ink Stains'
-        break
-      case Defects.CHANGELING:
-        text = 'Color Changeling'
-        break
-      case Defects.CRACKED_GUM:
-        text = 'Cracked Gum'
-        break
-      case Defects.TONED_GUM:
-        text = 'Toned Gum'
-        break
-      case Defects.HEAVILY_HINGED:
-        text = 'Heavily Hinged'
-        break
-      case Defects.ALBUM_TRANSFER:
-        text = 'Album Transfer'
-        break
-      case Defects.PAPER_ADHESION:
-        text = 'Paper Adhesion'
-        break
-      case Defects.SOILED:
-        text = 'Soiled Paper'
-        break
-    }
-    return text
+    // @ts-ignore
+    const g = EnumHelper.enumToString(Defects, value)
+    return g ? localeUtil.t(`defects.${g}`) : ''
   }
 }

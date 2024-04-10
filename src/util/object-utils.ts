@@ -44,10 +44,7 @@ export function augmentModel(model: Object, m: Object): void {
       _set(model, k, v)
     } else if (arr) {
       for (let i = 0; i < value.length; i++) {
-        augmentModel(
-          (model as KeyIndexable)[k][i] as Object,
-          (value as KeyIndexable)[i] as Object
-        )
+        augmentModel((model as KeyIndexable)[k][i] as Object, (value as KeyIndexable)[i] as Object)
       }
     }
   })
@@ -92,5 +89,10 @@ export class EnumHelper {
       enums.push(type[type[ordinal]])
     })
     return enums
+  }
+
+  public static enumToString(enumeration: any, value: any): string | undefined {
+    for (const k in enumeration) if (enumeration[k] == value) return <string>k
+    return undefined
   }
 }

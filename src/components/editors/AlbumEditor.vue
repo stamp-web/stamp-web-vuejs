@@ -4,6 +4,7 @@
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import { stampCollectionStore } from '@/stores/stampCollectionStore'
+  import localeUtil from '@/util/locale-utils'
 
   const props = defineProps({
     // @ts-ignore
@@ -16,7 +17,9 @@
   const stampCollections = ref(new Array<StampCollection>())
 
   const title = computed(() => {
-    return props.model && props.model.id >= 0 ? 'Edit Album' : 'New Album'
+    return localeUtil.t(
+      props.model && props.model.id >= 0 ? 'titles.edit-album' : 'titles.new-album'
+    )
   })
   const invalid = computed(() => {
     return form$.value && form$.value.invalid
@@ -53,27 +56,30 @@
         :native="false"
         :items="stampCollections"
         label-prop="name"
+        :label="localeUtil.t('form.stampCollection')"
         value-prop="id"
         rules="required"
       ></SelectElement>
       <TextElement
-        label="Name"
+        :label="localeUtil.t('form.name')"
         name="name"
         autocomplete="none"
         rules="required|max:150"
       />
       <TextareaElement
-        label="Description"
+        :label="localeUtil.t('form.description')"
         name="description"
         rules="max:1500"
         :autogrow="false"
       />
     </Vueform>
     <div class="panel-form-buttonbar">
-      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)"
-        >Save</PrimaryButton
-      >
-      <SecondaryButton @click="$emit('cancel')">Cancel</SecondaryButton>
+      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)">{{
+        localeUtil.t('actions.save')
+      }}</PrimaryButton>
+      <SecondaryButton @click="$emit('cancel')">{{
+        localeUtil.t('actions.cancel')
+      }}</SecondaryButton>
     </div>
   </div>
 </template>

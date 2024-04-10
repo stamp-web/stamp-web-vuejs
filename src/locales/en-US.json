@@ -1,20 +1,66 @@
 {
   "actions": {
+    "cancel": "Cancel",
     "clear-selection": "Clear All Selections",
     "delete": "Delete",
     "edit": "Edit",
     "find-stamps": "Find Stamps",
     "new-album": "New Album",
     "new-country": "New Country",
+    "new-seller": "New Seller",
+    "new-stamp": "New Stamp",
     "new-stamp-collection": "New Stamp Collection",
     "no": "No",
+    "save": "Save",
     "select-all": "Select All",
     "show-card-view": "Show Card View",
     "show-list-view": "Show List View",
     "yes": "Yes"
   },
   "cell": {
-    "stamp-count": "1 Stamp | {count} Stamps"
+    "stamp-count": "0 Stamps | 1 Stamp | {count} Stamps"
+  },
+  "condition": {
+    "MINT": "Mint",
+    "MINT_NH": "Mint (NH)",
+    "MINT_NG": "Mint (No gum)",
+    "MINT_HH": "Mint (heavily hinged)",
+    "CTO": "Cancel to Order",
+    "USED": "Used",
+    "COVER": "Used on Cover",
+    "MANUSCRIPT": "Manuscript Cancel",
+    "ON_PAPER": "Used on Paper"
+  },
+  "deceptions": {
+    "FAKE_CANCEL":"Fake Cancel",
+    "FAKE_OVERPRINT":"Fake Overprint",
+    "FISCAL_REMOVED":"Fiscal Cancel Removed",
+    "FORGERY":"Forgery",
+    "FORGERY_POSSIBLE":"Possible Forgery",
+    "REPAIRED":"Repaired",
+    "REPRINT":"Reprint",
+    "REGUM": "Regummed"
+  },
+  "defects": {
+    "THIN": "Thinned",
+    "TORN": "Torn",
+    "TONED_PAPER": "Paper Toned",
+    "CREASED": "Creased",
+    "SCUFFED": "Scuff Marks",
+    "PINHOLE": "Pinhole",
+    "SHORT_PERF": "Short Perforations",
+    "STUNTED_PERF": "Stunted Perforations",
+    "CLIPPED": "Paper Clipped",
+    "FADING": "Color Fading",
+    "BLEEDING": "Color Bleeding",
+    "INK_STAIN": "Ink Stains",
+    "CHANGELING": "Color Changeling",
+    "CRACKED_GUM": "Cracked Gum",
+    "TONED_GUM": "Toned Gum",
+    "HEAVILY_HINGED": "Heavily Hinged",
+    "ALBUM_TRANSFER": "Album Transfer",
+    "PAPER_ADHESION": "Paper Adhesion",
+    "SOILED": "Soiled Paper"
   },
   "display": {
     "selected-count": "Selected: {count}",
@@ -22,12 +68,27 @@
     "wantlist-item": "Wantlist Item"
   },
   "form": {
-    "filter-placeholder": "Filter"
+    "catalogueType": "Catalogue Type",
+    "description": "Description",
+    "filter-placeholder": "Filter",
+    "issue": "Issue Year",
+    "name": "Name",
+    "stampCollection": "Stamp Collection"
+  },
+  "grade": {
+    "XF": "Extra-Fine (XF)",
+    "VF": "Very-Fine (VF)",
+    "FVF": "Fine-Very-Fine (FVF)",
+    "F": "Fine (F)",
+    "VG": "Very-Good (VG)",
+    "D": "Damaged (D)",
+    "CTS": "Cut-To-Shape (CTS)"
   },
   "messages": {
     "delete-album": "Delete the album '{album}'?",
     "delete-country": "Delete the country '{country}'?",
-    "delete-collection": "Delete the stamp collection '{collection}'?"
+    "delete-collection": "Delete the stamp collection '{collection}'?",
+    "delete-seller": "Delete the seller '{seller}'?"
   },
   "models": {
     "albums": {
@@ -91,6 +152,16 @@
     "stamp-collection": "Stamp Collection"
   },
   "titles": {
+    "edit-album": "Edit Album",
+    "edit-catalogue": "Edit Catalogue",
+    "edit-country": "Edit Country",
+    "edit-sellers": "Edit Seller",
+    "edit-stamp-collection": "Edit Stamp Collection",
+    "new-album": "New Album",
+    "new-catalogue": "New Catalogue",
+    "new-country": "New Country",
+    "new-seller": "New Seller",
+    "new-stamp-collection": "New Stamp Collection",
     "stamp-web-editor": "Stamp Web Editor"
   }
 }

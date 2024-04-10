@@ -121,7 +121,12 @@
         <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
           {{ t('actions.new-country') }}
         </PrimaryButton>
-        <SecondaryButton @click="remove()" :disabled="!getSelected()" icon="sw-icon-delete">
+        <SecondaryButton
+          class=""
+          @click="remove()"
+          :disabled="!getSelected()"
+          icon="sw-icon-delete"
+        >
           {{ t('actions.delete') }}
         </SecondaryButton>
       </div>

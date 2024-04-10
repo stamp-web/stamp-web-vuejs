@@ -13,23 +13,12 @@ import { createPinia } from 'pinia'
 import eventBus from 'vue3-eventbus'
 
 import App from './App.vue'
-import { createI18n } from 'vue-i18n'
 import router from './router'
 import ClickableIconCellRenderer from '@/components/renderers/ClickableIconCellRenderer.vue'
 
-import de from './locales/de.json'
-import enUS from './locales/en-US.json'
+import LocaleUtilities from '@/util/locale-utils'
 
-const i18n = createI18n<false>({
-  legacy: false,
-  locale: 'en-US',
-  fallbackLocale: 'en-US',
-  globalInjection: true,
-  messages: {
-    de: de,
-    'en-US': enUS
-  }
-})
+const i18n = LocaleUtilities.getI18n()
 
 const app = createApp(App)
   .use(createPinia())

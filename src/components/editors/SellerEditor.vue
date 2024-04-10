@@ -3,24 +3,22 @@
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import localeUtil from '@/util/locale-utils'
-  import type { StampCollection } from '@/models/entityModels'
+  import type { Seller } from '@/models/entityModels'
 
   const props = defineProps({
     // @ts-ignore
-    model: {} as StampCollection
+    model: {} as Seller
   })
+
   defineEmits(['cancel', 'save'])
 
   const form$ = ref()
 
   const title = computed(() => {
     return localeUtil.t(
-      props.model && props.model.id >= 0
-        ? 'titles.edit-stamp-collection'
-        : 'titles.new-stamp-collection'
+      props.model && props.model.id >= 0 ? 'titles.edit-seller' : 'titles.new-seller'
     )
   })
-
   const invalid = computed(() => {
     return form$.value && form$.value.invalid
   })
@@ -36,7 +34,7 @@
 
 <template>
   <div class="panel-form bg-white" role="form">
-    <div class="panel-form-title"><span class="sw-icon-stamp-collection"></span>{{ title }}</div>
+    <div class="panel-form-title"><span class="sw-icon-country"></span>{{ title }}</div>
     <Vueform
       size="sm"
       ref="form$"
