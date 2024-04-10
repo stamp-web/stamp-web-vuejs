@@ -5,6 +5,7 @@ import type {
   Country,
   PersistedModel,
   PersistedNamedModel,
+  Seller,
   StampCollection
 } from '../../src/models/entityModels'
 import type { Stamp } from '../../src/models/Stamp'
@@ -75,6 +76,12 @@ class catalogueTestHelper extends entityTestHelper<Catalogue> {
   }
 }
 
+class sellerTestHelper extends entityTestHelper<Seller> {
+  getResourceName(): string {
+    return 'sellers'
+  }
+}
+
 // @ts-ignore
 class stampTestHelper extends entityTestHelper<Stamp> {
   getResourceName(): string {
@@ -87,3 +94,4 @@ export const AlbumTestHelper = new albumTestHelper()
 export const CountryTestHelper = new countryTestHelper()
 export const StampTestHelper = new stampTestHelper()
 export const CatalogueTestHelper = new catalogueTestHelper()
+export const SellerTestHelper = new sellerTestHelper()
