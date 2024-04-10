@@ -1,20 +1,14 @@
 import { useStore } from 'pinia-generic'
 import type { PiniaStore } from 'pinia-generic'
-import type { BaseModelStore } from '@/stores/baseModelStore'
+import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type { Catalogue } from '@/models/entityModels'
-import { baseModelStore } from '@/stores/baseModelStore'
+import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type BaseManagedService from '@/services/BasedManagedService'
 import CatalogueService from '@/services/CatalogueService'
 
-type CatalogueStoreType = PiniaStore<
-  'catalogueStore',
-  {},
-  {},
-  {},
-  BaseModelStore<Catalogue>
->
+type CatalogueStoreType = PiniaStore<'catalogueStore', {}, {}, {}, BaseNamedModelStore<Catalogue>>
 
-export const catalogueStore = useStore<CatalogueStoreType, BaseModelStore<Catalogue>>(
+export const catalogueStore = useStore<CatalogueStoreType, BaseNamedModelStore<Catalogue>>(
   'catalogueStore',
   {
     state: {},
@@ -24,5 +18,5 @@ export const catalogueStore = useStore<CatalogueStoreType, BaseModelStore<Catalo
       }
     }
   },
-  baseModelStore<Catalogue>()
+  baseNamedModelStore<Catalogue>()
 )

@@ -1,23 +1,14 @@
 import { useStore } from 'pinia-generic'
 import type { PiniaStore } from 'pinia-generic'
-import type { BaseModelStore } from '@/stores/baseModelStore'
 import type { Album } from '@/models/entityModels'
-import { baseModelStore } from '@/stores/baseModelStore'
 import AlbumService from '@/services/AlbumService'
 import type BaseManagedService from '@/services/BasedManagedService'
-import { CountModel } from '@/models/countModel'
+import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
+import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 
-type AlbumStoreType = PiniaStore<
-  'albumStore',
-  {},
-  {},
-  {
-    getStampCount(): Promise<CountModel[]>
-  },
-  BaseModelStore<Album>
->
+type AlbumStoreType = PiniaStore<'albumStore', {}, {}, {}, BaseNamedModelStore<Album>>
 
-export const albumStore = useStore<AlbumStoreType, BaseModelStore<Album>>(
+export const albumStore = useStore<AlbumStoreType, BaseNamedModelStore<Album>>(
   'albumStore',
   {
     state: {},
@@ -26,18 +17,7 @@ export const albumStore = useStore<AlbumStoreType, BaseModelStore<Album>>(
         return AlbumService
       }
     },
-    actions: {
-      async getStampCount(): Promise<CountModel[]> {
-        const counts = await (this.service as BaseManagedService<Album>).getStampCount()
-        counts.forEach((cm) => {
-          const album = this.items.list.find((a) => a.id === cm.id)
-          if (album) {
-            album.count = cm.count
-          }
-        })
-        return counts
-      }
-    }
+    actions: {}
   },
-  baseModelStore<Album>()
+  baseNamedModelStore<Album>()
 )

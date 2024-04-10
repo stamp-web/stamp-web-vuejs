@@ -3,7 +3,7 @@ import './assets/main.css'
 
 import Vueform from '@vueform/vueform'
 import vueformConfig from '../vueform.config'
-import FloatingVue from 'floating-vue'
+import { Tooltip, vTooltip } from 'floating-vue'
 
 // Needed for test resolution to avoid warnings
 import { createApp } from 'vue'
@@ -20,15 +20,17 @@ import LocaleUtilities from '@/util/locale-utils'
 
 const i18n = LocaleUtilities.getI18n()
 
+// @ts-ignore
 const app = createApp(App)
   .use(createPinia())
   .use(router)
   .use(Vueform, vueformConfig)
-  .use(FloatingVue)
   .use(eventBus)
   .use(i18n)
 /**
  * Globally define cell renderers so they can be used by name without having to import them all in the Grid Component
  */
 app.component('ClickableIconCellRenderer', ClickableIconCellRenderer)
+app.component('VTooltip', Tooltip)
+app.directive('tooltip', vTooltip)
 app.mount('#app')

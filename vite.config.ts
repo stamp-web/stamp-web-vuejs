@@ -77,6 +77,7 @@ export default ({ mode }) => {
             pinia: ['pinia', 'pinia-generic'],
             i18n: ['vue-i18n'],
             tooltip: ['floating-vue'],
+            headlessui: ['@headlessui/vue'],
             images: ['blueimp-load-image']
           }
         },

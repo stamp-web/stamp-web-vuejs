@@ -18,13 +18,15 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   },
   {
     remove(model: T): Promise<void>
-    find(): Promise<T[]>
+    find(options?: any): Promise<T[]>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
+    postFind(model: T): T
+    getCount(): number
   }
 >
 
-export function baseModelStore<T extends PersistedModel>() {
+export function baseModelStore<T extends PersistedModel>(): any {
   return defineGenericStore<BaseModelStore<T>>({
     state: {
       items: reactive({ list: [] as Array<T>, total: 0, loading: false }),
@@ -60,6 +62,7 @@ export function baseModelStore<T extends PersistedModel>() {
           const data: EntityList<T> = await this.inflightPromise
           this.items.list.splice(0, this.items.list.length)
           data.items.forEach((e) => {
+            e = this.postFind(e)
             this.items.list.push(createInstance(<T>e))
             this.items.total = data.total
           })
@@ -67,6 +70,9 @@ export function baseModelStore<T extends PersistedModel>() {
           this.inflightPromise = undefined
         }
         return this.items.list as unknown as T[]
+      },
+      postFind(model: T): T {
+        return model
       },
       async create(model: T): Promise<T> {
         const m: T = await this.service.create(model)
@@ -87,6 +93,9 @@ export function baseModelStore<T extends PersistedModel>() {
         const list = this.items.list as T[]
         list.splice(index, 1, m as T)
         return m
+      },
+      getCount(): number {
+        return this.items.total
       }
     }
   })
