@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { mount, VueWrapper } from '@vue/test-utils'
-import AlbumEditor from '@/components/editors/AlbumEditor.vue'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
+import SellerEditor from '../SellerEditor.vue'
 
-describe('AlbumEditor', () => {
+describe('SellerEditor', () => {
   beforeEach(() => {
     const pinia = createTestingPinia({
       fakeApp: true,
@@ -18,26 +18,26 @@ describe('AlbumEditor', () => {
     let wrapper: VueWrapper
 
     it('title edit scenario', async () => {
-      wrapper = mount(AlbumEditor, {
+      wrapper = mount(SellerEditor, {
         propsData: {
           model: {
             id: 56,
-            name: 'test-album'
+            name: 'test-seller'
           }
         }
       })
       // @ts-ignore
-      expect(wrapper.vm.title).toBe('Edit Album')
+      expect(wrapper.vm.title).toBe('Edit Seller')
     })
 
     it('title create scenario', async () => {
-      wrapper = mount(AlbumEditor, {
+      wrapper = mount(SellerEditor, {
         propsData: {
           model: {}
         }
       })
       // @ts-ignore
-      expect(wrapper.vm.title).toBe('New Album')
+      expect(wrapper.vm.title).toBe('New Seller')
       await nextTick()
       // @ts-ignore
       expect(wrapper.vm.invalid).toBe(true)

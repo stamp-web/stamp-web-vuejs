@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test'
+import { Page } from '@playwright/test'
 import { SelectCmp } from './Select-cmp'
 import { AbstractNamedEditorCmp } from './AbstractNamedEditor'
 
