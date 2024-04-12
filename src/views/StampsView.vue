@@ -61,7 +61,7 @@
     getPageSize,
     getActivePage,
     getPageCount
-  } = pagingInfo()
+  } = pagingInfo('stamps.pagingInfo')
 
   const viewDef = ref({
     mode: 'list'
@@ -273,8 +273,9 @@
           :disabled="areNoneSelected()"
         ></SecondaryButton>
         <PagingSizeInput
-          class="ml-2"
+          class="ml-auto mr-2 scale-90 hidden md:block"
           @page-size-changed="pageSizeChanges"
+          :label="t('form.page-size')"
           :page-size="getPageSize()"
         ></PagingSizeInput>
       </div>

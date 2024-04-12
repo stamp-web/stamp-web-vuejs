@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { onBeforeMount, ref, watch } from 'vue'
-  import _debounce from 'lodash-es/debounce'
 
   const props = defineProps({
-    pageSize: Number
+    pageSize: Number,
+    label: String
   })
   const emit = defineEmits(['page-size-changed'])
 
@@ -12,16 +12,12 @@
     pageSize: 500
   })
 
-  const pageSizeChanged = _debounce(() => {
-    if (model.value.pageSize > 0) {
-      emit('page-size-changed', model.value.pageSize)
-    }
-  })
-
   watch(
     () => [model.value.pageSize],
-    () => {
-      pageSizeChanged()
+    (nv, value) => {
+      if (value.find((e) => e) !== model.value.pageSize) {
+        emit('page-size-changed', model.value.pageSize)
+      }
     }
   )
 
@@ -33,13 +29,14 @@
 </script>
 
 <template>
-  <div class="scale-90 z-999">
-    <Vueform sync v-model="model" :endpoint="false" size="sm">
+  <div class="z-999">
+    <Vueform sync v-model="model" :endpoint="false" size="sm" add-class="">
       <SelectElement
         name="pageSize"
+        :columns="{ container: 12, label: 6 }"
+        :label="props.label || ''"
         :native="false"
         :items="pageSizes"
-        class="w-[80px]"
         :can-clear="false"
       ></SelectElement>
     </Vueform>

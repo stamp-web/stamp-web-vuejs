@@ -72,13 +72,12 @@ export default ({ mode }) => {
               'lodash-es/cloneDeep',
               'odata-filter-parser'
             ],
-            fetch: ['axios'],
+            fetch: ['axios', 'blueimp-load-image'],
             vueCore: ['vue', 'vue-router', 'vue3-eventbus'],
             pinia: ['pinia', 'pinia-generic'],
             i18n: ['vue-i18n'],
             tooltip: ['floating-vue'],
-            headlessui: ['@headlessui/vue'],
-            images: ['blueimp-load-image']
+            headlessui: ['@headlessui/vue']
           }
         },
         plugins: [

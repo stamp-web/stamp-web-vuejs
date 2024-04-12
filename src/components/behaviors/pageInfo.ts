@@ -1,10 +1,13 @@
 import { computed, ref } from 'vue'
+import LocalCache from '@/stores/LocalCache'
 
-const pageInfo = () => {
+const pageInfo = (filterKey?: string) => {
+  const FILTER_KEY = filterKey || 'pagingInfo'
+
   const info = ref({
     active: 1, // current page
     total: 1, // total pages
-    size: 1000,
+    size: Number.parseInt(LocalCache.getItem(`${FILTER_KEY}.pageSize`) || '1000'),
     list: new Array<Object>()
   })
 
@@ -17,7 +20,10 @@ const pageInfo = () => {
   }
 
   const setPageSize = (size: number): void => {
-    info.value.size = Math.max(size, 10)
+    if (info.value.size !== size) {
+      LocalCache.setItem(`${FILTER_KEY}.pageSize`, size.toString())
+      info.value.size = Math.max(size, 10)
+    }
   }
 
   const setItemList = (list: Array<Object>) => {
