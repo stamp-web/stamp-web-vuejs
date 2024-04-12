@@ -2,9 +2,9 @@ import { useStore } from 'pinia-generic'
 import type { PiniaStore } from 'pinia-generic'
 import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type { Seller } from '@/models/entityModels'
-import type BaseService from '@/services/BaseService'
 import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import SellerService from '@/services/SellerService'
+import BaseModelService from '@/services/BaseModelService'
 
 type SellerStoreType = PiniaStore<'sellerStore', {}, {}, {}, BaseNamedModelStore<Seller>>
 
@@ -13,7 +13,7 @@ export const sellerStore = useStore<SellerStoreType, BaseNamedModelStore<Seller>
   {
     state: {},
     getters: {
-      service(): BaseService<Seller> {
+      service(): BaseModelService<Seller> {
         return SellerService
       }
     }

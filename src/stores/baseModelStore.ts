@@ -1,7 +1,7 @@
 import type { PiniaStore } from 'pinia-generic'
 import { defineGenericStore } from 'pinia-generic'
 import type { PersistedModel } from '@/models/entityModels'
-import type BaseService from '@/services/BaseService'
+import type BaseModelService from '@/services/BaseModelService'
 import { nextTick, reactive } from 'vue'
 import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
@@ -14,7 +14,7 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
     inflightPromise: any
   },
   {
-    service(): BaseService<T>
+    service(): BaseModelService<T>
   },
   {
     remove(model: T): Promise<void>
@@ -33,7 +33,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
       inflightPromise: undefined
     },
     getters: {
-      service(): BaseService<T> {
+      service(): BaseModelService<T> {
         throw new Error('Must be implemented')
       }
     },

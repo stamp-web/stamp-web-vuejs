@@ -1,12 +1,12 @@
 import type { Stamp } from '@/models/Stamp'
 import StampService from '@/services/StampService'
-import BaseService from '@/services/BaseService'
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
 import { useStore } from 'pinia-generic'
 import type { PiniaStore } from 'pinia-generic'
 import type { BaseModelStore } from '@/stores/baseModelStore'
 import { baseModelStore } from '@/stores/baseModelStore'
 import type { EntityList } from '@/models/entityList'
+import BaseModelService from '@/services/BaseModelService'
 
 type StampStoreType = PiniaStore<'stampStore', {}, {}, {}, BaseModelStore<Stamp>>
 
@@ -15,7 +15,7 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
   {
     state: {},
     getters: {
-      service(): BaseService<Stamp> {
+      service(): BaseModelService<Stamp> {
         return StampService
       }
     },

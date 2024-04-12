@@ -1,7 +1,7 @@
-import BaseService from '@/services/BaseService'
 import type { Preference } from '@/models/Preference'
+import BaseModelService from '@/services/BaseModelService'
 
-class PreferenceService extends BaseService<Preference> {
+class PreferenceService extends BaseModelService<Preference> {
   constructor() {
     super()
   }

@@ -2,9 +2,9 @@ import { useStore } from 'pinia-generic'
 import type { PiniaStore } from 'pinia-generic'
 import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type { Country } from '@/models/entityModels'
-import type BaseService from '@/services/BaseService'
 import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import CountryService from '@/services/CountryService'
+import type BaseManagedService from '@/services/BasedManagedService'
 
 type CountryStoreType = PiniaStore<'countryStore', {}, {}, {}, BaseNamedModelStore<Country>>
 
@@ -13,7 +13,7 @@ export const countryStore = useStore<CountryStoreType, BaseNamedModelStore<Count
   {
     state: {},
     getters: {
-      service(): BaseService<Country> {
+      service(): BaseManagedService<Country> {
         return CountryService
       }
     }

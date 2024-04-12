@@ -1,6 +1,6 @@
-import BaseService from '@/services/BaseService'
 import type { Stamp } from '@/models/Stamp'
-class StampService extends BaseService<Stamp> {
+import BaseModelService from '@/services/BaseModelService'
+class StampService extends BaseModelService<Stamp> {
   constructor() {
     super()
   }

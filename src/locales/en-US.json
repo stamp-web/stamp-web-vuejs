@@ -138,6 +138,11 @@
     "next": "Next Page",
     "page": "Page {start} of {end}"
   },
+  "reportType": {
+    "CashValue": "Estimate Cash Value",
+    "CatalogueValue": "Catalogue Value",
+    "CostBasis": "Cost Basis"
+  },
   "table-columns": {
     "catalogue-number": "Catalogue Number",
     "catalogue-value": "Catalogue Value",
