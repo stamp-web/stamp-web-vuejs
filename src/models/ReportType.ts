@@ -16,7 +16,7 @@ export class ReportTypeHelper {
   public static toArray() {
     const values: { label: string; value: string }[] = []
     Object.keys(ReportType).forEach((key, index) => {
-      if (index > 1) {
+      if (index > 2) {
         return
       }
       const labelKey = EnumHelper.enumToString(ReportType, key)

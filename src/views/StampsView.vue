@@ -24,6 +24,11 @@
   import { OdataUtil } from '@/util/odata-util'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
   import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
+  import StampReportValues from '@/components/display/StampReportValues.vue'
+  import reportService from '@/services/ReportService'
+  import { ReportType } from '@/models/ReportType'
+  import { ReportResult } from '@/models/ReportResult'
+  import { asCurrencyString } from '@/util/object-utils'
 
   const { t } = useI18n()
 
@@ -41,6 +46,10 @@
   const cardLayout = ref()
   const buttonToolbar = ref()
   const footer = ref()
+  const reporting = ref({
+    reportType: ReportType.CatalogueValue,
+    reportValue: '0.0'
+  })
 
   const collection = reactive({
     list: new Array<Stamp>(),
@@ -217,6 +226,19 @@
     }
   }
 
+  async function fetchReportData() {
+    const result: ReportResult = await reportService.executeReport(
+      reporting.value.reportType,
+      query.value
+    )
+    reporting.value.reportValue = asCurrencyString(result.value, result.code)
+  }
+
+  const changeReportType = async (value: string) => {
+    reporting.value.reportType = Number.parseInt(value)
+    await fetchReportData()
+  }
+
   onUnmounted(() => {
     //resizeObserver.disconnect()
   })
@@ -235,6 +257,7 @@
     }
     query.value.$orderby = OdataUtil.createSort('number', 'asc')
     gotoPage(1)
+    await fetchReportData()
   })
 </script>
 <template>
@@ -324,6 +347,12 @@
           @last="gotoPage(getPageCount())"
         >
         </paging-component>
+        <stamp-report-values
+          class="ml-auto max-w-[240px] mr-5 md:flex hidden"
+          @report-type-changed="changeReportType"
+          :report-type="reporting.reportType"
+          :value="reporting.reportValue"
+        ></stamp-report-values>
         <display-stats
           class="mr-1"
           :start="startingCount"
