@@ -19,6 +19,7 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   {
     remove(model: T): Promise<void>
     find(options?: any): Promise<T[]>
+    findRandom(): Promise<T | undefined>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
     postFind(model: T): T
@@ -70,6 +71,13 @@ export function baseModelStore<T extends PersistedModel>(): any {
           this.inflightPromise = undefined
         }
         return this.items.list as unknown as T[]
+      },
+      async findRandom(): Promise<T | undefined> {
+        const list = await this.service.find()
+        if (list.total > 0) {
+          const randomIndex = Math.floor(Math.random() * list.total) + 1
+          return list.items[randomIndex]
+        }
       },
       postFind(model: T): T {
         return model

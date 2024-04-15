@@ -1,14 +1,13 @@
 <script setup lang="ts">
-  import { useRoute } from 'vue-router'
+  import { useRoute, useRouter } from 'vue-router'
   import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
   import { useI18n } from 'vue-i18n'
+  import _isEmpty from 'lodash-es/isEmpty'
 
-  import type { Stamp } from '@/models/Stamp'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
-  import { stampStore } from '@/stores/stampStore'
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
   import CatalogueValueCellRenderer from '@/components/renderers/CatalogueValueCellRenderer.vue'
   import ConditionCellRenderer from '@/components/renderers/ConditionCellRenderer.vue'
@@ -18,23 +17,32 @@
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import DisplayStats from '@/components/display/DisplayStats.vue'
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
-  import { preferenceStore } from '@/stores/PreferenceStore'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
   import pagingInfo from '@/components/behaviors/pageInfo'
-  import { OdataUtil } from '@/util/odata-util'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
   import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
   import StampReportValues from '@/components/display/StampReportValues.vue'
-  import reportService from '@/services/ReportService'
+
+  import type { Stamp } from '@/models/Stamp'
   import { ReportType } from '@/models/ReportType'
   import { ReportResult } from '@/models/ReportResult'
+
+  import reportService from '@/services/ReportService'
+
+  import { preferenceStore } from '@/stores/PreferenceStore'
+  import { countryStore } from '@/stores/CountryStore'
+  import { stampStore } from '@/stores/stampStore'
+
   import { asCurrencyString } from '@/util/object-utils'
+  import { OdataUtil } from '@/util/odata-util'
 
   const { t } = useI18n()
 
   const route = useRoute()
+  const router = useRouter()
   const dataGridRef = ref()
   const store = stampStore()
+  const countriesStore = countryStore()
   const prefStore = preferenceStore()
   const query = ref({
     $skip: 1000,
@@ -243,6 +251,22 @@
     //resizeObserver.disconnect()
   })
 
+  const setupInitialQuery = async () => {
+    if (_isEmpty(route.query)) {
+      const country = await countriesStore.findRandom()
+      if (country) {
+        await router.push({ query: { $filter: `(countryRef eq ${country.id})` } })
+        query.value.$filter = `(countryRef eq ${country.id})`
+      }
+    } else {
+      // @ts-ignore
+      query.value = {
+        ...structuredClone(route.query)
+      }
+    }
+    query.value.$orderby = OdataUtil.createSort('number', 'asc')
+  }
+
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
 
@@ -250,12 +274,7 @@
     const imagePref = await prefStore.findByNameAndCategory('imagePath', 'stamps')
     prefPaths.value.thumbPath = thumbPref.value ?? '/'
     prefPaths.value.imagePath = imagePref.value ?? '/'
-
-    // @ts-ignore
-    query.value = {
-      ...structuredClone(route.query)
-    }
-    query.value.$orderby = OdataUtil.createSort('number', 'asc')
+    await setupInitialQuery()
     gotoPage(1)
     await fetchReportData()
   })
