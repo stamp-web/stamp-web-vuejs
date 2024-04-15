@@ -30,7 +30,7 @@
   import reportService from '@/services/ReportService'
 
   import { preferenceStore } from '@/stores/PreferenceStore'
-  import { countryStore } from '@/stores/CountryStore'
+  import { countryStore } from '@/stores/countryStore'
   import { stampStore } from '@/stores/stampStore'
 
   import { asCurrencyString } from '@/util/object-utils'
