@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { Condition, ConditionHelper } from '@/models/Condition'
+  import { uuidv4 } from '@/util/object-utils'
 
   const $props = defineProps({
     label: String,
@@ -25,8 +26,10 @@
     :search="false"
     label-prop="name"
     value-prop="value"
+    :can-deselect="false"
     :items="getConditions"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
+    :autocomplete="uuidv4()"
   ></select-element>
 </template>

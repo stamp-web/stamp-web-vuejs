@@ -1,14 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { AxiosError } from 'axios'
 import {
   isNil,
   augmentModel,
   resolvePath,
   EnumHelper,
   determineShiftedValues,
-  asCurrencyString
-} from '../object-utils'
+  asCurrencyString,
+  extractErrorMessage,
+  uuidv4
+} from '@/util/object-utils'
 import { Defects } from '@/models/Defects'
-import { CurrencyCode } from '../../models/CurrencyCode'
+import { CurrencyCode } from '@/models/CurrencyCode'
 
 describe('object-utils', () => {
   describe('isNil', () => {
@@ -199,6 +202,41 @@ describe('object-utils', () => {
         expect(v[1]).toBe(Defects.CLIPPED)
         expect(v[2]).toBe(Defects.CREASED)
       })
+    })
+  })
+
+  describe('extractErrorMessage', () => {
+    it('Plain Error', () => {
+      const err = new Error('error unexpected')
+      const msg = extractErrorMessage(err)
+      expect(msg).toBe('error unexpected')
+    })
+
+    it('Reference Error', () => {
+      try {
+        // @ts-ignore
+        foo.substring(1)
+      } catch (err: any) {
+        const msg = extractErrorMessage(err)
+        expect(msg).toBe('foo is not defined')
+      }
+    })
+
+    it('Axios Error', () => {
+      // @ts-ignore
+      const err = new AxiosError('axios test message', undefined, undefined, undefined, {
+        data: 'axios data message'
+      })
+      const msg = extractErrorMessage(err)
+      expect(msg).toBe('axios data message')
+    })
+  })
+
+  describe('uuidvd', () => {
+    it('valid creation', () => {
+      const uuid = uuidv4()
+      expect(uuid).toBeDefined()
+      expect(uuid.length).toBe(36)
     })
   })
 })

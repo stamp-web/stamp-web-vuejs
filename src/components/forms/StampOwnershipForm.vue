@@ -5,6 +5,7 @@
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
   import GradeSelector from '@/components/inputs/GradeSelector.vue'
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
+  import { uuidv4 } from '@/util/object-utils'
 
   const { t } = useI18n()
 
@@ -29,11 +30,13 @@
         <AlbumSelector v-model="model" :label="t('form.album')"></AlbumSelector>
         <ConditionSelector
           v-model="model"
+          name="condition"
           :label="t('form.condition')"
           :columns="{ container: 12, label: 12, wrapper: 8 }"
         ></ConditionSelector>
         <GradeSelector
           v-model="model"
+          name="grade"
           :label="t('form.grade')"
           :columns="{ container: 12, label: 12, wrapper: 8 }"
         ></GradeSelector>
@@ -46,8 +49,7 @@
           v-model="model"
           name="notes"
           rules="max:500"
-          aria-autocomplete="none"
-          autocomplete="off"
+          :autocomplete="uuidv4()"
         ></TextareaElement>
       </GroupElement>
     </Vueform>

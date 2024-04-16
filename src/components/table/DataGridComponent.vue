@@ -41,12 +41,11 @@
         await nextTick()
         resizeColumns()
       }
-    },
-    { deep: true }
+    }
   )
 
   watch(
-    () => [[props.rowData]],
+    () => props.rowData,
     async () => {
       if (!isNil(gridApi.value)) {
         gridApi.value.setRowData(props.rowData)

@@ -38,8 +38,9 @@
   import { stampStore } from '@/stores/stampStore'
 
   import type { KeyIndexable } from '@/util/ts/key-accessor'
-  import { asCurrencyString } from '@/util/object-utils'
+  import { asCurrencyString, extractErrorMessage } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
+  import { Prompt } from '@/components/Prompt'
 
   const { t } = useI18n()
 
@@ -47,7 +48,6 @@
   const router = useRouter()
   const dataGridRef = ref()
   const columnControl = ref({
-    condition: true,
     grade: true,
     pricePaid: true
   })
@@ -144,6 +144,7 @@
       sort: 'asc',
       sortable: true
     }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
     new ColumnDefinition('activeCatalogueNumber.value', {
       cellClass: ['!pr-0.25'],
       cellRenderer: CatalogueValueCellRenderer,
@@ -152,7 +153,6 @@
       maxWidth: 150,
       sortable: true
     }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
     new ColumnDefinition(
       '',
       Object.assign(ColumnDefinition.getActionIconProperties(), {
@@ -207,12 +207,12 @@
     }
   )
 
-  const isSelectdWantlist = computed((): boolean => {
+  const isSelectedWantlist = computed((): boolean => {
     return getEditModel()?.wantList
   })
 
-  const getEditorWidth = () => {
-    return isSelectdWantlist.value ? '20rem' : '40rem'
+  const calculateEditorWidth = () => {
+    return isSelectedWantlist.value ? '20rem' : '40rem'
   }
 
   const setupStats = () => {
@@ -239,10 +239,7 @@
 
   const findWithQuery = async (theQuery: any) => {
     const results = await store.find(theQuery)
-    collection.list = [] //.splice(0, collection.list.length)
-    await nextTick()
-    collection.list = results
-    setItemList(collection.list)
+    updateLocalCollection(results)
     setupStats()
   }
 
@@ -277,8 +274,33 @@
     await fetchReportData()
   }
 
+  async function updateLocalCollection(list: Array<Stamp>, savedStamp?: Stamp) {
+    const currentList = list
+    collection.list = []
+    await nextTick()
+    currentList.forEach((stamp: Stamp) => {
+      if (savedStamp && stamp.id === savedStamp.id) {
+        collection.list.push(savedStamp)
+      } else {
+        collection.list.push(stamp)
+      }
+    })
+    setItemList(collection.list)
+  }
+
   const save = async (s: Stamp) => {
-    console.log('in saving', getEditModel(), s)
+    try {
+      const savedStamp = s.id > 0 ? await store.update(s) : await store.create(s)
+      await updateLocalCollection(collection.list, savedStamp)
+      hideEditor()
+      // @ts-ignore
+    } catch (err: Error) {
+      Prompt.alert({
+        message: t('messages.save-failure', { message: extractErrorMessage(err) }),
+        title: t('titles.save-failure'),
+        asHtml: true
+      })
+    }
   }
 
   const setupInitialQuery = async () => {
@@ -398,7 +420,7 @@
           leave="transition-opacity duration-150"
           leave-from="opacity-100"
           leave-to="opacity-0"
-          :class="`max-w-[${getEditorWidth()}] min-w-[${getEditorWidth()}] h-full flex flex-col ml-2`"
+          :class="`max-w-[${calculateEditorWidth()}] min-w-[${calculateEditorWidth()}] h-full flex flex-col ml-2`"
         >
           <StampEditor :model="getEditModel()" @cancel="hideEditor()" @save="save"></StampEditor>
         </TransitionRoot>

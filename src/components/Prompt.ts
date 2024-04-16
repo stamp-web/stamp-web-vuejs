@@ -5,6 +5,7 @@ export interface AlertOptions {
   message: string
   title?: string
   confirmButtonLabel?: string
+  asHtml?: boolean
 }
 export interface ConfirmationOptions extends AlertOptions {
   denyButtonLabel?: string
@@ -45,28 +46,32 @@ const customStylingForSweetAlerts = {
 
 class prompt {
   confirm(options: ConfirmationOptions): Promise<boolean> {
-    return Swal.fire({
-      text: options.message,
+    const params = {
       title: options.title || '',
       customClass: customStylingForSweetAlerts,
       width: '25em',
       showDenyButton: true,
       confirmButtonText: options.confirmButtonLabel || 'Yes',
       denyButtonText: options.denyButtonLabel || 'No'
-    }).then((result: SweetAlertResult) => {
+    }
+    // @ts-ignore
+    params[options.asHtml ? 'html' : 'text'] = options.message
+    return Swal.fire(params).then((result: SweetAlertResult) => {
       return Promise.resolve(result.isConfirmed)
     })
   }
 
   alert(options: AlertOptions): Promise<void> {
-    return Swal.fire({
-      text: options.message,
+    const params = {
       title: options.title || '',
       customClass: customStylingForSweetAlerts,
       width: '25em',
       showDenyButton: false,
-      confirmButtonText: options.confirmButtonLabel || 'Yes'
-    }).then(() => {
+      confirmButtonText: options.confirmButtonLabel || 'Ok'
+    }
+    // @ts-ignore
+    params[options.asHtml ? 'html' : 'text'] = options.message
+    return Swal.fire(params).then(() => {
       return Promise.resolve()
     })
   }

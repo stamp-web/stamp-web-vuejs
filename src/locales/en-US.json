@@ -100,7 +100,9 @@
     "delete-album": "Delete the album '{album}'?",
     "delete-country": "Delete the country '{country}'?",
     "delete-collection": "Delete the stamp collection '{collection}'?",
-    "delete-seller": "Delete the seller '{seller}'?"
+    "delete-seller": "Delete the seller '{seller}'?",
+    "delete-stamp": "Delete the stamp `{stamp}'?",
+    "save-failure": "An error occurred saving the object. The message is: <br/>'{message}'"
   },
   "models": {
     "albums": {
@@ -184,6 +186,7 @@
     "new-stamp": "New Stamp",
     "new-stamp-collection": "New Stamp Collection",
     "ownership-details": "Ownership Details",
+    "save-failure": "Save Error",
     "stamp-web-editor": "Stamp Web Editor"
   }
 }

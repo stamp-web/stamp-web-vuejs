@@ -25,6 +25,7 @@
     :search="false"
     label-prop="name"
     value-prop="value"
+    :can-deselect="false"
     :items="getGrades"
     :label="$props.label || ''"
     :rules="$props.rules || ''"

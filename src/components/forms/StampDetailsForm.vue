@@ -3,6 +3,7 @@
   import type { Stamp } from '@/models/Stamp'
   import CountrySelector from '@/components/inputs/CountrySelector.vue'
   import { useI18n } from 'vue-i18n'
+  import { uuidv4 } from '@/util/object-utils'
 
   const { t } = useI18n()
 
@@ -36,14 +37,14 @@
           name="rate"
           class="!text-xs"
           rules="required|max:25"
-          autocomplete="rate"
+          :autocomplete="uuidv4()"
         ></TextElement>
         <TextElement
           :label="t('form.description')"
           v-model="model"
           name="description"
           rules="required|max:250"
-          autocomplete="description"
+          :autocomplete="uuidv4()"
         ></TextElement>
       </GroupElement>
     </Vueform>

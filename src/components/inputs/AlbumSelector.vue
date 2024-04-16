@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { albumStore } from '@/stores/albumStore'
+  import { uuidv4 } from '@/util/object-utils'
 
   const albumsStore = albumStore()
 
@@ -27,9 +28,10 @@
     :filter-results="false"
     label-prop="name"
     value-prop="id"
+    :can-deselect="false"
     :items="getAlbums"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
-    :autocomplete="'cs-' + Math.random()"
+    :autocomplete="uuidv4()"
   ></select-element>
 </template>

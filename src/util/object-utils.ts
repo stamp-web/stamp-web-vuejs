@@ -5,6 +5,7 @@ import _has from 'lodash-es/has'
 import _isNumber from 'lodash-es/isNumber'
 import _set from 'lodash-es/set'
 import { CurrencyCode } from '@/models/CurrencyCode'
+import { AxiosError } from 'axios'
 
 export function isNil(obj: any): boolean {
   return obj === null || obj === undefined
@@ -75,6 +76,30 @@ export function determineShiftedValues(total: number, highestCount: number) {
     }
   }
   return values
+}
+
+/**
+ * Generates a v4 UUID
+ *
+ * Algorithm obtained from: https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
+ */
+export function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+export function extractErrorMessage(err: Error) {
+  let message = err.message
+  if (err instanceof AxiosError) {
+    const msg = err.response?.data
+    if (msg) {
+      message = msg
+    }
+  }
+  return message
 }
 
 export class EnumHelper {

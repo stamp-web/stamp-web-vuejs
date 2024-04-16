@@ -3,6 +3,7 @@
   import { useI18n } from 'vue-i18n'
   import CatalogueSelector from '@/components/inputs/CatalogueSelector.vue'
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
+  import { uuidv4 } from '@/util/object-utils'
 
   const { t } = useI18n()
   const form$ = ref()
@@ -38,7 +39,7 @@
           :columns="{ container: 12, label: 12, wrapper: 6 }"
           :label="t('form.number')"
           rules="required|max:25"
-          :autocomplete="'num-' + Math.random()"
+          :autocomplete="uuidv4()"
         ></TextElement>
         <TextElement
           v-model="model"
@@ -46,7 +47,7 @@
           :columns="{ container: 12, label: 12, wrapper: 4 }"
           :label="t('form.value')"
           rules=""
-          :autocomplete="'num-' + Math.random()"
+          :autocomplete="uuidv4()"
         ></TextElement>
         <CheckboxElement v-model="model" name="unknown">{{
           t('form.no-value-listed')

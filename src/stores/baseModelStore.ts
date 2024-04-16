@@ -25,8 +25,10 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
     findRandom(): Promise<T | undefined>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
-    postFind(model: T): T
     getCount(): number
+    postFind(model: T): T
+    postCreate(model: T): T
+    postUpdate(model: T): T
   }
 >
 
@@ -92,31 +94,56 @@ export function baseModelStore<T extends PersistedModel>(): any {
           return list.items[randomIndex]
         }
       },
-      postFind(model: T): T {
-        return model
-      },
       async create(model: T): Promise<T> {
         const m: T = await this.service.create(model)
         const list = this.items.list as T[]
-        list.push(m)
+        list.push(this.postCreate(m))
         this.items.total++
         return m
       },
 
       async update(model: T): Promise<T> {
-        const m: T = await this.service.update(model)
-        let index = this.items.list.findIndex((e) => {
+        let m: T = await this.service.update(model)
+        const index = this.items.list.findIndex((e) => {
           return e.id === m.id
         })
-        if (index < 0) {
-          index = this.items.list.length - 1
+        m = this.postUpdate(m)
+        if (index >= 0) {
+          ;(this.items.list as Array<T>)[index] = m
+        } else {
+          ;(this.items.list as Array<T>).push(m)
         }
-        const list = this.items.list as T[]
-        list.splice(index, 1, m as T)
         return m
       },
+
       getCount(): number {
         return this.items.total
+      },
+
+      postFind(model: T): T {
+        return model
+      },
+
+      /**
+       * Post Create hook for modifying the entity after creation.
+       * Base implementation simply returns the entity
+       *
+       * @param model
+       * @return the Modified model
+       */
+      postCreate(model: T): T {
+        return model
+      },
+
+      /**
+       * Post Update hook for modifying the entity after updating.
+       * Base implementation simply returns the entity
+       *
+       * @param model
+       * @return the Modified model
+       */
+      postUpdate(model: T): T {
+        return model
       }
     }
   })

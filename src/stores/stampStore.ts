@@ -10,6 +10,13 @@ import BaseModelService from '@/services/BaseModelService'
 
 type StampStoreType = PiniaStore<'stampStore', {}, {}, {}, BaseModelStore<Stamp>>
 
+export const setActiveCatalogueNumber = (s: Stamp): Stamp => {
+  const activeCN = s.catalogueNumbers?.find((cn: CatalogueNumber) => {
+    return cn.active
+  })
+  s.activeCatalogueNumber = activeCN
+  return s
+}
 export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
   'stampStore',
   {
@@ -33,26 +40,40 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
         this.items.loading = true
         const data: EntityList<Stamp> = await this.service.find(options)
         data.items.forEach((e) => {
-          const activeCN = e.catalogueNumbers.find((cn: CatalogueNumber) => {
-            return cn.active
-          })
-          e.activeCatalogueNumber = activeCN
+          e = setActiveCatalogueNumber(e)
           this.items.list.push(e)
           this.items.total = data.total
         })
         this.items.loading = false
         return this.items.list
       },
+
+      /**
+       * Will set the active catalogue number post creation of the stamp.
+       *
+       * @override
+       * @param stamp
+       */
+      postCreate(stamp: Stamp): Stamp {
+        return setActiveCatalogueNumber(stamp)
+      },
+
+      /**
+       * Will set the active catalogue number post update of the stamp.
+       *
+       * @override
+       * @param stamp
+       */
+      postUpdate(stamp: Stamp): Stamp {
+        return setActiveCatalogueNumber(stamp)
+      },
+
       /**
        * @override
        * @param stamp
        */
       postFind(stamp: Stamp): Stamp {
-        const activeCN = stamp.catalogueNumbers.find((cn: CatalogueNumber) => {
-          return cn.active
-        })
-        stamp.activeCatalogueNumber = activeCN
-        return stamp
+        return setActiveCatalogueNumber(stamp)
       }
     }
   },

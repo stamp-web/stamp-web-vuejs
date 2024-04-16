@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { CurrencyCode } from '@/models/CurrencyCode'
+  import { uuidv4 } from '@/util/object-utils'
 
   const $props = defineProps({
     label: String,
@@ -27,5 +28,6 @@
     :items="getCurrencies"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
+    :autocomplete="uuidv4()"
   ></select-element>
 </template>
