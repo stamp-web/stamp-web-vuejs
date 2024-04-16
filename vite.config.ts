@@ -93,6 +93,7 @@ export default ({ mode }) => {
       include: ['nouislider', 'wnumb', 'trix', 'axios', 'lodash']
     },
     server: {
+      // @ts-ignore
       https: config.https,
       // @ts-ignore
       proxy: config.proxy
