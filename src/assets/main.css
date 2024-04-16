@@ -12,7 +12,7 @@
   @apply flex flex-grow flex-col h-full m-0 border-2 border-[var(--vf-primary)];
 }
 .panel-form-form {
-  @apply flex-grow h-full mb-auto m-2;
+  @apply flex-grow h-full mb-auto m-2 overflow-y-auto;
 }
 .panel-form-buttonbar {
   @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;

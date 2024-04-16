@@ -68,13 +68,24 @@
     "wantlist-item": "Wantlist Item"
   },
   "form": {
+    "album": "Album",
+    "catalogue": "Catalogue",
     "catalogueType": "Catalogue Type",
+    "condition": "Condition",
+    "country": "Country",
     "description": "Description",
     "filter-placeholder": "Filter",
+    "grade": "Grade",
     "issue": "Issue Year",
     "name": "Name",
+    "notes": "Notes",
+    "no-space": "No space available",
+    "no-value-listed": "No value listed",
+    "number": "Number",
     "page-size": "Page Size",
-    "stampCollection": "Stamp Collection"
+    "rate": "Denomination",
+    "stampCollection": "Stamp Collection",
+    "value": "Value"
   },
   "grade": {
     "XF": "Extra-Fine (XF)",
@@ -158,16 +169,21 @@
     "stamp-collection": "Stamp Collection"
   },
   "titles": {
+    "active-catalogueNumber": "Active Catalogue Number",
+    "details": "Details",
     "edit-album": "Edit Album",
     "edit-catalogue": "Edit Catalogue",
     "edit-country": "Edit Country",
     "edit-seller": "Edit Seller",
+    "edit-stamp": "Edit Stamp",
     "edit-stamp-collection": "Edit Stamp Collection",
     "new-album": "New Album",
     "new-catalogue": "New Catalogue",
     "new-country": "New Country",
     "new-seller": "New Seller",
+    "new-stamp": "New Stamp",
     "new-stamp-collection": "New Stamp Collection",
+    "ownership-details": "Ownership Details",
     "stamp-web-editor": "Stamp Web Editor"
   }
 }

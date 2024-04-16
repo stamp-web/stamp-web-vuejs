@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
+  import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
+  import { TransitionRoot } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
 
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
@@ -16,12 +17,15 @@
   import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import DisplayStats from '@/components/display/DisplayStats.vue'
+  import StampReportValues from '@/components/display/StampReportValues.vue'
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
+  import editableModel from '@/components/behaviors/editableModel'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
   import pagingInfo from '@/components/behaviors/pageInfo'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
   import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
-  import StampReportValues from '@/components/display/StampReportValues.vue'
+
+  import StampEditor from '@/components/editors/StampEditor.vue'
 
   import type { Stamp } from '@/models/Stamp'
   import { ReportType } from '@/models/ReportType'
@@ -33,6 +37,7 @@
   import { countryStore } from '@/stores/countryStore'
   import { stampStore } from '@/stores/stampStore'
 
+  import type { KeyIndexable } from '@/util/ts/key-accessor'
   import { asCurrencyString } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
 
@@ -41,6 +46,11 @@
   const route = useRoute()
   const router = useRouter()
   const dataGridRef = ref()
+  const columnControl = ref({
+    condition: true,
+    grade: true,
+    pricePaid: true
+  })
   const store = stampStore()
   const countriesStore = countryStore()
   const prefStore = preferenceStore()
@@ -79,6 +89,8 @@
     getActivePage,
     getPageCount
   } = pagingInfo('stamps.pagingInfo')
+
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<Stamp>()
 
   const viewDef = ref({
     mode: 'list'
@@ -140,6 +152,7 @@
       maxWidth: 150,
       sortable: true
     }),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
     new ColumnDefinition(
       '',
       Object.assign(ColumnDefinition.getActionIconProperties(), {
@@ -184,6 +197,23 @@
       maxWidth: 150
     })
   ]
+
+  watch(
+    () => [isEditorShown()],
+    () => {
+      Object.keys(columnControl.value).forEach((key) => {
+        ;(columnControl.value as KeyIndexable)[key] = !isEditorShown()
+      })
+    }
+  )
+
+  const isSelectdWantlist = computed((): boolean => {
+    return getEditModel()?.wantList
+  })
+
+  const getEditorWidth = () => {
+    return isSelectdWantlist.value ? '20rem' : '40rem'
+  }
 
   const setupStats = () => {
     collection.total = store.getCount()
@@ -247,9 +277,9 @@
     await fetchReportData()
   }
 
-  onUnmounted(() => {
-    //resizeObserver.disconnect()
-  })
+  const save = async (s: Stamp) => {
+    console.log('in saving', getEditModel(), s)
+  }
 
   const setupInitialQuery = async () => {
     if (_isEmpty(route.query)) {
@@ -266,6 +296,10 @@
     }
     query.value.$orderby = OdataUtil.createSort('number', 'asc')
   }
+
+  onUnmounted(() => {
+    //resizeObserver.disconnect()
+  })
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
@@ -321,40 +355,54 @@
           :page-size="getPageSize()"
         ></PagingSizeInput>
       </div>
-      <div class="h-full w-full" v-if="viewDef.mode === 'list'">
-        <DataGridComponent
-          ref="dataGridRef"
-          :columnDefs="columnDefs"
-          :multi-select="true"
-          :rowData="collection.list"
-          :selected-data="collection.selected"
-          @selected="setSelected"
-          @deselected="setDeselected"
-          @sortChanged="onSortChanged"
-        >
-        </DataGridComponent>
-      </div>
-      <div
-        class="flex-grow flex flex-grow-0 flex-shrink-0 flex-row flex-auto overflow-y-auto max-h-[calc(100%_-_65px)] min-h-[calc(100%_-_65px)] border border-gray-300"
-        v-if="viewDef.mode === 'card'"
-        ref="cardLayout"
-      >
-        <div class="flex flex-wrap flex-grow h-full flex-row overflow-y-auto pt-1 pl-1">
-          <template v-for="stamp in collection.list" :key="stamp.id">
-            <stamp-card
-              :class="`stampcard m-1 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]
-          brightness-100 hover:brightness-95 ${getSelectedCardClasses(stamp)}`"
-              :stamp="stamp"
-              :pref-paths="prefPaths"
-              :is-selected="isSelected(stamp)"
-              path="stampOwnerships[0].img"
-              @selected="setSelected"
-              @deselected="setDeselected"
-            ></stamp-card>
-          </template>
+      <div class="h-full w-full flex overflow-hidden">
+        <div class="h-full w-full" v-if="viewDef.mode === 'list'">
+          <DataGridComponent
+            ref="dataGridRef"
+            :columnDefs="columnDefs"
+            :columnVisibility="columnControl"
+            :multi-select="true"
+            :rowData="collection.list"
+            :selected-data="collection.selected"
+            @selected="setSelected"
+            @deselected="setDeselected"
+            @sortChanged="onSortChanged"
+          >
+          </DataGridComponent>
         </div>
+        <div
+          class="flex-grow flex flex-grow-0 flex-shrink-0 flex-row flex-auto w-full overflow-y-auto border border-gray-300"
+          v-if="viewDef.mode === 'card'"
+          ref="cardLayout"
+        >
+          <div class="flex flex-wrap flex-grow h-full flex-row overflow-y-auto pt-1 pl-1">
+            <template v-for="stamp in collection.list" :key="stamp.id">
+              <stamp-card
+                :class="`stampcard m-1 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]
+          brightness-100 hover:brightness-95 ${getSelectedCardClasses(stamp)}`"
+                :stamp="stamp"
+                :pref-paths="prefPaths"
+                :is-selected="isSelected(stamp)"
+                path="stampOwnerships[0].img"
+                @selected="setSelected"
+                @deselected="setDeselected"
+              ></stamp-card>
+            </template>
+          </div>
+        </div>
+        <TransitionRoot
+          :show="isEditorShown()"
+          enter="transition-opacity duration-75"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="transition-opacity duration-150"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+          :class="`max-w-[${getEditorWidth()}] min-w-[${getEditorWidth()}] h-full flex flex-col ml-2`"
+        >
+          <StampEditor :model="getEditModel()" @cancel="hideEditor()" @save="save"></StampEditor>
+        </TransitionRoot>
       </div>
-
       <div class="flex mb-1 mt-1 h-[22.5px]" ref="footer">
         <paging-component
           class="mr-auto"

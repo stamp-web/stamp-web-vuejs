@@ -2,17 +2,17 @@ import { ref } from 'vue'
 import type { PersistedModel } from '@/models/entityModels'
 import cloneDeep from 'lodash-es/cloneDeep'
 
-const editableModel = () => {
+const editableModel = <T extends PersistedModel>() => {
   const editorShown = ref(false)
-  const editingModel = ref<PersistedModel>()
+  const editingModel = ref<T>()
 
-  const setEditModel = (model: PersistedModel) => {
+  const setEditModel = (model: T) => {
     editingModel.value = cloneDeep(model)
     showEditor()
   }
 
-  const getEditModel = () => {
-    return editingModel.value
+  const getEditModel = (): T => {
+    return editingModel.value as T
   }
 
   const hideEditor = () => {

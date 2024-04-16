@@ -9,6 +9,7 @@
   import type { PersistedModel } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
+  import type { KeyIndexable } from '@/util/ts/key-accessor'
 
   const gridApi = ref()
   const gridEl = ref()
@@ -18,12 +19,31 @@
     rowData: Array<T>,
     columnDefs: Array<ColumnDefinition>,
     multiSelect: Boolean,
+    columnVisibility: {},
     selectedData: Array<T>
   })
   const emit = defineEmits(['selected', 'deselected', 'sortChanged'])
 
   const columns = Object.freeze(props.columnDefs)
   const allowSelectionEvent = ref(true)
+
+  watch(
+    () => [[props.columnVisibility]],
+    async () => {
+      if (!isNil(gridApi.value)) {
+        const keys = Object.keys(props.columnVisibility as KeyIndexable)
+        keys.forEach((key) => {
+          gridApi.value.columnModel.setColumnVisible(
+            key,
+            (props.columnVisibility as KeyIndexable)[key]
+          )
+        })
+        await nextTick()
+        resizeColumns()
+      }
+    },
+    { deep: true }
+  )
 
   watch(
     () => [[props.rowData]],

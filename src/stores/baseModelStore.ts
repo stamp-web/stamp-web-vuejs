@@ -2,19 +2,22 @@ import type { PiniaStore } from 'pinia-generic'
 import { defineGenericStore } from 'pinia-generic'
 import type { PersistedModel } from '@/models/entityModels'
 import type BaseModelService from '@/services/BaseModelService'
-import { nextTick, reactive } from 'vue'
+import { reactive } from 'vue'
 import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
 import _isEmpty from 'lodash-es/isEmpty'
+import _isEqual from 'lodash-es/isEqual'
 
 export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   'entityModelStore',
   {
     items: { list: Array<T>; total: number; loading: boolean }
     inflightPromise: any
+    lastOptions: {}
   },
   {
     service(): BaseModelService<T>
+    baseSearchOptions(): {}
   },
   {
     remove(model: T): Promise<void>
@@ -31,11 +34,15 @@ export function baseModelStore<T extends PersistedModel>(): any {
   return defineGenericStore<BaseModelStore<T>>({
     state: {
       items: reactive({ list: [] as Array<T>, total: 0, loading: false }),
-      inflightPromise: undefined
+      inflightPromise: undefined,
+      lastOptions: {}
     },
     getters: {
       service(): BaseModelService<T> {
         throw new Error('Must be implemented')
+      },
+      baseSearchOptions() {
+        return {}
       }
     },
     actions: {
@@ -50,15 +57,21 @@ export function baseModelStore<T extends PersistedModel>(): any {
           this.items.total--
         }
       },
-      async find(options: {} = {}): Promise<T[]> {
+
+      // @ts-ignore
+      async find(options: {} = this.baseSearchOptions): Promise<T[]> {
         // attempt caching for inflight promises.  This will have to be cancelled
         // for finds that have options
-        if (this.items.loading && this.inflightPromise && _isEmpty(options)) {
+        if (
+          this.items.loading &&
+          this.inflightPromise &&
+          (_isEmpty(options) || _isEqual(options, this.lastOptions))
+        ) {
           await this.inflightPromise
-          await nextTick()
         }
-        if (this.items.list.length === 0) {
+        if (this.items.list.length === 0 || !_isEqual(options, this.lastOptions)) {
           this.items.loading = true
+          this.lastOptions = options
           this.inflightPromise = this.service.find(options)
           const data: EntityList<T> = await this.inflightPromise
           this.items.list.splice(0, this.items.list.length)
