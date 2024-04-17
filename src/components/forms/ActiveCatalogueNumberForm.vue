@@ -4,11 +4,12 @@
   import CatalogueSelector from '@/components/inputs/CatalogueSelector.vue'
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
   import { uuidv4 } from '@/util/object-utils'
+  import type { CatalogueNumber } from '@/models/CatalogueNumber'
 
   const { t } = useI18n()
   const form$ = ref()
 
-  const model = defineModel()
+  const model = defineModel<CatalogueNumber>()
 
   const $emit = defineEmits(['validation-changed'])
   watch(

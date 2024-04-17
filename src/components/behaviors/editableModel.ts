@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { PersistedModel } from '@/models/entityModels'
+// eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
 import cloneDeep from 'lodash-es/cloneDeep'
 
 const editableModel = <T extends PersistedModel>() => {

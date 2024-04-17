@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { ref, onMounted, computed, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
+  // eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
   import cloneDeep from 'lodash-es/cloneDeep'
 
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'

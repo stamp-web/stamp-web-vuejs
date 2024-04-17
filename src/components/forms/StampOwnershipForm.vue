@@ -6,12 +6,13 @@
   import GradeSelector from '@/components/inputs/GradeSelector.vue'
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
   import { uuidv4 } from '@/util/object-utils'
+  import type { Ownership } from '@/models/Owernship'
 
   const { t } = useI18n()
 
   const form$ = ref()
 
-  const model = defineModel()
+  const model = defineModel<Ownership>()
 
   const $emit = defineEmits(['validation-changed'])
 
