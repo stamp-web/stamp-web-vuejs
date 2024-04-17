@@ -13,7 +13,9 @@
     // @ts-ignore
     Object.keys(Grade).forEach((key) => {
       const val = parseInt(key)
-      grades.push({ value: val, name: GradeHelper.toString(val) })
+      if (!Number.isNaN(val)) {
+        grades.push({ value: val, name: GradeHelper.toString(val) })
+      }
     })
     return Promise.resolve(grades)
   }

@@ -14,7 +14,9 @@
     // @ts-ignore
     Object.keys(Condition).forEach((key) => {
       const val = parseInt(key)
-      conditions.push({ value: val, name: ConditionHelper.toString(val) })
+      if (!Number.isNaN(val)) {
+        conditions.push({ value: val, name: ConditionHelper.toString(val) })
+      }
     })
     return Promise.resolve(conditions)
   }
