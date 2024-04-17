@@ -18,7 +18,7 @@
   @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;
 }
 .panel-form-title {
-  @apply bg-gray-300 p-2 text-gray-900 mb-5 h-12 flex-nowrap truncate;
+  @apply bg-[var(--vf-primary)] p-2 text-[var(--vf-color-on-primary)] text-sm mb-5 h-11 flex-nowrap truncate;
 }
 
 @tailwind utilities;
