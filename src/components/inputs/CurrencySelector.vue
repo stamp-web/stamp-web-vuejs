@@ -26,6 +26,7 @@
     label-prop="name"
     value-prop="value"
     :items="getCurrencies"
+    :append-to-body="true"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     :autocomplete="uuidv4()"

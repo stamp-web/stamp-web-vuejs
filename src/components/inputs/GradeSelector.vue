@@ -28,6 +28,7 @@
     label-prop="name"
     value-prop="value"
     :can-deselect="false"
+    :append-to-body="true"
     :items="getGrades"
     :label="$props.label || ''"
     :rules="$props.rules || ''"

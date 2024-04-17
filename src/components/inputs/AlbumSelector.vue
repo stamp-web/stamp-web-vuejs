@@ -29,6 +29,7 @@
     label-prop="name"
     value-prop="id"
     :can-deselect="false"
+    :append-to-body="true"
     :items="getAlbums"
     :label="$props.label || ''"
     :rules="$props.rules || ''"

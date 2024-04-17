@@ -28,6 +28,7 @@
     :filter-results="false"
     label-prop="name"
     value-prop="id"
+    :append-to-body="true"
     :can-deselect="false"
     :items="getCountries"
     :label="$props.label || ''"

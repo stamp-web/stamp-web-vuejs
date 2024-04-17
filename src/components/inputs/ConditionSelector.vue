@@ -29,6 +29,7 @@
     label-prop="name"
     value-prop="value"
     :can-deselect="false"
+    :append-to-body="true"
     :items="getConditions"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
