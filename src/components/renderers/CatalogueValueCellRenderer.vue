@@ -4,7 +4,7 @@
   import type { Stamp } from '@/models/Stamp'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import type { Catalogue } from '@/models/entityModels'
-  import { asCurrencyString } from '@/util/object-utils'
+  import { CurrencyTools } from '@/models/CurrencyCode'
 
   const store = catalogueStore()
   const catalogues = ref<Array<Catalogue>>()
@@ -25,7 +25,7 @@
       })
       if (catalogue) {
         const currency = catalogue.code
-        return asCurrencyString(cn.value, currency)
+        return CurrencyTools.asCurrencyString(cn.value, currency)
       }
     }
 

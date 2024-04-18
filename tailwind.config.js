@@ -2,17 +2,22 @@
 // eslint-disable-next-line no-undef
 module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,vue,tsx}",
+    './index.html',
+    './src/**/*.{js,ts,vue,tsx}',
     './vueform.config.js',
     './node_modules/@vueform/vueform/themes/tailwind/**/*.vue',
-    './node_modules/@vueform/vueform/themes/tailwind/**/*.js',
+    './node_modules/@vueform/vueform/themes/tailwind/**/*.js'
   ],
   theme: {
-    extend: {},
+    extend: {
+      minWidth: {
+        160: '40rem',
+        192: '48rem'
+      },
+      maxWidth: {
+        160: '40rem'
+      }
+    }
   },
-  plugins: [
-    require('@vueform/vueform/tailwind')
-  ],
+  plugins: [require('@vueform/vueform/tailwind')]
 }
-

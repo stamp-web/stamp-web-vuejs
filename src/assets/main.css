@@ -18,7 +18,7 @@
   @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;
 }
 .panel-form-title {
-  @apply bg-[var(--vf-primary)] p-2 text-[var(--vf-color-on-primary)] text-sm mb-5 h-11 flex-nowrap truncate;
+  @apply bg-[var(--vf-primary)] p-2 text-[var(--vf-color-on-primary)] text-sm mb-3 h-11 flex-nowrap truncate;
 }
 
 @tailwind utilities;
@@ -41,4 +41,37 @@ body div[data-v-app=""] {
 /* force the cancel button of the sweetalert to gray from red */
 body div:where(.swal2-container) button:where(.swal2-styled).swal2-deny {
   background-color: #ccc;
+}
+
+/**
+ * flatpickr overrides for the vueform DateElement
+ */
+#app .flatpickr-calendar {
+  .flatpickr-current-month {
+    font-size: 12px;
+  }
+
+  .flatpickr-weekdays {
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  .flatpickr-days {
+    max-width: 14rem;
+    width: 14rem;
+    font-size: 12px;
+
+    .dayContainer {
+      max-width: 14rem;
+      min-width: 14rem;
+      width: 14rem;
+
+      .flatpickr-day {
+        max-height: 2rem;
+        height: 2rem;
+        line-height: 2rem;
+      }
+    }
+  }
+
 }

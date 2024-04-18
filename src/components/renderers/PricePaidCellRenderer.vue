@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue'
-  import { asCurrencyString, resolvePath } from '@/util/object-utils'
+  import { resolvePath } from '@/util/object-utils'
+  import { CurrencyTools } from '@/models/CurrencyCode'
   import type { Ownership } from '@/models/Owernship'
   import { CurrencyCode } from '@/models/CurrencyCode'
 
@@ -13,7 +14,7 @@
     if (ownership) {
       const price = ownership.pricePaid ?? 0.0
       const currency = ownership.code ?? CurrencyCode.USD
-      return asCurrencyString(price, currency)
+      return CurrencyTools.asCurrencyString(price, currency)
     }
     return ''
   })

@@ -6,12 +6,11 @@ import {
   resolvePath,
   EnumHelper,
   determineShiftedValues,
-  asCurrencyString,
   extractErrorMessage,
-  uuidv4
+  uuidv4,
+  fixFraction
 } from '@/util/object-utils'
 import { Defects } from '@/models/Defects'
-import { CurrencyCode } from '@/models/CurrencyCode'
 
 describe('object-utils', () => {
   describe('isNil', () => {
@@ -130,28 +129,6 @@ describe('object-utils', () => {
     })
   })
 
-  describe('asCurrencyString', () => {
-    it('USD simple value', () => {
-      const v = asCurrencyString(43.52, CurrencyCode.USD)
-      expect(v).toBe('$43.52')
-    })
-
-    it('USD larger value', () => {
-      const v = asCurrencyString(25043.52, CurrencyCode.USD)
-      expect(v).toBe('$25,043.52')
-    })
-
-    it('EUR simple value', () => {
-      const v = asCurrencyString(53.0, CurrencyCode.EUR)
-      expect(v).toBe('€53.00')
-    })
-
-    it('JPY simple value', () => {
-      const v = asCurrencyString(100542, CurrencyCode.JPY)
-      expect(v).toBe('¥100,542')
-    })
-  })
-
   describe('determineShiftedValues', () => {
     it('single value', () => {
       const v = determineShiftedValues(32, 6)
@@ -237,6 +214,27 @@ describe('object-utils', () => {
       const uuid = uuidv4()
       expect(uuid).toBeDefined()
       expect(uuid.length).toBe(36)
+    })
+  })
+
+  describe('fixFraction', () => {
+    it('no fractions', () => {
+      expect(fixFraction('452')).toBe(452.0)
+    })
+    it('not a number', () => {
+      expect(fixFraction('foo')).toBe(0)
+    })
+    it('single decimal place', () => {
+      expect(fixFraction('23.5')).toBe(23.5)
+    })
+    it('two decimal places', () => {
+      expect(fixFraction('6700.53')).toBe(6700.53)
+    })
+    it('four decimal places', () => {
+      expect(fixFraction('2345.4501')).toBe(2345.45)
+    })
+    it('many decimal values truncated to four places', () => {
+      expect(fixFraction('3.1415978', 4)).toBe(3.1415)
     })
   })
 })

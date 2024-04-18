@@ -1,16 +1,14 @@
 <script lang="ts" setup>
-  import { ref, watch } from 'vue'
+  import { nextTick, onMounted, ref, watch } from 'vue'
   import type { Stamp } from '@/models/Stamp'
   import CountrySelector from '@/components/inputs/CountrySelector.vue'
   import { useI18n } from 'vue-i18n'
-  import { uuidv4 } from '@/util/object-utils'
 
   const { t } = useI18n()
 
   const form$ = ref()
-
+  const rateEl = ref()
   const model = defineModel<Stamp>()
-
   const $emit = defineEmits(['validation-changed'])
 
   watch(
@@ -19,11 +17,18 @@
       $emit('validation-changed', !form$.value?.invalid)
     }
   )
+
+  onMounted(async () => {
+    if (model.value && model.value.id < 1) {
+      await nextTick()
+      await rateEl.value.focus()
+    }
+  })
 </script>
 <template>
   <div class="border-gray-300 p-3 border-solid border rounded">
-    <h3 class="text-[var(--vf-primary)]">{{ t('titles.details') }}</h3>
-    <Vueform v-model="model" ref="form$" sync size="sm">
+    <h3 class="text-[var(--vf-primary)] mb-1 font-bold">{{ t('titles.details') }}</h3>
+    <Vueform v-model="model" ref="form$" sync size="sm" :display-errors="false">
       <GroupElement name="group-stamp-details">
         <CountrySelector
           v-model="model"
@@ -35,16 +40,16 @@
           :label="t('form.rate')"
           v-model="model"
           name="rate"
-          class="!text-xs"
+          ref="rateEl"
           rules="required|max:25"
-          :autocomplete="uuidv4()"
+          autocomplete="off"
         ></TextElement>
         <TextElement
           :label="t('form.description')"
           v-model="model"
           name="description"
           rules="required|max:250"
-          :autocomplete="uuidv4()"
+          autocomplete="off"
         ></TextElement>
       </GroupElement>
     </Vueform>

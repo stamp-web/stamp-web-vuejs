@@ -1,8 +1,6 @@
 <script lang="ts" setup>
   import { ref, onMounted, computed, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
-  // eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
-  import cloneDeep from 'lodash-es/cloneDeep'
 
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
@@ -13,6 +11,7 @@
   import type { Stamp } from '@/models/Stamp'
   import type { Ownership } from '@/models/Owernship'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
+  import { fixFraction } from '@/util/object-utils'
 
   const { t } = useI18n()
 
@@ -24,13 +23,12 @@
   const stampModel = ref<Stamp>()
   const activeCatalogueNumber = ref<CatalogueNumber>()
   const stampOwnership = ref<Ownership>()
-
+  const wantlist = ref<boolean>()
   const validation = ref({
     stamp: true,
     cn: true,
     owner: true
   })
-  const wantlist = ref<boolean>()
 
   defineEmits(['cancel', 'save'])
 
@@ -44,11 +42,13 @@
   const title = computed(() => {
     return t($props.model && $props.model.id >= 0 ? 'titles.edit-stamp' : 'titles.new-stamp')
   })
+
   const validForm = computed(() => {
     const result =
       validation.value.stamp &&
       validation.value.cn &&
-      ((stampOwnership.value && validation.value.owner) || !stampOwnership.value)
+      ((stampOwnership.value && validation.value.owner) ||
+        (wantlist.value && !stampOwnership.value))
     return result
   })
 
@@ -64,14 +64,24 @@
     m.activeCatalogueNumber = Object.assign(m.activeCatalogueNumber, activeCatalogueNumber.value)
     if (m.stampOwnerships?.length > 0) {
       m.stampOwnerships[0] = Object.assign(m.stampOwnerships[0], stampOwnership.value)
+      // Fix any data members that are not in the pure data formats (despite editor configurations)
+      if (m.stampOwnerships[0].pricePaid && typeof m.stampOwnerships[0].pricePaid === 'string') {
+        m.stampOwnerships[0].pricePaid = fixFraction(m.stampOwnerships[0].pricePaid)
+      }
+    }
+    // Fix any data members that are not in the pure data formats (despite editor configurations)
+    if (typeof m.activeCatalogueNumber.value === 'string') {
+      m.activeCatalogueNumber.value = fixFraction(m.activeCatalogueNumber.value)
     }
     return m
   }
 
   const setRefs = () => {
-    stampModel.value = cloneDeep($props.model)
+    stampModel.value = $props.model
     activeCatalogueNumber.value = $props.model.activeCatalogueNumber
-    stampOwnership.value = $props.model.stampOwnerships[0]
+    if ($props.model.stampOwnerships?.length > 0) {
+      stampOwnership.value = $props.model.stampOwnerships[0]
+    }
     wantlist.value = stampModel.value?.wantList
   }
 
@@ -102,7 +112,7 @@
         ></StampOwnershipForm>
       </div>
     </div>
-    <div class="panel-form-buttonbar mt-auto">
+    <div class="panel-form-buttonbar mt-auto pt-2">
       <PrimaryButton
         class="mr-2 text-sm"
         :disabled="!validForm"

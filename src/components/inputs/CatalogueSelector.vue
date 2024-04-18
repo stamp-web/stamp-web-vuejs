@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { catalogueStore } from '@/stores/catalogueStore'
-  import { uuidv4 } from '@/util/object-utils'
 
   const cataloguesStore = catalogueStore()
 
@@ -33,6 +32,6 @@
     :items="getCatalogues"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
-    :autocomplete="uuidv4()"
+    autocomplete=""
   ></select-element>
 </template>

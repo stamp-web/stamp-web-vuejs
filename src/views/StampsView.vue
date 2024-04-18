@@ -30,6 +30,7 @@
   import type { Stamp } from '@/models/Stamp'
   import { ReportType } from '@/models/ReportType'
   import { ReportResult } from '@/models/ReportResult'
+  import { CurrencyTools } from '@/models/CurrencyCode'
 
   import reportService from '@/services/ReportService'
 
@@ -38,7 +39,7 @@
   import { stampStore } from '@/stores/stampStore'
 
   import type { KeyIndexable } from '@/util/ts/key-accessor'
-  import { asCurrencyString, extractErrorMessage } from '@/util/object-utils'
+  import { extractErrorMessage } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
   import { Prompt } from '@/components/Prompt'
 
@@ -212,7 +213,7 @@
   })
 
   const calculateEditorWidth = () => {
-    return isSelectedWantlist.value ? '20rem' : '40rem'
+    return isSelectedWantlist.value ? 'min-w-80 max-w-80' : 'min-w-160 max-w-160'
   }
 
   const setupStats = () => {
@@ -266,7 +267,7 @@
       reporting.value.reportType,
       query.value
     )
-    reporting.value.reportValue = asCurrencyString(result.value, result.code)
+    reporting.value.reportValue = CurrencyTools.asCurrencyString(result.value, result.code)
   }
 
   const changeReportType = async (value: string) => {
@@ -420,7 +421,7 @@
           leave="transition-opacity duration-150"
           leave-from="opacity-100"
           leave-to="opacity-0"
-          :class="`max-w-[${calculateEditorWidth()}] min-w-[${calculateEditorWidth()}] h-full flex flex-col ml-2`"
+          :class="`${calculateEditorWidth()} h-full flex flex-col ml-2`"
         >
           <StampEditor :model="getEditModel()" @cancel="hideEditor()" @save="save"></StampEditor>
         </TransitionRoot>

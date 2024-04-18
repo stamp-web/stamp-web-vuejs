@@ -4,7 +4,6 @@ import _isArrayLikeObject from 'lodash-es/isArrayLikeObject'
 import _has from 'lodash-es/has'
 import _isNumber from 'lodash-es/isNumber'
 import _set from 'lodash-es/set'
-import { CurrencyCode } from '@/models/CurrencyCode'
 import { AxiosError } from 'axios'
 
 export function isNil(obj: any): boolean {
@@ -51,20 +50,6 @@ export function augmentModel(model: Object, m: Object): void {
   })
 }
 
-export function asCurrencyString(value: number, currency: string): string {
-  const minFractions = currency === CurrencyCode.JPY ? 0 : 2
-  let text = ''
-  if (currency) {
-    text = value.toLocaleString('en', {
-      style: 'currency',
-      currencyDisplay: 'symbol',
-      currency: currency,
-      minimumFractionDigits: minFractions
-    })
-  }
-  return text
-}
-
 export function determineShiftedValues(total: number, highestCount: number) {
   const values = []
   let runningTotal = total
@@ -100,6 +85,14 @@ export function extractErrorMessage(err: Error) {
     }
   }
   return message
+}
+
+export function fixFraction(num: string, digits: number = 2): Number {
+  const n = parseFloat(num)
+  if (Number.isNaN(n)) {
+    return 0
+  }
+  return Math.floor(n * Math.pow(10, digits)) / Math.pow(10, digits)
 }
 
 export class EnumHelper {

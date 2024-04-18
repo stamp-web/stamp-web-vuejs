@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { countryStore } from '@/stores/countryStore'
-  import { uuidv4 } from '@/util/object-utils'
 
   const countriesStore = countryStore()
 
@@ -33,6 +32,6 @@
     :items="getCountries"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
-    :autocomplete="uuidv4()"
+    autocomplete="off"
   ></select-element>
 </template>
