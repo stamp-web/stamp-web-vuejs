@@ -27,7 +27,7 @@
 
   import StampEditor from '@/components/editors/StampEditor.vue'
 
-  import type { Stamp } from '@/models/Stamp'
+  import { type Stamp, StampModelHelper } from '@/models/Stamp'
   import { ReportType } from '@/models/ReportType'
   import { ReportResult } from '@/models/ReportResult'
   import { CurrencyTools } from '@/models/CurrencyCode'
@@ -278,15 +278,27 @@
   async function updateLocalCollection(list: Array<Stamp>, savedStamp?: Stamp) {
     const currentList = list
     collection.list = []
-    await nextTick()
+    let found = false
+
     currentList.forEach((stamp: Stamp) => {
       if (savedStamp && stamp.id === savedStamp.id) {
         collection.list.push(savedStamp)
+        found = true
       } else {
         collection.list.push(stamp)
       }
     })
+    if (savedStamp && !found) {
+      collection.list.unshift(savedStamp)
+    }
+    await nextTick()
     setItemList(collection.list)
+  }
+
+  const createStamp = async (wantList: boolean = false) => {
+    const stampPrefs = await prefStore.findByCategory('stamps')
+    const model = StampModelHelper.newInstance(wantList, stampPrefs)
+    setEditModel(model)
   }
 
   const save = async (s: Stamp) => {
@@ -365,11 +377,21 @@
           :disabled="areAllSelected()"
         ></SecondaryButton>
         <SecondaryButton
-          class="px-0.5"
+          class="mr-1 px-0.5"
           icon="sw-icon-clear-all"
           :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="selectAll(false)"
           :disabled="areNoneSelected()"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="mr-1 px-0.5"
+          icon="sw-icon-plus"
+          @click="createStamp()"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="px-0.5"
+          icon="sw-icon-plus"
+          @click="createStamp(true)"
         ></SecondaryButton>
         <PagingSizeInput
           class="ml-auto mr-2 scale-90 hidden md:block"

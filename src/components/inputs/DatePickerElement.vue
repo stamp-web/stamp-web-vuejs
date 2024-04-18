@@ -1,11 +1,15 @@
 <script lang="ts" setup>
   import { ref, nextTick, onBeforeUnmount, onMounted } from 'vue'
-  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
 
   const $props = defineProps({
     name: String,
     label: String,
-    columns: { type: Object, default: { default: 5 } }
+    columns: {
+      type: Object,
+      default: () => {
+        return { default: 5 }
+      }
+    }
   })
   const model = defineModel()
   const $datePicker = ref()
@@ -28,20 +32,20 @@
   }
 
   onBeforeUnmount(() => {
-    $datePicker?.value.$el
+    $datePicker?.value?.$el
       ?.querySelector('.form-bg-addon')
       ?.removeEventListener('click', handleClick)
   })
 
   onMounted(async () => {
     await nextTick()
-    $datePicker?.value.$el?.querySelector('.form-bg-addon')?.addEventListener('click', handleClick)
+    $datePicker?.value?.$el?.querySelector('.form-bg-addon')?.addEventListener('click', handleClick)
   })
 </script>
 <template>
   <DateElement
-    :label="$props.label"
-    :name="$props.name"
+    :label="$props.label || ''"
+    :name="$props.name || ''"
     ref="$datePicker"
     size="sm"
     v-model="model"
@@ -56,6 +60,6 @@
         calendarContainer: 'max-w-56 w-56'
       }
     }"
-    :columns="$props.columns"
+    :columns="$props.columns || ''"
   ></DateElement>
 </template>

@@ -21,7 +21,7 @@
   onMounted(() => {
     if ($props.models) {
       $props.models.forEach((model) => {
-        buttonModels.value.push(Object.assign(new ButtonGroupModel(), { ...model }))
+        buttonModels.value.push(model)
       })
     }
   })

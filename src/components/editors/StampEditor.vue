@@ -9,7 +9,7 @@
   import StampOwnershipForm from '@/components/forms/StampOwnershipForm.vue'
 
   import type { Stamp } from '@/models/Stamp'
-  import type { Ownership } from '@/models/Owernship'
+  import { type Ownership } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { fixFraction } from '@/util/object-utils'
 

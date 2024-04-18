@@ -2,8 +2,9 @@
   import { CurrencyCode } from '@/models/CurrencyCode'
 
   const $props = defineProps({
+    appendToBody: Boolean,
     label: String,
-    search: { type: Boolean, default: true },
+    search: { type: Boolean, default: false },
     name: { type: String, default: 'code' },
     rules: String
   })
@@ -25,7 +26,7 @@
     label-prop="name"
     value-prop="value"
     :items="getCurrencies"
-    :append-to-body="true"
+    :append-to-body="$props.appendToBody || true"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     autocomplete="off"

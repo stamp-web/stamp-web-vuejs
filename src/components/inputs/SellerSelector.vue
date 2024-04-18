@@ -23,8 +23,8 @@
   <select-element
     :name="$props.name || 'sellerRef'"
     :native="false"
-    :search="$props.search || false"
-    :filter-results="false"
+    :search="$props.search || true"
+    :filter-results="true"
     label-prop="name"
     value-prop="id"
     :can-deselect="false"

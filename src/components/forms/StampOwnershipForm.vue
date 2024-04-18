@@ -1,19 +1,18 @@
 <script lang="ts" setup>
   import { useI18n } from 'vue-i18n'
-  import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue'
+  import { ref, watch } from 'vue'
   import AlbumSelector from '@/components/inputs/AlbumSelector.vue'
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
   import GradeSelector from '@/components/inputs/GradeSelector.vue'
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
-  import type { Ownership } from '@/models/Owernship'
   import SellerSelector from '@/components/inputs/SellerSelector.vue'
-  import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
   import DatePickerElement from '@/components/inputs/DatePickerElement.vue'
+  import { type Ownership } from '@/models/Ownership'
+  import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
 
   const { t } = useI18n()
 
   const form$ = ref()
-  const datePicker$ = ref()
   const state = ref({
     currencyRegex: `regex:${CurrencyTools.formatRegex(CurrencyCode.USD, false)}`
   })

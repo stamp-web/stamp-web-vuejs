@@ -17,12 +17,7 @@
    * Returns the computed country name from the given id of the country for the cell.
    */
   const countryName = computed(() => {
-    const value =
-      props.countryRef && props.countryRef > 0
-        ? props.countryRef
-        : props.params
-          ? props.params.value
-          : -1
+    const value = props.params ? props.params.value : -1
     return findCountryName(value)
   })
 
