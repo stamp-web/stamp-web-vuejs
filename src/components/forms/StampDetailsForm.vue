@@ -1,20 +1,39 @@
 <script lang="ts" setup>
   import { nextTick, onMounted, ref, watch } from 'vue'
   import type { Stamp } from '@/models/Stamp'
+  import type { Country } from '@/models/entityModels'
   import CountrySelector from '@/components/inputs/CountrySelector.vue'
   import { useI18n } from 'vue-i18n'
+  import { countryStore } from '@/stores/countryStore'
 
   const { t } = useI18n()
 
   const form$ = ref()
   const rateEl = ref()
+  const countries = countryStore()
   const model = defineModel<Stamp>()
-  const $emit = defineEmits(['validation-changed'])
+  const $emit = defineEmits(['validation-changed', 'country-updated'])
 
   watch(
     () => [form$.value?.invalid],
     () => {
       $emit('validation-changed', !form$.value?.invalid)
+    }
+  )
+
+  watch(
+    () => model.value?.countryRef,
+    async () => {
+      const list: Array<Country> = await countries.find()
+      const country = list.find((c) => {
+        return c.id === model?.value?.countryRef
+      })
+      if (country) {
+        $emit('country-updated', country.name)
+      }
+    },
+    {
+      flush: 'post'
     }
   )
 

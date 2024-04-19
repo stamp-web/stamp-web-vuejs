@@ -1,9 +1,10 @@
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
-import type { PersistedModel } from '@/models/entityModels'
+import { type PersistedModel } from '@/models/entityModels'
 import { createInstance } from '@/models/entityModels'
 import type { Preference } from '@/models/Preference'
 import { CatalogueNumberHelper } from '@/models/CatalogueNumber'
 import { OwnershipHelper, type Ownership } from '@/models/Ownership'
+import { ConditionHelper } from '@/models/Condition'
 
 export interface Stamp extends PersistedModel {
   description?: string
@@ -38,8 +39,32 @@ export class StampModelHelper {
         stamp.countryRef = +pref.value
       }
     }
-
-    console.log('generated stamp', stamp)
     return stamp
+  }
+
+  static calculateImagePath = (
+    stamp: Stamp,
+    catalogueNumber: CatalogueNumber,
+    countryName: string,
+    prefix: string = '',
+    includeUsedInPath: boolean = true
+  ) => {
+    let path = ''
+    if (!stamp.wantList) {
+      // @ts-ignore
+      if (countryName && catalogueNumber && countryName !== '' && catalogueNumber.number) {
+        path = `${countryName}/`
+        if (includeUsedInPath && ConditionHelper.isUsed(catalogueNumber.condition)) {
+          path += 'used/'
+        } else if (includeUsedInPath && ConditionHelper.isOnCover(catalogueNumber.condition)) {
+          path += 'on-cover/'
+        }
+        if (prefix) {
+          path += prefix
+        }
+        path += `${catalogueNumber.number}.jpg`
+      }
+    }
+    return path
   }
 }

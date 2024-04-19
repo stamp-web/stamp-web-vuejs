@@ -42,8 +42,6 @@
   import { extractErrorMessage } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
   import { Prompt } from '@/components/Prompt'
-  import { createInstance } from '@/models/entityModels'
-  import type { Preference } from '@/models/Preference'
   import LocalCache from '@/stores/LocalCache'
 
   const { t } = useI18n()

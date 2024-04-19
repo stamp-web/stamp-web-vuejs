@@ -22,6 +22,7 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   {
     remove(model: T): Promise<void>
     find(options?: any): Promise<T[]>
+    findById(id: Number): Promise<T>
     findRandom(): Promise<T | undefined>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
@@ -86,6 +87,13 @@ export function baseModelStore<T extends PersistedModel>(): any {
           this.inflightPromise = undefined
         }
         return this.items.list as unknown as T[]
+      },
+      async findById(id) {
+        // @ts-ignore
+        if (this.items.list.length <= 0 || this.lastOptions.$filter) {
+          await this.find()
+        }
+        return Promise.resolve(this.items.list.find((item) => item.id === id) as T)
       },
       async findRandom(): Promise<T | undefined> {
         const list = await this.service.find()

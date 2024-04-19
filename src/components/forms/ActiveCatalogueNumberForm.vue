@@ -6,14 +6,18 @@
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
   import { catalogueStore } from '@/stores/catalogueStore'
-  import type { Catalogue } from '@/models/entityModels'
+  import { type Catalogue, CatalogueModelHelper } from '@/models/Catalogue'
 
   const { t } = useI18n()
   const form$ = ref()
 
   const model = defineModel<CatalogueNumber>()
   const cataloguesStore = catalogueStore()
-  const $emit = defineEmits(['validation-changed'])
+  const $emit = defineEmits([
+    'validation-changed',
+    'catalogue-prefix',
+    'catalogueNumber-info-changed'
+  ])
   const state = ref({
     currencyRegex: `regex:${CurrencyTools.formatRegex(CurrencyCode.USD, false)}`,
     currency: CurrencyCode.USD
@@ -27,6 +31,21 @@
   )
 
   watch(
+    () => [model.value?.condition, model.value?.number],
+    (newVal, oldVal) => {
+      newVal.forEach((item, idx) => {
+        // we only want to emit the event if there was a change in the values we are watching
+        if (item !== oldVal[idx]) {
+          $emit('catalogueNumber-info-changed')
+          return false
+        }
+      })
+    },
+    {
+      flush: 'post'
+    }
+  )
+  watch(
     () => model.value?.catalogueRef,
     async () => {
       const catalogues: Array<Catalogue> = await cataloguesStore.find()
@@ -36,9 +55,12 @@
       if (catalogue) {
         state.value.currencyRegex = `regex:${CurrencyTools.formatRegex(catalogue.code, false)}`
         state.value.currency = catalogue.code
+        $emit('catalogue-prefix', CatalogueModelHelper.getPrefix(catalogue))
       }
     },
-    {}
+    {
+      flush: 'post'
+    }
   )
 </script>
 <template>

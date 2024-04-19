@@ -3,6 +3,8 @@
 
   const cataloguesStore = catalogueStore()
 
+  const model = defineModel()
+
   const $props = defineProps({
     label: String,
     search: { type: Boolean, default: true },
@@ -27,6 +29,7 @@
     :filter-results="true"
     label-prop="name"
     value-prop="id"
+    v-model="model"
     :can-deselect="false"
     :append-to-body="true"
     :items="getCatalogues"

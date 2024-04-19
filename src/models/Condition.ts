@@ -18,4 +18,27 @@ export class ConditionHelper {
     const g = EnumHelper.enumToString(Condition, value)
     return g ? localeUtil.t(`condition.${g}`) : ''
   }
+
+  static isUsed(condition: Condition): boolean {
+    let result = false
+    switch (condition) {
+      case Condition.USED:
+      case Condition.CTO:
+      case Condition.MANUSCRIPT:
+        result = true
+        break
+    }
+    return result
+  }
+
+  static isOnCover(condition: Condition): boolean {
+    let result = false
+    switch (condition) {
+      case Condition.COVER:
+      case Condition.ON_PAPER:
+        result = true
+        break
+    }
+    return result
+  }
 }

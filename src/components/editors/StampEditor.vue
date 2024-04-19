@@ -12,6 +12,7 @@
   import { type Ownership } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { fixFraction } from '@/util/object-utils'
+  import { StampModelHelper } from '@/models/Stamp'
 
   const { t } = useI18n()
 
@@ -23,7 +24,14 @@
   const stampModel = ref<Stamp>()
   const activeCatalogueNumber = ref<CatalogueNumber>()
   const stampOwnership = ref<Ownership>()
-  const wantlist = ref<boolean>()
+
+  const state = ref({
+    wantList: false,
+    edit: false,
+    prefix: '',
+    countryName: ''
+  })
+
   const validation = ref({
     stamp: true,
     cn: true,
@@ -39,6 +47,42 @@
     }
   )
 
+  const setCountryName = (countryName: string) => {
+    state.value.countryName = countryName
+    calculateImagePath()
+  }
+  const setImagePrefix = (prefix: string) => {
+    state.value.prefix = prefix
+    calculateImagePath()
+  }
+
+  const calculateImagePath = () => {
+    let path = ''
+    const cn = activeCatalogueNumber.value
+    const stamp = stampModel.value
+    if (
+      stamp &&
+      cn &&
+      stampOwnership.value &&
+      !state.value.edit &&
+      !state.value.wantList &&
+      stamp.countryRef > 0 &&
+      cn.catalogueRef > 0 &&
+      cn.condition >= 0 &&
+      cn.number !== ''
+    ) {
+      path = StampModelHelper.calculateImagePath(
+        stamp,
+        cn,
+        state.value.countryName,
+        state.value.prefix,
+        true
+      )
+      stampOwnership.value.img = path
+    }
+    return path
+  }
+
   const title = computed(() => {
     return t($props.model && $props.model.id >= 0 ? 'titles.edit-stamp' : 'titles.new-stamp')
   })
@@ -48,7 +92,7 @@
       validation.value.stamp &&
       validation.value.cn &&
       ((stampOwnership.value && validation.value.owner) ||
-        (wantlist.value && !stampOwnership.value))
+        (state.value.wantList && !stampOwnership.value))
     return result
   })
 
@@ -82,12 +126,15 @@
     if ($props.model.stampOwnerships?.length > 0) {
       stampOwnership.value = $props.model.stampOwnerships[0]
     }
-    wantlist.value = stampModel.value?.wantList
+    state.value.wantList = stampModel.value?.wantList || false
+    state.value.edit = $props.model?.id > 0
   }
 
   onMounted(async () => {
     setRefs()
   })
+
+  defineExpose({ calculateImagePath, setRefs })
 </script>
 
 <template>
@@ -98,14 +145,17 @@
         <StampDetailsForm
           v-model="stampModel"
           @validationChanged="(v: boolean) => (validation.stamp = v)"
+          @country-updated="setCountryName"
           class="mb-2"
         ></StampDetailsForm>
         <ActiveCatalogueNumberForm
           v-model="activeCatalogueNumber"
           @validationChanged="(v: boolean) => (validation.cn = v)"
+          @catalogueNumber-info-changed="calculateImagePath"
+          @catalogue-prefix="setImagePrefix"
         ></ActiveCatalogueNumberForm>
       </div>
-      <div v-if="!wantlist" class="flex flex-col w-full p-2 pl-0 pt-0">
+      <div v-if="!state.wantList" class="flex flex-col w-full p-2 pl-0 pt-0">
         <StampOwnershipForm
           v-model="stampOwnership"
           @validationChanged="(v: boolean) => (validation.owner = v)"

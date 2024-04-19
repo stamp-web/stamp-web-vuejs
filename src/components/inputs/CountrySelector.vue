@@ -3,6 +3,8 @@
 
   const countriesStore = countryStore()
 
+  const model = defineModel()
+
   const $props = defineProps({
     label: String,
     search: { type: Boolean, default: true },
@@ -26,6 +28,7 @@
     :search="$props.search || true"
     :filter-results="true"
     label-prop="name"
+    v-model="model"
     value-prop="id"
     :append-to-body="true"
     :can-deselect="false"
