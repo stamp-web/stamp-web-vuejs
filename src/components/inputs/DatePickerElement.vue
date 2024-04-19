@@ -49,12 +49,6 @@
     ref="$datePicker"
     size="sm"
     v-model="model"
-    :addons="{
-      after: {
-        template: ` <i class='sw-icon-cancel cursor-pointer text-gray-300 hover:text-current pb-0.5 px-0.5 scale-110'></i>
- <i class='cursor-pointer sw-icon-calendar text-gray-600 hover:text-black pb-0.5 pl-0.5 scale-110'></i>`
-      }
-    }"
     :add-Classes="{
       DatepickerWrapper: {
         calendarContainer: 'max-w-56 w-56'

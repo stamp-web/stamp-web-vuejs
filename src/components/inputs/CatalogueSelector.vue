@@ -32,6 +32,6 @@
     :items="getCatalogues"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
-    autocomplete=""
+    autocomplete="off"
   ></select-element>
 </template>
