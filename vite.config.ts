@@ -59,6 +59,7 @@ export default ({ mode }) => {
     plugins: config.plugins,
     base: '',
     build: {
+      sourcemap: true,
       rollupOptions: {
         output: {
           manualChunks: {
