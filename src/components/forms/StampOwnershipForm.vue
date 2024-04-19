@@ -31,8 +31,7 @@
     () => model.value?.code,
     () => {
       state.value.currencyRegex = `regex:${CurrencyTools.formatRegex(model.value?.code || CurrencyCode.USD, false)}`
-    },
-    {}
+    }
   )
 </script>
 <template>
@@ -83,7 +82,6 @@
           v-model="model"
           :columns="{ default: 6 }"
         ></DatePickerElement>
-
         <TextElement
           :label="t('form.image-path')"
           v-model="model"

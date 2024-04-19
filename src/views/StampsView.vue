@@ -42,6 +42,9 @@
   import { extractErrorMessage } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
   import { Prompt } from '@/components/Prompt'
+  import { createInstance } from '@/models/entityModels'
+  import type { Preference } from '@/models/Preference'
+  import LocalCache from '@/stores/LocalCache'
 
   const { t } = useI18n()
 
@@ -303,7 +306,12 @@
 
   const save = async (s: Stamp) => {
     try {
-      const savedStamp = s.id > 0 ? await store.update(s) : await store.create(s)
+      const updating = s.id > 0
+      if (!updating && s.stampOwnerships?.length > 0 && s.stampOwnerships[0].purchased) {
+        let d = new Date(s.stampOwnerships[0].purchased)
+        LocalCache.setItem('ownership-purchased', d.toLocaleDateString())
+      }
+      const savedStamp = updating ? await store.update(s) : await store.create(s)
       await updateLocalCollection(collection.list, savedStamp)
       hideEditor()
       // @ts-ignore

@@ -57,7 +57,7 @@
    * that are not edited or used (such as IDs) so we restore the objects by merging in the new values
    * into the previous values
    *
-   * TODO: cleck clearing fields like purchased works
+   * TODO: clech clearing fields like purchased works
    */
   const getSaveModel = () => {
     const m = Object.assign($props.model, stampModel.value)

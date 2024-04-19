@@ -41,7 +41,8 @@ export const preferenceStore = useStore<PreferenceStoreType, BaseModelStore<Pref
         // @ts-ignore
       },
       async findByNameAndCategory(name: string, category: string): Promise<Preference> {
-        if (this.items.list.length <= 0) {
+        // @ts-ignore
+        if (this.items.list.length <= 0 || this.lastOptions.$filter) {
           await this.find()
         }
         return Promise.resolve(

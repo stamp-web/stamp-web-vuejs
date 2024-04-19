@@ -35,7 +35,7 @@ export class StampModelHelper {
       const pref = preferences.find((p) => 'countryRef' === p.name)
       if (pref) {
         // @ts-ignore
-        stamp.countryRef = pref.value
+        stamp.countryRef = +pref.value
       }
     }
 

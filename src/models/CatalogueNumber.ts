@@ -26,7 +26,7 @@ export class CatalogueNumberHelper {
         const pref = preferences.find((p) => key === p.name)
         if (pref) {
           // @ts-ignore
-          catalogueNumber[key] = pref.value
+          catalogueNumber[key] = +pref.value
         }
       })
     }
