@@ -56,7 +56,7 @@
     calculateImagePath()
   }
 
-  const calculateImagePath = () => {
+  const calculateImagePath = (force: boolean = false) => {
     let path = ''
     const cn = activeCatalogueNumber.value
     const stamp = stampModel.value
@@ -64,7 +64,7 @@
       stamp &&
       cn &&
       stampOwnership.value &&
-      !state.value.edit &&
+      (!state.value.edit || force) &&
       !state.value.wantList &&
       stamp.countryRef > 0 &&
       cn.catalogueRef > 0 &&
@@ -159,6 +159,7 @@
         <StampOwnershipForm
           v-model="stampOwnership"
           @validationChanged="(v: boolean) => (validation.owner = v)"
+          @regenerateImagePath="calculateImagePath(true)"
         ></StampOwnershipForm>
       </div>
     </div>

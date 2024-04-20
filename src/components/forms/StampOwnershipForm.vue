@@ -9,6 +9,7 @@
   import DatePickerElement from '@/components/inputs/DatePickerElement.vue'
   import { type Ownership } from '@/models/Ownership'
   import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
+  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
 
   const { t } = useI18n()
 
@@ -18,7 +19,7 @@
   })
 
   const model = defineModel<Ownership>()
-  const $emit = defineEmits(['validation-changed'])
+  const $emit = defineEmits(['validation-changed', 'regenerate-image-path'])
 
   watch(
     () => [form$.value?.invalid],
@@ -27,12 +28,20 @@
     }
   )
 
+  const regenerateImagePath = () => {
+    if (model.value?.img) {
+      $emit('regenerate-image-path')
+    }
+  }
+
   watch(
     () => model.value?.code,
     () => {
       state.value.currencyRegex = `regex:${CurrencyTools.formatRegex(model.value?.code || CurrencyCode.USD, false)}`
     }
   )
+
+  defineExpose({ regenerateImagePath })
 </script>
 <template>
   <div class="w-full border-gray-300 p-3 border-solid border rounded">
@@ -82,13 +91,23 @@
           v-model="model"
           :columns="{ default: 6 }"
         ></DatePickerElement>
-        <TextElement
-          :label="t('form.image-path')"
-          v-model="model"
-          name="img"
-          rules="max:250"
-          autocomplete="off"
-        ></TextElement>
+        <GroupElement name="group-image-path">
+          <TextElement
+            :label="t('form.image-path')"
+            v-model="model"
+            name="img"
+            rules="max:250"
+            :columns="{ default: 10 }"
+            autocomplete="off"
+          ></TextElement>
+          <SecondaryButton
+            class="mr-2 !px-0.5 !py-0 max-h-6 min-h-6 mt-auto mb-1 w-6 max-w-6"
+            :tooltip="t('form.regenerate-image')"
+            @click="regenerateImagePath"
+            icon="sw-icon-refresh"
+          ></SecondaryButton>
+        </GroupElement>
+
         <CheckboxElement v-model="model" name="cert">{{ t('form.certified') }}</CheckboxElement>
         <TextElement
           :label="t('form.certificate')"
