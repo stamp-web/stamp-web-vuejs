@@ -66,6 +66,32 @@ describe('StampModelHelper tests', () => {
       )
     })
 
+    it('verify with special characters apostrophe', () => {
+      const stamp = StampModelHelper.newInstance(false)
+      const cn = stamp.activeCatalogueNumber
+      if (cn) {
+        cn.condition = Condition.MINT
+        cn.number = "45a W OR 5'4'5"
+      }
+      // @ts-ignore
+      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+        'test country/45a W OR 5-4-5.jpg'
+      )
+    })
+
+    it('verify with special characters', () => {
+      const stamp = StampModelHelper.newInstance(false)
+      const cn = stamp.activeCatalogueNumber
+      if (cn) {
+        cn.condition = Condition.USED
+        cn.number = '23%`<>"[]{};'
+      }
+      // @ts-ignore
+      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+        'test country/used/23----------.jpg'
+      )
+    })
+
     it('verify with used stamp', () => {
       const stamp = StampModelHelper.newInstance(false)
       const cn = stamp.activeCatalogueNumber
