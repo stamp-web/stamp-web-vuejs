@@ -15,6 +15,6 @@ export class DeceptionHelper {
   public static toString(value: number): string {
     // @ts-ignore
     const g = EnumHelper.enumToString(Deception, value)
-    return g ? localeUtil.t(`deceptions.${g}`) : ''
+    return g ? localeUtil.t(`deception.${g}`) : ''
   }
 }

@@ -11,6 +11,7 @@ import {
   fixFraction
 } from '@/util/object-utils'
 import { Defects } from '@/models/Defects'
+import { Deception } from '../../models/Deception'
 
 describe('object-utils', () => {
   describe('isNil', () => {
@@ -146,6 +147,14 @@ describe('object-utils', () => {
   })
 
   describe('EnumHelper', () => {
+    describe('buildEnumListModel tests', () => {
+      it('validate proper creation', () => {
+        const en = EnumHelper.buildEnumListModel(Deception, 'deception')
+        expect(en).toBeDefined()
+        expect(en.length).toBe(8)
+        expect(en[1]).toStrictEqual({ value: 4, label: 'Fake Overprint' })
+      })
+    })
     describe('asEnumArray tests', () => {
       it('empty defects nothing is determined', () => {
         // @ts-ignore

@@ -1,15 +1,19 @@
 <script lang="ts" setup>
   import { useI18n } from 'vue-i18n'
   import { ref, watch } from 'vue'
+  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+
   import AlbumSelector from '@/components/inputs/AlbumSelector.vue'
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
   import GradeSelector from '@/components/inputs/GradeSelector.vue'
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
   import SellerSelector from '@/components/inputs/SellerSelector.vue'
   import DatePickerElement from '@/components/inputs/DatePickerElement.vue'
+  import EnumTotallingSelector from '@/components/inputs/EnumTotallingSelector.vue'
   import { type Ownership } from '@/models/Ownership'
   import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
-  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import { Defects } from '@/models/Defects'
+  import { Deception } from '@/models/Deception'
 
   const { t } = useI18n()
 
@@ -19,6 +23,8 @@
   })
 
   const model = defineModel<Ownership>()
+  const defectEnum = Defects
+  const deceptionEnum = Deception
   const $emit = defineEmits(['validation-changed', 'regenerate-image-path'])
 
   watch(
@@ -62,6 +68,22 @@
           :columns="{ container: 12, label: 12, wrapper: 7 }"
         ></GradeSelector>
         <SellerSelector v-model="model" :label="t('form.seller')"></SellerSelector>
+        <EnumTotallingSelector
+          :label="t('form.defects')"
+          :type="defectEnum"
+          token-name="defects"
+        ></EnumTotallingSelector>
+        <EnumTotallingSelector
+          :label="t('form.deceptions')"
+          :type="deceptionEnum"
+          token-name="deception"
+        ></EnumTotallingSelector>
+        <DatePickerElement
+          :label="t('form.purchased')"
+          name="purchased"
+          v-model="model"
+          :columns="{ default: 6 }"
+        ></DatePickerElement>
         <GroupElement
           name="group-price"
           :columns="{ container: 12, label: 12, wrapper: 12 }"
@@ -85,12 +107,6 @@
           ></TextElement>
           <CurrencySelector v-model="model" :columns="{ default: 4 }"></CurrencySelector>
         </GroupElement>
-        <DatePickerElement
-          :label="t('form.purchased')"
-          name="purchased"
-          v-model="model"
-          :columns="{ default: 6 }"
-        ></DatePickerElement>
         <GroupElement name="group-image-path">
           <TextElement
             :label="t('form.image-path')"

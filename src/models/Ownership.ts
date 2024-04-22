@@ -5,6 +5,9 @@ import type { Condition } from '@/models/Condition'
 import { type Preference } from '@/models/Preference'
 import { createInstance } from '@/models/entityModels'
 import LocalCache from '@/stores/LocalCache'
+import { EnumHelper } from '@/util/object-utils'
+import { Defects } from '@/models/Defects'
+import { Deception } from '@/models/Deception'
 
 export interface Ownership extends PersistedModel {
   pricePaid: number
@@ -42,5 +45,26 @@ export class OwnershipHelper {
       })
     }
     return ownership
+  }
+
+  static toTagElementView(model: Ownership) {
+    // @ts-ignore
+    model['_defects'] = EnumHelper.asEnumArray(Defects, model.defects)
+    // @ts-ignore
+    model['_deception'] = EnumHelper.asEnumArray(Deception, model.deception)
+  }
+
+  static fromTagElementView(model: any) {
+    const fieldNames = ['defects', 'deception']
+    fieldNames.forEach((name) => {
+      let total = 0
+      if (model[`_${name}`]) {
+        model[`_${name}`].forEach((v: number) => {
+          total += v
+        })
+        model[name] = total
+        delete model[`_${name}`]
+      }
+    })
   }
 }

@@ -38,10 +38,11 @@
   )
 
   onMounted(async () => {
-    if (model.value && model.value.id < 1) {
-      await nextTick()
-      await rateEl.value.focus()
+    await nextTick()
+    if (model.value && (model.value.id < 1 || !model.value.id)) {
+      rateEl.value.focus()
     }
+    await form$.value.validate()
   })
 </script>
 <template>

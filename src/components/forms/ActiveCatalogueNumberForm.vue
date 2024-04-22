@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, watch } from 'vue'
+  import { ref, watch, onMounted, nextTick } from 'vue'
   import { useI18n } from 'vue-i18n'
   import CatalogueSelector from '@/components/inputs/CatalogueSelector.vue'
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
@@ -62,6 +62,11 @@
       flush: 'post'
     }
   )
+
+  onMounted(async () => {
+    await nextTick()
+    await form$.value.validate()
+  })
 </script>
 <template>
   <div class="w-full border-gray-300 p-3 border-solid border rounded">

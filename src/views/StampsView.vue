@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+  import { computed, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { TransitionRoot } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
@@ -24,8 +24,8 @@
   import pagingInfo from '@/components/behaviors/pageInfo'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
   import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
-
   import StampEditor from '@/components/editors/StampEditor.vue'
+  import { Prompt } from '@/components/Prompt'
 
   import { type Stamp, StampModelHelper } from '@/models/Stamp'
   import { ReportType } from '@/models/ReportType'
@@ -37,12 +37,12 @@
   import { preferenceStore } from '@/stores/PreferenceStore'
   import { countryStore } from '@/stores/countryStore'
   import { stampStore } from '@/stores/stampStore'
+  import LocalCache from '@/stores/LocalCache'
 
   import type { KeyIndexable } from '@/util/ts/key-accessor'
   import { extractErrorMessage } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
-  import { Prompt } from '@/components/Prompt'
-  import LocalCache from '@/stores/LocalCache'
+  import { OwnershipHelper } from '@/models/Ownership'
 
   const { t } = useI18n()
 
@@ -107,6 +107,13 @@
     return 0
   }
 
+  const transformEditModel = (m: any) => {
+    if (m.stampOwnerships?.length > 0) {
+      OwnershipHelper.toTagElementView(m.stampOwnerships[0])
+    }
+    setEditModel(m)
+  }
+
   const columnDefs = [
     new ColumnDefinition('', {
       cellRenderer: ImagePreviewCellRenderer,
@@ -146,7 +153,7 @@
       sort: 'asc',
       sortable: true
     }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
+    ColumnDefinition.createActionIconColumn('sw-icon-edit', transformEditModel, t('actions.edit')),
     new ColumnDefinition('activeCatalogueNumber.value', {
       cellClass: ['!pr-0.25'],
       cellRenderer: CatalogueValueCellRenderer,
@@ -222,7 +229,7 @@
     calculatePagingStats(collection.total)
   }
 
-  const setView = async (viewType: string): Promise<void> => {
+  const setView = (viewType: string) => {
     viewDef.value.mode = viewType
   }
 
@@ -299,17 +306,21 @@
   const createStamp = async (wantList: boolean = false) => {
     const stampPrefs = await prefStore.findByCategory('stamps')
     const model = StampModelHelper.newInstance(wantList, stampPrefs)
-    setEditModel(model)
+    transformEditModel(model)
   }
 
   const save = async (s: Stamp) => {
     try {
       const updating = s.id > 0
-      if (!updating && s.stampOwnerships?.length > 0 && s.stampOwnerships[0].purchased) {
-        let d = new Date(s.stampOwnerships[0].purchased)
-        LocalCache.setItem('ownership-purchased', d.toLocaleDateString())
+      const sModified = structuredClone(toRaw(s))
+      if (sModified.stampOwnerships?.length > 0) {
+        if (!updating && sModified.stampOwnerships[0].purchased) {
+          let d = new Date(sModified.stampOwnerships[0].purchased)
+          LocalCache.setItem('ownership-purchased', d.toLocaleDateString())
+        }
+        OwnershipHelper.fromTagElementView(sModified.stampOwnerships[0])
       }
-      const savedStamp = updating ? await store.update(s) : await store.create(s)
+      const savedStamp = updating ? await store.update(sModified) : await store.create(sModified)
       await updateLocalCollection(collection.list, savedStamp)
       hideEditor()
       // @ts-ignore
@@ -364,16 +375,16 @@
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-list"
-          :tooltip="viewDef.mode === 'list' ? '' : t('actions.show-list-view')"
+          :tooltip="viewDef?.mode === 'list' ? '' : t('actions.show-list-view')"
           @click="setView('list')"
-          :disabled="viewDef.mode === 'list'"
+          :disabled="viewDef?.mode === 'list'"
         ></SecondaryButton>
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-gridview"
-          :tooltip="viewDef.mode === 'card' ? '' : t('actions.show-card-view')"
+          :tooltip="viewDef?.mode === 'card' ? '' : t('actions.show-card-view')"
           @click="setView('card')"
-          :disabled="viewDef.mode === 'card'"
+          :disabled="viewDef?.mode === 'card'"
         ></SecondaryButton>
         <SecondaryButton
           class="mr-1 px-0.5"
@@ -426,7 +437,9 @@
           v-if="viewDef.mode === 'card'"
           ref="cardLayout"
         >
-          <div class="flex flex-wrap flex-grow h-full flex-row overflow-y-auto pt-1 pl-1">
+          <div
+            class="flex flex-wrap content-start flex-grow h-full flex-row overflow-y-auto pt-1 pl-1"
+          >
             <template v-for="stamp in collection.list" :key="stamp.id">
               <stamp-card
                 :class="`stampcard m-1 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]

@@ -31,7 +31,7 @@
     "MANUSCRIPT": "Manuscript Cancel",
     "ON_PAPER": "Used on Paper"
   },
-  "deceptions": {
+  "deception": {
     "FAKE_CANCEL":"Fake Cancel",
     "FAKE_OVERPRINT":"Fake Overprint",
     "FISCAL_REMOVED":"Fiscal Cancel Removed",
@@ -75,6 +75,8 @@
     "certified": "Certified or validated",
     "condition": "Condition",
     "country": "Country",
+    "deceptions": "Deceptions",
+    "defects": "Defects",
     "description": "Description",
     "filter-placeholder": "Filter",
     "grade": "Grade",

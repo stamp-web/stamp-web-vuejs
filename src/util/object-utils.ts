@@ -5,6 +5,7 @@ import _has from 'lodash-es/has'
 import _isNumber from 'lodash-es/isNumber'
 import _set from 'lodash-es/set'
 import { AxiosError } from 'axios'
+import LocaleUtils from '@/util/locale-utils'
 
 export function isNil(obj: any): boolean {
   return obj === null || obj === undefined
@@ -107,6 +108,21 @@ export class EnumHelper {
       enums.push(type[type[ordinal]])
     })
     return enums
+  }
+
+  public static buildEnumListModel(enumeration: any, tokenName: string) {
+    const keys = Object.keys(enumeration)
+    const items = []
+    if (keys) {
+      const len = keys.length / 2
+      for (let i = 0; i < len; i++) {
+        items.push({
+          value: +keys[i],
+          label: LocaleUtils.t(`${tokenName}.${keys[i + len]}`)
+        })
+      }
+    }
+    return items
   }
 
   public static enumToString(enumeration: any, value: any): string | undefined {
