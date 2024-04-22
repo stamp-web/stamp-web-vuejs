@@ -22,6 +22,13 @@
   )
 
   watch(
+    () => model.value?.rate,
+    async () => {
+      await nextTick()
+      focusRate()
+    }
+  )
+  watch(
     () => model.value?.countryRef,
     async () => {
       const list: Array<Country> = await countries.find()
@@ -37,12 +44,20 @@
     }
   )
 
-  onMounted(async () => {
-    await nextTick()
-    if (model.value && (model.value.id < 1 || !model.value.id)) {
+  const focusRate = () => {
+    if (
+      model.value &&
+      (model.value.id < 1 || !model.value.id) &&
+      (model.value.rate === '' || !model.value.rate)
+    ) {
       rateEl.value.focus()
     }
+  }
+
+  onMounted(async () => {
+    await nextTick()
     await form$.value.validate()
+    focusRate()
   })
 </script>
 <template>

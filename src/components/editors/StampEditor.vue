@@ -84,7 +84,7 @@
   }
 
   const title = computed(() => {
-    return t($props.model && $props.model.id >= 0 ? 'titles.edit-stamp' : 'titles.new-stamp')
+    return t(state.value.edit ? 'titles.edit-stamp' : 'titles.new-stamp')
   })
 
   const validForm = computed(() => {
@@ -101,7 +101,7 @@
    * that are not edited or used (such as IDs) so we restore the objects by merging in the new values
    * into the previous values
    *
-   * TODO: clech clearing fields like purchased works
+   * TODO: cleck clearing fields like purchased works
    */
   const getSaveModel = () => {
     const m = Object.assign($props.model, stampModel.value)
@@ -169,6 +169,13 @@
         :disabled="!validForm"
         @click="$emit('save', getSaveModel())"
         >{{ t('actions.save') }}</PrimaryButton
+      >
+      <PrimaryButton
+        v-if="!state.edit"
+        class="mr-2 text-sm"
+        :disabled="!validForm"
+        @click="$emit('save', getSaveModel(), true)"
+        >{{ t('actions.save-and-new') }}</PrimaryButton
       >
       <SecondaryButton class="text-sm" @click="$emit('cancel')">{{
         t('actions.cancel')

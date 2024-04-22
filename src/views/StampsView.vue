@@ -309,7 +309,7 @@
     transformEditModel(model)
   }
 
-  const save = async (s: Stamp) => {
+  const save = async (s: Stamp, saveAndNew: boolean = false) => {
     try {
       const updating = s.id > 0
       const sModified = structuredClone(toRaw(s))
@@ -322,7 +322,11 @@
       }
       const savedStamp = updating ? await store.update(sModified) : await store.create(sModified)
       await updateLocalCollection(collection.list, savedStamp)
-      hideEditor()
+      if (saveAndNew) {
+        createStamp(savedStamp.wantList)
+      } else {
+        hideEditor()
+      }
       // @ts-ignore
     } catch (err: Error) {
       Prompt.alert({
