@@ -79,6 +79,19 @@ describe('StampModelHelper tests', () => {
       )
     })
 
+    it('verify stamp with rotary press printing', () => {
+      const stamp = StampModelHelper.newInstance(false)
+      const cn = stamp.activeCatalogueNumber
+      if (cn) {
+        cn.condition = Condition.MINT
+        cn.number = "21 a W OR 1'4'1/0'5'0"
+      }
+      // @ts-ignore
+      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+        'test country/21 a W OR 1-4-1_0-5-0.jpg'
+      )
+    })
+
     it('verify with special characters', () => {
       const stamp = StampModelHelper.newInstance(false)
       const cn = stamp.activeCatalogueNumber

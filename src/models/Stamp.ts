@@ -62,7 +62,7 @@ export class StampModelHelper {
         if (prefix) {
           path += prefix
         }
-        path += `${catalogueNumber.number}.jpg`
+        path += `${catalogueNumber.number.replace('/', '_')}.jpg`
         path = path.replace(/[[<>'";`%{}\]]/gi, '-')
       }
     }
