@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
-import { SelectCmp } from './Select-cmp'
-import { AbstractNamedEditorCmp } from './AbstractNamedEditor'
+import { SelectCmp } from './Select-cmp.js'
+import { AbstractNamedEditorCmp } from './AbstractNamedEditor.js'
 
 export class AlbumEditorCmp extends AbstractNamedEditorCmp {
   constructor(page: Page) {

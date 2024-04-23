@@ -1,14 +1,14 @@
 import { APIRequestContext } from '@playwright/test'
 import type {
   Album,
-  Catalogue,
   Country,
   PersistedModel,
   PersistedNamedModel,
   Seller,
   StampCollection
-} from '../../src/models/entityModels'
-import type { Stamp } from '../../src/models/Stamp'
+} from '../../src/models/entityModels.js'
+import { Stamp } from '../../src/models/Stamp.js'
+import { Catalogue } from '../../src/models/Catalogue.js'
 
 abstract class entityTestHelper<T extends PersistedModel> {
   abstract getResourceName(): string
@@ -20,9 +20,8 @@ abstract class entityTestHelper<T extends PersistedModel> {
     const result = await request.post(`/stamp-webservices/rest/${this.getResourceName()}`, {
       data: payload
     })
-    await result.json()
-    if (result.status() === 201) {
-      return result.json()
+    if ((await result.status()) === 201) {
+      return await result.json()
     } else {
       throw new Error(`code: ${result.status()}, status: ${result.statusText()}`)
     }
@@ -70,6 +69,7 @@ class countryTestHelper extends entityTestHelper<Country> {
   }
 }
 
+// @ts-ignore
 class catalogueTestHelper extends entityTestHelper<Catalogue> {
   getResourceName(): string {
     return 'catalogues'

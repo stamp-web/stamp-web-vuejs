@@ -1,10 +1,10 @@
 import { test, expect, Locator, Page } from '@playwright/test'
-import { StampCollectionsViewPage } from '../../pages/views/StampCollectionsView-page'
-import { generateText } from '../../helpers/test-utils'
-import { PromptCmp } from '../../pages/components/Prompt-cmp'
-import { StampCollectionTestHelper } from '../../helpers/api-helpers'
-import { StampCollection } from '../../../src/models/entityModels'
-import { StampCollectionEditorCmp } from '../../pages/components/StampCollectionEditor-cmp'
+import { StampCollectionsViewPage } from '../../pages/views/StampCollectionsView-page.js'
+import { generateText } from '../../helpers/test-utils.js'
+import { PromptCmp } from '../../pages/components/Prompt-cmp.js'
+import { StampCollectionTestHelper } from '../../helpers/api-helpers.js'
+import { StampCollectionEditorCmp } from '../../pages/components/StampCollectionEditor-cmp.js'
+import { StampCollection } from '../../../src/models/entityModels.js'
 
 test.describe('creation tests', () => {
   let name: string

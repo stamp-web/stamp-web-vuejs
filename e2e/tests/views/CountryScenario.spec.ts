@@ -1,16 +1,18 @@
 import { test, expect, Locator, Page } from '@playwright/test'
-import { CountryViewPage } from '../../pages/views/CountryView-page'
-import { generateText } from '../../helpers/test-utils'
-import { PromptCmp } from '../../pages/components/Prompt-cmp'
+import { CountryViewPage } from '../../pages/views/CountryView-page.js'
+import { generateText } from '../../helpers/test-utils.js'
+import { PromptCmp } from '../../pages/components/Prompt-cmp.js'
 import {
   CatalogueTestHelper,
   CountryTestHelper,
   StampTestHelper
-} from '../../helpers/api-helpers'
-import { Catalogue, Country } from '../../../src/models/entityModels'
-import { CountryEditorCmp } from '../../pages/components/CountryEditor-cmp'
-import { CurrencyCode } from '../../../src/models/CurrencyCode'
-import { StampViewPage } from '../../pages/views/StampView-page'
+} from '../../helpers/api-helpers.js'
+import { StampViewPage } from '../../pages/views/StampView-page.js'
+import { CountryEditorCmp } from '../../pages/components/CountryEditor-cmp.js'
+
+import { Country } from '../../../src/models/entityModels.js'
+import { Catalogue } from '../../../src/models/Catalogue.js'
+import { CurrencyCode } from '../../../src/models/CurrencyCode.js'
 
 test.describe('creation tests', () => {
   let name: string
@@ -108,6 +110,7 @@ test.describe('navigate to stamps', () => {
       catalogueNumbers: [
         {
           number: 'test-43c',
+          // @ts-ignore
           catalogueRef: catalogue.id,
           value: 25.54,
           condition: 0,
@@ -120,6 +123,7 @@ test.describe('navigate to stamps', () => {
 
   test.afterEach(async ({ request }) => {
     await CountryTestHelper.delete(request, country.id)
+    // @ts-ignore
     await CatalogueTestHelper.delete(request, catalogue.id)
   })
 

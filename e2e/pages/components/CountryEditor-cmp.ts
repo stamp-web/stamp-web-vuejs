@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import { AbstractNamedEditorCmp } from './AbstractNamedEditor'
+import { AbstractNamedEditorCmp } from './AbstractNamedEditor.js'
 
 export class CountryEditorCmp extends AbstractNamedEditorCmp {
   constructor(page: Page) {

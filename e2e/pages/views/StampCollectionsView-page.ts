@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
-import { AbstractNamedViewPage } from './AbstractNamedView-page'
-import { StampCollectionEditorCmp } from '../components/StampCollectionEditor-cmp'
+import { AbstractNamedViewPage } from './AbstractNamedView-page.js'
+import { StampCollectionEditorCmp } from '../components/StampCollectionEditor-cmp.js'
 
 export class StampCollectionsViewPage extends AbstractNamedViewPage<StampCollectionEditorCmp> {
   constructor(page: Page) {

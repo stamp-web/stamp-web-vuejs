@@ -4,7 +4,9 @@
   export default /*#__PURE__*/ defineComponent({
     props: {
       icon: String,
-      tooltip: String
+      tooltip: String,
+      name: String,
+      id: String
     },
 
     computed: {
@@ -27,7 +29,12 @@
 </script>
 
 <template>
-  <button :class="`${appliedStyles}`" v-tooltip="$props.tooltip">
+  <button
+    :class="`${appliedStyles}`"
+    v-tooltip="$props.tooltip"
+    :name="$props.name"
+    :id="$props.id"
+  >
     <span v-if="icon" :class="`${icon}`"></span>
     <slot></slot>
   </button>

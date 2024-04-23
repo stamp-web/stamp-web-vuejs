@@ -1,10 +1,11 @@
 import { test, expect, Locator, Page } from '@playwright/test'
-import { AlbumViewPage } from '../../pages/views/AlbumView-page'
-import { generateText } from '../../helpers/test-utils'
-import { PromptCmp } from '../../pages/components/Prompt-cmp'
-import { AlbumTestHelper, StampCollectionTestHelper } from '../../helpers/api-helpers'
-import type { StampCollection } from '../../../src/models/entityModels'
-import { AlbumEditorCmp } from '../../pages/components/AlbumEditor-cmp'
+import { AlbumViewPage } from '../../pages/views/AlbumView-page.js'
+import { generateText } from '../../helpers/test-utils.js'
+import { PromptCmp } from '../../pages/components/Prompt-cmp.js'
+import { AlbumTestHelper, StampCollectionTestHelper } from '../../helpers/api-helpers.js'
+import { AlbumEditorCmp } from '../../pages/components/AlbumEditor-cmp.js'
+
+import type { StampCollection } from '../../../src/models/entityModels.js'
 
 test.describe('creation tests', () => {
   let name: string

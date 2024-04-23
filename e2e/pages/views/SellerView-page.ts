@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
-import { SellerEditorCmp } from '../components/SellerEditor-cmp'
-import { AbstractNamedViewPage } from './AbstractNamedView-page'
+import { SellerEditorCmp } from '../components/SellerEditor-cmp.js'
+import { AbstractNamedViewPage } from './AbstractNamedView-page.js'
 
 export class SellerViewPage extends AbstractNamedViewPage<SellerEditorCmp> {
   constructor(page: Page) {

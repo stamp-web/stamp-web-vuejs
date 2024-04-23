@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test'
-import { DataGridComponentCmp } from '../components/DataGridComponent-cmp'
-import { FilterInputCmp } from '../components/FilterInput-cmp'
-import { AbstractNamedEditorCmp } from '../components/AbstractNamedEditor'
+import { DataGridComponentCmp } from '../components/DataGridComponent-cmp.js'
+import { FilterInputCmp } from '../components/FilterInput-cmp.js'
+import { AbstractNamedEditorCmp } from '../components/AbstractNamedEditor.js'
 
 export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
   protected readonly page: Page

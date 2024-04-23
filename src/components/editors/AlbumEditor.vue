@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed, onBeforeMount } from 'vue'
-  import type { Album, StampCollection } from '@/models/entityModels'
+  import { ref, onMounted, nextTick, computed } from 'vue'
+  import type { Album } from '@/models/entityModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
-  import { stampCollectionStore } from '@/stores/stampCollectionStore'
   import localeUtil from '@/util/locale-utils'
+  import StampCollectionSelector from '@/components/inputs/StampCollectionSelector.vue'
 
   const props = defineProps({
     // @ts-ignore
@@ -13,8 +13,6 @@
   defineEmits(['cancel', 'save'])
 
   const form$ = ref()
-  const store = stampCollectionStore()
-  const stampCollections = ref(new Array<StampCollection>())
 
   const title = computed(() => {
     return localeUtil.t(
@@ -26,10 +24,6 @@
   })
 
   defineExpose({ title })
-
-  onBeforeMount(async () => {
-    stampCollections.value = await store.find()
-  })
 
   onMounted(async () => {
     await nextTick()
@@ -51,15 +45,11 @@
       class="panel-form-form"
       :endpoint="false"
     >
-      <SelectElement
+      <StampCollectionSelector
         name="stampCollectionRef"
-        :native="false"
-        :items="stampCollections"
-        label-prop="name"
         :label="localeUtil.t('form.stampCollection')"
-        value-prop="id"
         rules="required"
-      ></SelectElement>
+      ></StampCollectionSelector>
       <TextElement
         :label="localeUtil.t('form.name')"
         name="name"

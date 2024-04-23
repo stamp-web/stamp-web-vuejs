@@ -407,11 +407,13 @@
         <SecondaryButton
           class="mr-1 px-0.5"
           icon="sw-icon-plus"
+          id="create-stamp"
           @click="createStamp()"
         ></SecondaryButton>
         <SecondaryButton
           class="px-0.5"
           icon="sw-icon-plus"
+          id="create-wantList"
           @click="createStamp(true)"
         ></SecondaryButton>
         <PagingSizeInput

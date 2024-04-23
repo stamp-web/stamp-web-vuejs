@@ -1,10 +1,11 @@
 import { test, expect, Locator, Page } from '@playwright/test'
-import { generateText } from '../../helpers/test-utils'
-import { PromptCmp } from '../../pages/components/Prompt-cmp'
-import { SellerTestHelper } from '../../helpers/api-helpers'
-import { Seller } from '../../../src/models/entityModels'
-import { SellerViewPage } from '../../pages/views/SellerView-page'
-import { SellerEditorCmp } from '../../pages/components/SellerEditor-cmp'
+import { generateText } from '../../helpers/test-utils.js'
+import { PromptCmp } from '../../pages/components/Prompt-cmp.js'
+import { SellerTestHelper } from '../../helpers/api-helpers.js'
+import { SellerViewPage } from '../../pages/views/SellerView-page.js'
+import { SellerEditorCmp } from '../../pages/components/SellerEditor-cmp.js'
+
+import { Seller } from '../../../src/models/entityModels.js'
 
 test.describe('creation tests', () => {
   let name: string
