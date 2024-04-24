@@ -1,38 +1,36 @@
 <script lang="ts" setup>
+  import { onBeforeMount, ref } from 'vue'
   import { countryStore } from '@/stores/countryStore'
+  import type { Country } from '@/models/entityModels'
 
   const countriesStore = countryStore()
 
   const model = defineModel()
+  const items = ref(new Array<Country>())
 
   const $props = defineProps({
     label: String,
-    search: { type: Boolean, default: true },
-    name: { type: String, default: 'countryRef' },
+    search: Boolean,
+    name: String,
     rules: String
   })
 
-  const getCountries = async (query: string) => {
-    let params = countriesStore.baseSearchOptions
-    if (query) {
-      // @ts-ignore
-      params.$filter = `(contains(name,'${query}'))`
-    }
-    return await countriesStore.find(params)
-  }
+  onBeforeMount(async () => {
+    items.value = await countriesStore.find()
+  })
 </script>
 <template>
   <select-element
     :name="$props.name || 'countryRef'"
     :native="false"
     :search="$props.search || true"
+    :track-by="['name']"
     :filter-results="true"
     label-prop="name"
-    v-model="model"
     value-prop="id"
+    v-model="model"
     :append-to-body="true"
-    :can-deselect="false"
-    :items="getCountries"
+    :items="items"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     autocomplete="off"

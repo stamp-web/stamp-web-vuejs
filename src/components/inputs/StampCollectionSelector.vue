@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+  import { onBeforeMount, ref } from 'vue'
   import { stampCollectionStore } from '@/stores/stampCollectionStore'
+  import type { StampCollection } from '@/models/entityModels'
 
   const store = stampCollectionStore()
-
+  const items = ref(new Array<StampCollection>())
   const $props = defineProps({
     label: String,
     search: { type: Boolean, default: true },
@@ -10,14 +12,9 @@
     rules: String
   })
 
-  const getStampCollections = async (query: string) => {
-    let params = store.baseSearchOptions
-    if (query) {
-      // @ts-ignore
-      params.$filter = `(contains(name,'${query}'))`
-    }
-    return await store.find(params)
-  }
+  onBeforeMount(async () => {
+    items.value = await store.find()
+  })
 </script>
 <template>
   <select-element
@@ -29,7 +26,7 @@
     value-prop="id"
     :can-deselect="false"
     :append-to-body="true"
-    :items="getStampCollections"
+    :items="items"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     autocomplete="off"

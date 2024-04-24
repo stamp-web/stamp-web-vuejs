@@ -41,7 +41,9 @@ abstract class entityTestHelper<T extends PersistedModel> {
     const filtered = results[this.getCollectionName()].filter((obj: T) => {
       return (obj as unknown as PersistedNamedModel).name === name
     })
-    await this.delete(request, filtered.shift().id)
+    if (filtered) {
+      await this.delete(request, filtered.shift().id)
+    }
   }
 
   async find(request: APIRequestContext) {

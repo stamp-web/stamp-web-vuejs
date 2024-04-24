@@ -36,6 +36,6 @@ export class SelectCmp {
       loc = await this.getLocator().locator(`#${encodeId(this.prop)}-dropdown`)
     }
 
-    await loc.getByRole('option').getByText(text).click()
+    await loc.getByRole('option').getByText(text, { exact: true }).click()
   }
 }

@@ -50,8 +50,43 @@ export class StampEditorCmp {
     )
   }
 
+  getCatalogueUnknown(): Locator {
+    return this.getLocator().locator(`input[id="${encodeId('group-cn-details.unknown')}"]`)
+  }
+
+  getCatalogueNoSpace(): Locator {
+    return this.getLocator().locator(`input[id="${encodeId('group-cn-details.nospace')}"]`)
+  }
+
+  getOwnershipAlbum(): SelectCmp {
+    return new SelectCmp(this.page, 'group-stamp-ownership.albumRef')
+  }
+
+  getOwnershipCondition(): SelectCmp {
+    return new SelectCmp(this.page, 'group-stamp-ownership.condition', false)
+  }
+
+  getOwnershipGrade(): SelectCmp {
+    return new SelectCmp(this.page, 'group-stamp-ownership.grade', false)
+  }
+
+  getOwnershipSeller(): SelectCmp {
+    return new SelectCmp(this.page, 'group-stamp-ownership.sellerRef')
+  }
+
+  getOwnershipImagePath(): Locator {
+    return this.getLocator().locator(
+      'input[name="img"]'
+      //`input[id="${encodeId('group-stamp-ownership.group-image-path.img')}"]`
+    )
+  }
+
   getSaveButton() {
     return this.getLocator().locator('button span:text("Save")', { hasText: /^Save$/ })
+  }
+
+  getSaveAndNewButton() {
+    return this.getLocator().locator('button span:text("Save and new")')
   }
 
   getCancelButton() {

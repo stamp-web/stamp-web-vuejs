@@ -1,23 +1,21 @@
 <script lang="ts" setup>
+  import { onBeforeMount, ref } from 'vue'
   import { sellerStore } from '@/stores/sellerStore'
+  import type { Seller } from '@/models/entityModels'
 
   const store = sellerStore()
+  const items = ref(new Array<Seller>())
 
   const $props = defineProps({
     label: String,
-    search: { type: Boolean, default: true },
-    name: { type: String, default: 'sellerRef' },
+    search: Boolean,
+    name: String,
     rules: String
   })
 
-  const getSellers = async (query: string) => {
-    let params = store.baseSearchOptions
-    if (query) {
-      // @ts-ignore
-      params.$filter = `(contains(name,'${query}'))`
-    }
-    return await store.find(params)
-  }
+  onBeforeMount(async () => {
+    items.value = await store.find()
+  })
 </script>
 <template>
   <select-element
@@ -29,7 +27,7 @@
     value-prop="id"
     :can-deselect="false"
     :append-to-body="true"
-    :items="getSellers"
+    :items="items"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     autocomplete="off"

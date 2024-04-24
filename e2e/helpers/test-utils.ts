@@ -8,5 +8,5 @@ export function generateText(count: number): string {
 }
 
 export function encodeId(id: string): string {
-  return id.replace('.', '\\.')
+  return id.replace(/\./g, '\\.')
 }

@@ -1,25 +1,22 @@
 <script lang="ts" setup>
+  import { onBeforeMount, ref } from 'vue'
   import { catalogueStore } from '@/stores/catalogueStore'
+  import type { Catalogue } from '@/models/Catalogue'
 
   const cataloguesStore = catalogueStore()
-
+  const items = ref(new Array<Catalogue>())
   const model = defineModel()
 
   const $props = defineProps({
     label: String,
-    search: { type: Boolean, default: true },
-    name: { type: String, default: 'catalogueRef' },
+    search: Boolean,
+    name: String,
     rules: String
   })
 
-  const getCatalogues = async (query: string) => {
-    let params = cataloguesStore.baseSearchOptions
-    if (query) {
-      // @ts-ignore
-      params.$filter = `(contains(name,'${query}'))`
-    }
-    return await cataloguesStore.find(params)
-  }
+  onBeforeMount(async () => {
+    items.value = await cataloguesStore.find()
+  })
 </script>
 <template>
   <select-element
@@ -32,7 +29,7 @@
     v-model="model"
     :can-deselect="false"
     :append-to-body="true"
-    :items="getCatalogues"
+    :items="items"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     autocomplete="off"
