@@ -8,11 +8,8 @@ import {
 } from '../../helpers/api-helpers.js'
 import { CountryViewPage } from '../../pages/views/CountryView-page.js'
 import { StampViewPage } from '../../pages/views/StampView-page.js'
-import { SelectCmp } from '../../pages/components/Select-cmp.js'
 
 test.describe('creation tests', () => {
-  let countryView: CountryViewPage
-  let stampView: StampViewPage
   let albumName: string
   let collectionName: string
   let catalogueName: string
