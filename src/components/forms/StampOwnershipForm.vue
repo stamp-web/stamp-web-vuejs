@@ -102,7 +102,7 @@
             input-type="search"
             force-numbers
             :columns="{ default: 4 }"
-            :rules="`${state.currencyRegex}`"
+            :rules="`nullable|${state.currencyRegex}`"
             autocomplete="off"
           ></TextElement>
           <CurrencySelector v-model="model" :columns="{ default: 4 }"></CurrencySelector>
