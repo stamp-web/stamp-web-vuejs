@@ -78,7 +78,7 @@
 
 <template>
   <VTooltip>
-    <span v-if="notesIcon" :class="`icon-cell ${notesIcon} flex items-center h-3 w-3`"></span>
+    <span v-if="notesIcon" :class="`icon-cell ${notesIcon} flex items-center h-4 w-4`"></span>
     <template #popper>
       <span class="notes-tooltip" v-html="tooltip"></span>
     </template>

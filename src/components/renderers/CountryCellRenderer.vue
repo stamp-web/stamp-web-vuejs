@@ -17,14 +17,13 @@
    * Returns the computed country name from the given id of the country for the cell.
    */
   const countryName = computed(() => {
-    const value = props.params ? props.params.value : -1
+    const value = props.params ? props.params.value : props.countryRef
     return findCountryName(value)
   })
 
   const findCountryName = (value: number) => {
     let found
     if (countries.value) {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       found = countries.value.find((country: Country) => {
         return country.id === value
       })

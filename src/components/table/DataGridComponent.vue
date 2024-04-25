@@ -41,7 +41,8 @@
         await nextTick()
         resizeColumns()
       }
-    }
+    },
+    { deep: true }
   )
 
   watch(

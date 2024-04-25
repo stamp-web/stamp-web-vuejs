@@ -5,6 +5,7 @@
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
   import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
   import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
+  import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
@@ -117,6 +118,12 @@
         path="stampOwnerships[0]"
         class="ml-auto w-4 h-4"
       ></notes-cell-renderer>
+      <cert-cell-renderer
+        v-if="props.stamp?.stampOwnerships[0]?.cert"
+        :stamp="props.stamp"
+        path="stampOwnerships[0]"
+        class="w-4 h-4"
+      ></cert-cell-renderer>
     </div>
     <div class="truncate text-[0.65rem] leading-3 m-2 mt-0 mb-1">
       <stamp-description-cell-renderer :stamp="props.stamp"></stamp-description-cell-renderer>

@@ -43,6 +43,7 @@
   import { extractErrorMessage } from '@/util/object-utils'
   import { OdataUtil } from '@/util/odata-util'
   import { OwnershipHelper } from '@/models/Ownership'
+  import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
 
   const { t } = useI18n()
 
@@ -50,7 +51,9 @@
   const router = useRouter()
   const dataGridRef = ref()
   const columnControl = ref({
+    cert: true,
     grade: true,
+    notes: true,
     pricePaid: true
   })
   const store = stampStore()
@@ -169,7 +172,22 @@
         cellRendererParams: {
           path: 'stampOwnerships[0]'
         },
-        headerName: t('table-columns.notes'),
+        colId: 'notes',
+        maxWidth: 24,
+        minWidth: 24,
+        sortable: false
+      })
+    ),
+    new ColumnDefinition(
+      '',
+      Object.assign(ColumnDefinition.getActionIconProperties(), {
+        cellRenderer: CertCellRenderer,
+        cellRendererParams: {
+          path: 'stampOwnerships[0]'
+        },
+        colId: 'cert',
+        maxWidth: 24,
+        minWidth: 24,
         sortable: false
       })
     ),

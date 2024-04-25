@@ -107,6 +107,7 @@
     "CTS": "Cut-To-Shape (CTS)"
   },
   "messages": {
+    "cert-exists": "A certificate or expertization opinion exists",
     "delete-album": "Delete the album '{album}'?",
     "delete-country": "Delete the country '{country}'?",
     "delete-collection": "Delete the stamp collection '{collection}'?",

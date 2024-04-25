@@ -11,7 +11,8 @@ describe('StampCard', () => {
       comp = shallowMount(StampCard, {
         propsData: {
           stamp: {
-            wantList: true
+            wantList: true,
+            stampOwnerships: []
           }
         }
       })
@@ -36,6 +37,7 @@ describe('StampCard', () => {
       stampOwnerships: [
         {
           id: 456,
+          cert: false,
           img: 'Germany/used/456.png'
         }
       ]
@@ -75,6 +77,7 @@ describe('StampCard', () => {
       stampOwnerships: [
         {
           id: 456,
+          cert: false,
           img: 'Germany/used/456.png'
         }
       ]
@@ -111,7 +114,8 @@ describe('StampCard', () => {
       const comp = shallowMount(StampCard, {
         propsData: {
           stamp: {
-            wantList: false
+            wantList: false,
+            stampOwnerships: []
           },
           path: 'stampOwnerships[0].img'
         }
@@ -129,7 +133,8 @@ describe('StampCard', () => {
       const comp = shallowMount(StampCard, {
         propsData: {
           stamp: {
-            wantList: false
+            wantList: false,
+            stampOwnerships: []
           },
           isSelected: false
         }
