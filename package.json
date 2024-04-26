@@ -31,6 +31,7 @@
     "vue-i18n": "^9.11.0",
     "vue-property-decorator": "^8.0.0",
     "vue-router": "^4.2.5",
+    "vue-toast-notification": "^3.1.2",
     "vue3-eventbus": "^2.0.0"
   },
   "devDependencies": {

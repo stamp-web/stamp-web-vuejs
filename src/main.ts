@@ -1,7 +1,9 @@
 import 'floating-vue/dist/style.css'
 import './assets/main.css'
+import 'vue-toast-notification/dist/theme-default.css'
 
 import Vueform from '@vueform/vueform'
+import ToastPlugin from 'vue-toast-notification'
 import vueformConfig from '../vueform.config'
 import { Tooltip, vTooltip } from 'floating-vue'
 
@@ -26,6 +28,7 @@ const app = createApp(App)
   .use(router)
   .use(Vueform, vueformConfig)
   .use(eventBus)
+  .use(ToastPlugin)
   .use(i18n)
 /**
  * Globally define cell renderers so they can be used by name without having to import them all in the Grid Component

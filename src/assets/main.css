@@ -43,6 +43,21 @@ body div:where(.swal2-container) button:where(.swal2-styled).swal2-deny {
   background-color: #ccc;
 }
 
+body {
+  .v-toast {
+    .v-toast__item--success {
+      border-radius: 0.5rem;
+      background-color: white !important;
+      opacity: 1.0;
+      border: 0.125rem solid var(--vf-primary);
+
+      .v-toast__text {
+        color: var(--vf-primary);
+      }
+    }
+  }
+}
+
 /**
  * flatpickr overrides for the vueform DateElement
  */

@@ -73,6 +73,7 @@ export default ({ mode }) => {
               'lodash-es/cloneDeep',
               'odata-filter-parser'
             ],
+            toast: ['vue-toast-notification'],
             fetch: ['axios', 'blueimp-load-image'],
             vueCore: ['vue', 'vue-router', 'vue3-eventbus'],
             pinia: ['pinia', 'pinia-generic'],

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
   import { useI18n } from 'vue-i18n'
   import { ref, watch } from 'vue'
-  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import { useToast } from 'vue-toast-notification'
 
+  import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import AlbumSelector from '@/components/inputs/AlbumSelector.vue'
   import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
   import GradeSelector from '@/components/inputs/GradeSelector.vue'
@@ -16,6 +17,7 @@
   import { Deception } from '@/models/Deception'
 
   const { t } = useI18n()
+  const $toast = useToast()
 
   const form$ = ref()
   const state = ref({
@@ -37,6 +39,13 @@
   const regenerateImagePath = () => {
     if (model.value?.img) {
       $emit('regenerate-image-path')
+    }
+  }
+
+  const copyToClipboard = () => {
+    if (model.value && model.value?.img) {
+      navigator.clipboard.writeText(model.value?.img)
+      $toast.open({ message: t('messages.copied'), duration: 1500, position: 'top' })
     }
   }
 
@@ -113,7 +122,7 @@
             v-model="model"
             name="img"
             rules="max:250"
-            :columns="{ default: 10 }"
+            :columns="{ default: 9 }"
             autocomplete="off"
           ></TextElement>
           <SecondaryButton
@@ -121,6 +130,12 @@
             :tooltip="t('form.regenerate-image')"
             @click="regenerateImagePath"
             icon="sw-icon-refresh"
+          ></SecondaryButton>
+          <SecondaryButton
+            class="mr-2 ml-1 !px-0.5 !py-0 max-h-6 min-h-6 mt-auto mb-1 w-6 max-w-6"
+            :tooltip="t('form.copy-to-clipboard')"
+            @click="copyToClipboard"
+            icon=" sw-icon-copy"
           ></SecondaryButton>
         </GroupElement>
 

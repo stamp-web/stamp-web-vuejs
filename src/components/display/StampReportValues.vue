@@ -45,7 +45,7 @@
   <div class="flex">
     <span class="ml-1 align-middle contents whitespace-nowrap text-0.5sm">{{ props.value }}</span>
     <toggle-button-group
-      class="scale-75"
+      class="scale-90"
       :models="reportModels"
       @toggle-changed="toggleClicked"
     ></toggle-button-group>
