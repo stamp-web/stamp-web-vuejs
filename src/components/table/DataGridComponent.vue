@@ -14,6 +14,7 @@
   const gridApi = ref()
   const gridEl = ref()
   const loading = ref(false)
+  const dataLoadTime = ref(0)
 
   const props = defineProps({
     rowData: Array<T>,
@@ -51,6 +52,7 @@
       if (!isNil(gridApi.value)) {
         gridApi.value.setRowData(props.rowData)
         gridApi.value.deselectAll()
+        dataLoadTime.value = new Date().getTime()
         setSelected(props.selectedData ?? new Array<T>())
       }
     },
@@ -82,10 +84,15 @@
 
   const setSelected = async (selected: Array<T>) => {
     if (selected) {
+      let leastIndex = -1
       const selectedNodes = new Array<RowNode<T>>()
       if (selected.length > 0) {
+        const lastSelected = selected[selected.length - 1]
         gridApi.value.forEachNode((node: RowNode<T>) => {
           if (selected.find((d) => d.id === node.data?.id)) {
+            if (lastSelected.id === node.data?.id && node.rowIndex) {
+              leastIndex = node.rowIndex
+            }
             selectedNodes.push(node)
           }
         })
@@ -93,6 +100,13 @@
       allowSelectionEvent.value = false
       gridApi.value.deselectAll()
       gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
+      await nextTick()
+      if (leastIndex >= 0 && leastIndex < gridApi.value.getDisplayedRowCount()) {
+        // will scroll to selection if  the time between setting the data is greater than
+        // 250ms so it doesn't scroll on individual selections (only on data reload)
+        const placement = new Date().getTime() - dataLoadTime.value < 250 ? 'middle' : null
+        gridApi.value.ensureIndexVisible(leastIndex, placement)
+      }
       allowSelectionEvent.value = true
     }
   }

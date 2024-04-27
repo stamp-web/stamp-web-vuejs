@@ -1,16 +1,6 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import {
-    computed,
-    inject,
-    nextTick,
-    onMounted,
-    onUnmounted,
-    reactive,
-    ref,
-    toRaw,
-    watch
-  } from 'vue'
+  import { computed, inject, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { TransitionRoot } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
@@ -102,12 +92,6 @@
     reportValue: '0.0'
   })
 
-  const collection = reactive({
-    list: new Array<Stamp>(),
-    total: 0,
-    selected: new Array<Stamp>()
-  })
-
   const {
     areAllSelected,
     areNoneSelected,
@@ -115,10 +99,14 @@
     selectAll,
     setSelected,
     setDeselected,
-    initializeSelected
-  } = stampSelectableCollection
-
-  initializeSelected(collection)
+    getCurrentSelected,
+    getCollectionTotal,
+    setCollectionTotal,
+    getCollection,
+    setCollection,
+    isCollectionEmpty,
+    updateCollectionEntry
+  } = stampSelectableCollection()
 
   const { conditionChanged, descriptionChanged, wantListChanged } = stampFilters
 
@@ -128,7 +116,7 @@
     calculatePagingStats,
     setActivePage,
     setPageSize,
-    setItemList,
+    setPagingItems,
     getPageSize,
     getActivePage,
     getPageCount
@@ -282,8 +270,9 @@
   }
 
   const setupStats = () => {
-    collection.total = store.getCount()
-    calculatePagingStats(collection.total)
+    setPagingItems(getCollection())
+    setCollectionTotal(store.getCount())
+    calculatePagingStats(getCollectionTotal())
   }
 
   const setView = (viewType: string) => {
@@ -304,9 +293,9 @@
   }
 
   const findWithQuery = async (theQuery: any) => {
-    logger.info('query is', query.value)
+    logger.info('query info', query.value)
     const results = await store.find(theQuery)
-    updateLocalCollection(results)
+    setCollection(results)
     setupStats()
   }
 
@@ -364,26 +353,6 @@
     gotoPage(getActivePage())
   }
 
-  async function updateLocalCollection(list: Array<Stamp>, savedStamp?: Stamp) {
-    const currentList = list
-    collection.list = []
-    let found = false
-
-    currentList.forEach((stamp: Stamp) => {
-      if (savedStamp && stamp.id === savedStamp.id) {
-        collection.list.push(savedStamp)
-        found = true
-      } else {
-        collection.list.push(stamp)
-      }
-    })
-    if (savedStamp && !found) {
-      collection.list.unshift(savedStamp)
-    }
-    await nextTick()
-    setItemList(collection.list)
-  }
-
   const createStamp = async (wantList: boolean = false) => {
     const stampPrefs = await prefStore.findByCategory('stamps')
     const model = StampModelHelper.newInstance(wantList, stampPrefs)
@@ -402,7 +371,8 @@
         OwnershipHelper.fromTagElementView(sModified.stampOwnerships[0])
       }
       const savedStamp = updating ? await store.update(sModified) : await store.create(sModified)
-      await updateLocalCollection(collection.list, savedStamp)
+      await updateCollectionEntry(savedStamp)
+      setupStats()
       if (saveAndNew) {
         createStamp(savedStamp.wantList)
       } else {
@@ -514,7 +484,7 @@
           icon="sw-icon-select-all"
           :tooltip="areAllSelected() ? '' : t('actions.select-all')"
           @click="selectAll()"
-          :disabled="collection.list.length === 0"
+          :disabled="isCollectionEmpty()"
         ></SecondaryButton>
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
@@ -567,8 +537,8 @@
             :columnDefs="columnDefs"
             :columnVisibility="columnControl"
             :multi-select="true"
-            :rowData="collection.list"
-            :selected-data="collection.selected"
+            :rowData="getCollection()"
+            :selected-data="getCurrentSelected()"
             @selected="setSelected"
             @deselected="setDeselected"
             @sortChanged="onSortChanged"
@@ -583,7 +553,7 @@
           <div
             class="flex flex-wrap content-start flex-grow h-full flex-row overflow-y-auto pt-1 pl-1"
           >
-            <template v-for="stamp in collection.list" :key="stamp.id">
+            <template v-for="stamp in getCollection()" :key="stamp.id">
               <stamp-card
                 :class="`stampcard m-1 border bg-[#f3f4f6] border-gray-300 rounded-md h-[12rem] w-[12rem]
           brightness-100 hover:brightness-95 ${getSelectedCardClasses(stamp)}`"
@@ -631,8 +601,8 @@
           class="mr-1"
           :start="startingCount"
           :end="endingCount"
-          :total="collection.total"
-          :selected="collection.selected.length"
+          :total="getCollectionTotal()"
+          :selected="getCurrentSelected().length"
         ></display-stats>
       </div>
     </div>

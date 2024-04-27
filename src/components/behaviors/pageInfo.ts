@@ -26,7 +26,7 @@ const pageInfo = (filterKey?: string) => {
     }
   }
 
-  const setItemList = (list: Array<Object>) => {
+  const setPagingItems = (list: Array<Object>) => {
     info.value.list = list
   }
 
@@ -61,7 +61,7 @@ const pageInfo = (filterKey?: string) => {
     setActivePage,
     setPageCount,
     setPageSize,
-    setItemList,
+    setPagingItems,
     getPageSize,
     getPageCount,
     getActivePage,
