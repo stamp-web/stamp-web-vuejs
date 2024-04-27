@@ -1,54 +1,64 @@
 import type { Stamp } from '@/models/Stamp'
 
-const stampSelectableCollection = (list: Array<Stamp>, selected: Array<Stamp>) => {
+const stampSelectableCollection = () => {
+  let ref: any
+
+  const initializeSelected = (theRef: any) => {
+    ref = theRef
+  }
   const isSelected = (stamp: Stamp): boolean => {
-    return selected.includes(stamp)
+    return ref.selected.includes(stamp)
   }
 
   const areAllSelected = () => {
-    return list.length === selected.length
+    return ref.list.length === ref.selected.length
   }
 
   const areNoneSelected = () => {
-    return selected.length < 1
+    return ref.selected.length < 1
   }
 
   const setSelected = (stamp: Stamp, options?: Partial<any>) => {
-    const indx = selected.findIndex((s) => s.id === stamp.id)
+    const indx = ref.selected.findIndex((s: Stamp) => s.id === stamp.id)
     if (indx < 0) {
-      selected.push(stamp)
+      ref.selected.push(stamp)
     }
-    if (selected.length > 1 && options?.shiftKey) {
-      const lastSelected = selected[selected.length - 2]
-      let lastIndex = list.findIndex((s) => s.id === stamp.id)
-      let startingIndx = list.findIndex((s) => s.id === lastSelected.id)
+    if (ref.selected.length > 1 && options?.shiftKey) {
+      const lastSelected = ref.selected[ref.selected.length - 2]
+      let lastIndex = ref.list.findIndex((s: Stamp) => s.id === stamp.id)
+      let startingIndx = ref.list.findIndex((s: Stamp) => s.id === lastSelected.id)
       if (startingIndx > lastIndex) {
         const tempIndex = lastIndex
         lastIndex = startingIndx
         startingIndx = tempIndex
       }
       for (let i = startingIndx + 1; i < lastIndex; i++) {
-        const currentStamp = list[i]
-        const c_indx = selected.findIndex((s) => s.id === currentStamp.id)
+        const currentStamp = ref.list[i]
+        const c_indx = ref.selected.findIndex((s: Stamp) => s.id === currentStamp.id)
         if (c_indx < 0) {
-          selected.push(currentStamp)
+          ref.selected.push(currentStamp)
         }
       }
     }
   }
 
   const setDeselected = (stamp: Stamp) => {
-    const indx = selected.findIndex((s) => s.id === stamp.id)
+    const indx = ref.selected.findIndex((s: Stamp) => s.id === stamp.id)
     if (indx >= 0) {
-      selected.splice(indx, 1)
+      ref.selected.splice(indx, 1)
     }
   }
 
   const selectAll = (allSelect: boolean = true) => {
-    selected.splice(0, selected.length, ...list.slice(0, allSelect ? list.length : 0))
+    ref.selected.splice(
+      0,
+      ref.selected.length,
+      ...ref.list.slice(0, allSelect ? ref.list.length : 0)
+    )
   }
 
   return {
+    initializeSelected,
     areAllSelected,
     areNoneSelected,
     isSelected,
@@ -58,4 +68,4 @@ const stampSelectableCollection = (list: Array<Stamp>, selected: Array<Stamp>) =
   }
 }
 
-export default stampSelectableCollection
+export default stampSelectableCollection()

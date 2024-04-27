@@ -1,9 +1,25 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { computed, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch } from 'vue'
+  import {
+    computed,
+    inject,
+    nextTick,
+    onMounted,
+    onUnmounted,
+    reactive,
+    ref,
+    toRaw,
+    watch
+  } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { TransitionRoot } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
+  import { Parser, Operators, Predicate } from 'odata-filter-parser'
+  import type { Log } from 'vuejs3-logger'
+
+  import editableModel from '@/components/behaviors/editableModel'
+  import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
+  import stampFilters from '@/components/behaviors/stampFilters'
 
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
@@ -19,15 +35,19 @@
   import DisplayStats from '@/components/display/DisplayStats.vue'
   import StampReportValues from '@/components/display/StampReportValues.vue'
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
-  import editableModel from '@/components/behaviors/editableModel'
-  import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
+  import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
   import pagingInfo from '@/components/behaviors/pageInfo'
   import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
   import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
+  import FilterInput from '@/components/inputs/FilterInput.vue'
+  import ConditionFilterInput from '@/components/inputs/ConditionFilterInput.vue'
+
   import StampEditor from '@/components/editors/StampEditor.vue'
+
   import { Prompt } from '@/components/Prompt'
 
   import { type Stamp, StampModelHelper } from '@/models/Stamp'
+  import { OwnershipHelper } from '@/models/Ownership'
   import { ReportType } from '@/models/ReportType'
   import { ReportResult } from '@/models/ReportResult'
   import { CurrencyTools } from '@/models/CurrencyCode'
@@ -41,11 +61,13 @@
 
   import type { KeyIndexable } from '@/util/ts/key-accessor'
   import { extractErrorMessage } from '@/util/object-utils'
+  import { PredicateUtilities } from '@/util/predicate-util'
   import { OdataUtil } from '@/util/odata-util'
-  import { OwnershipHelper } from '@/models/Ownership'
-  import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
+  import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
 
   const { t } = useI18n()
+
+  const logger = inject('vuejs3-logger') as Log
 
   const route = useRoute()
   const router = useRouter()
@@ -65,6 +87,12 @@
     $filter: '',
     $orderby: ''
   })
+
+  const state = ref({
+    predicates: new Array<Predicate>(),
+    condition: 'All',
+    wantList: 'All'
+  })
   const stampView = ref()
   const cardLayout = ref()
   const buttonToolbar = ref()
@@ -80,8 +108,19 @@
     selected: new Array<Stamp>()
   })
 
-  const { areAllSelected, areNoneSelected, isSelected, selectAll, setSelected, setDeselected } =
-    stampSelectableCollection(collection.list, collection.selected)
+  const {
+    areAllSelected,
+    areNoneSelected,
+    isSelected,
+    selectAll,
+    setSelected,
+    setDeselected,
+    initializeSelected
+  } = stampSelectableCollection
+
+  initializeSelected(collection)
+
+  const { conditionChanged, descriptionChanged, wantListChanged } = stampFilters
 
   const {
     endingCount,
@@ -265,6 +304,7 @@
   }
 
   const findWithQuery = async (theQuery: any) => {
+    logger.info('query is', query.value)
     const results = await store.find(theQuery)
     updateLocalCollection(results)
     setupStats()
@@ -273,6 +313,10 @@
   const gotoPage = (page: number) => {
     setActivePage(page)
     setQueryPagingParams((getActivePage() - 1) * getPageSize(), getPageSize())
+    query.value.$filter = PredicateUtilities.concat(
+      Operators.AND,
+      state.value.predicates
+    ).serialize()
     findWithQuery(query.value)
   }
 
@@ -299,6 +343,25 @@
   const changeReportType = async (value: string) => {
     reporting.value.reportType = Number.parseInt(value)
     await fetchReportData()
+  }
+
+  const print = () => {}
+
+  const purchase = () => {}
+
+  const deleteSelected = () => {}
+
+  const wantListFilterChanged = (wantListFilter: string) => {
+    wantListChanged(state.value.predicates, wantListFilter)
+    gotoPage(getActivePage())
+  }
+  const conditionFilterChanged = (conditionFilter: string) => {
+    conditionChanged(state.value.predicates, conditionFilter)
+    gotoPage(getActivePage())
+  }
+  const filterChanged = (filterText: string) => {
+    descriptionChanged(state.value.predicates, filterText)
+    gotoPage(getActivePage())
   }
 
   async function updateLocalCollection(list: Array<Stamp>, savedStamp?: Stamp) {
@@ -360,12 +423,21 @@
       const country = await countriesStore.findRandom()
       if (country) {
         await router.push({ query: { $filter: `(countryRef eq ${country.id})` } })
-        query.value.$filter = `(countryRef eq ${country.id})`
+        state.value.predicates = [
+          new Predicate({
+            subject: 'countryRef',
+            operator: Operators.EQUALS,
+            value: `${country.id}`
+          })
+        ]
       }
     } else {
       // @ts-ignore
       query.value = {
         ...structuredClone(route.query)
+      }
+      if (query.value.$filter) {
+        state.value.predicates = [Parser.parse(query.value.$filter)]
       }
     }
     query.value.$orderby = OdataUtil.createSort('number', 'asc')
@@ -395,45 +467,92 @@
     <div class="flex-grow flex-auto flex flex-col h-full overflow-y-hidden">
       <div class="flex mb-1 h-[32.5px]" ref="buttonToolbar">
         <SecondaryButton
-          class="mr-1 px-0.5"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-24 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
+          icon="sw-icon-plus"
+          id="create-stamp"
+          :tooltip="t('actions.new-stamp')"
+          @click="createStamp()"
+          >{{ t('actions.new-stamp') }}</SecondaryButton
+        >
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-tl-none rounded-bl-none border !border-gray-400 !border-l-transparent hidden lg:block"
+          icon="sw-icon-plus"
+          id="create-wantList"
+          :tooltip="t('actions.new-wantlist')"
+          @click="createStamp(true)"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400"
           icon="sw-icon-list"
           :tooltip="viewDef?.mode === 'list' ? '' : t('actions.show-list-view')"
           @click="setView('list')"
           :disabled="viewDef?.mode === 'list'"
         ></SecondaryButton>
         <SecondaryButton
-          class="mr-1 px-0.5"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
           icon="sw-icon-gridview"
           :tooltip="viewDef?.mode === 'card' ? '' : t('actions.show-card-view')"
           @click="setView('card')"
           :disabled="viewDef?.mode === 'card'"
         ></SecondaryButton>
         <SecondaryButton
-          class="mr-1 px-0.5"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
+          icon="sw-icon-references"
+          :tooltip="t('actions.show-reference-catalogueNumbers')"
+          @click="setView('card')"
+          :disabled="true"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="ml-0 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-tl-none rounded-bl-none border !border-gray-400 !border-l-transparent"
+          icon="sw-icon-print"
+          :tooltip="t('actions.print')"
+          @click="print()"
+          :disabled="true"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
           icon="sw-icon-select-all"
           :tooltip="areAllSelected() ? '' : t('actions.select-all')"
           @click="selectAll()"
-          :disabled="areAllSelected()"
+          :disabled="collection.list.length === 0"
         ></SecondaryButton>
         <SecondaryButton
-          class="mr-1 px-0.5"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
+          icon=" sw-icon-purchased"
+          :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
+          @click="purchase()"
+          :disabled="areNoneSelected() || true"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
           icon="sw-icon-clear-all"
           :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="selectAll(false)"
           :disabled="areNoneSelected()"
         ></SecondaryButton>
         <SecondaryButton
-          class="mr-1 px-0.5"
-          icon="sw-icon-plus"
-          id="create-stamp"
-          @click="createStamp()"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"
+          icon="sw-icon-trash"
+          :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
+          @click="deleteSelected()"
+          :disabled="areNoneSelected() || true"
         ></SecondaryButton>
-        <SecondaryButton
-          class="px-0.5"
-          icon="sw-icon-plus"
-          id="create-wantList"
-          @click="createStamp(true)"
-        ></SecondaryButton>
+        <FilterInput
+          class="ml-1 w-56 scale-90 hidden lg:block"
+          label="Filter"
+          @filter-changed="filterChanged"
+        ></FilterInput>
+        <WantListFilterInput
+          class="scale-90 w-44 hidden xl:block"
+          :filter="state.wantList"
+          @wantList-filter-changed="wantListFilterChanged"
+        >
+        </WantListFilterInput>
+        <ConditionFilterInput
+          class="ml-0 scale-90 w-40 hidden xl:block"
+          :condition="state.condition"
+          @condition-filter-changed="conditionFilterChanged"
+        ></ConditionFilterInput>
         <PagingSizeInput
           class="ml-auto mr-2 scale-90 hidden md:block"
           @page-size-changed="pageSizeChanges"

@@ -16,6 +16,24 @@ describe('ConditionHelper tests', () => {
     })
   })
 
+  describe('AllUsed', () => {
+    it('check default', () => {
+      expect(ConditionHelper.AllUsed().length).toBe(3)
+    })
+  })
+
+  describe('AllMint', () => {
+    it('check default', () => {
+      expect(ConditionHelper.AllMint().length).toBe(4)
+    })
+  })
+
+  describe('AllPostalHistory', () => {
+    it('check default', () => {
+      expect(ConditionHelper.AllPostalHistory().length).toBe(1)
+    })
+  })
+
   describe('isOnCover', () => {
     it('validate positive conditions', () => {
       expect(ConditionHelper.isOnCover(Condition.ON_PAPER)).toBe(true)

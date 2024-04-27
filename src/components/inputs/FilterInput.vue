@@ -8,6 +8,8 @@
 
   const props = defineProps({
     placeholder: String,
+    label: String,
+    disabled: Boolean,
     filterText: String,
     updateRate: Number
   })
@@ -48,14 +50,16 @@
 </script>
 
 <template>
-  <Vueform sync v-model="model" ref="form$" :endpoint="false">
+  <Vueform size="sm" sync v-model="model" ref="form$" :endpoint="false">
     <TextElement
       ref="filterInput"
+      :label="props.label || ''"
       :placeholder="`${props.placeholder || t('form.filter-placeholder')}`"
-      size="sm"
-      autocomplete="none"
+      autocomplete="off"
       :floating="false"
       name="text"
+      :disabled="props.disabled || false"
+      :columns="{ label: 2, wrapper: 12 }"
     >
       <template #addon-after>
         <span class="sw-icon-cancel" @click="clear"></span>

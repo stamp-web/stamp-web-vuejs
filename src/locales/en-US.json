@@ -9,13 +9,17 @@
     "new-country": "New Country",
     "new-seller": "New Seller",
     "new-stamp": "New Stamp",
+    "new-stamp-term": "Stamp",
     "new-stamp-collection": "New Stamp Collection",
+    "new-wantlist": "New Wantlist Stamp",
     "no": "No",
+    "print": "Print Current List",
     "save": "Save",
     "save-and-new": "Save and new",
     "select-all": "Select All",
     "show-card-view": "Show Card View",
     "show-list-view": "Show List View",
+    "show-reference-catalogueNumbers": "Show Reference Catalogue Numbers",
     "yes": "Yes"
   },
   "cell": {
@@ -31,6 +35,17 @@
     "COVER": "Used on Cover",
     "MANUSCRIPT": "Manuscript Cancel",
     "ON_PAPER": "Used on Paper"
+  },
+  "wantlist-filter": {
+    "All":"All Stamps",
+    "WantList": "Only WantList Stamps",
+    "Owned": "Only Owned Stamps"
+  },
+  "condition-filter": {
+    "All": "All Conditions",
+    "Used":  "Only Used Stamps",
+    "Mint":  "Only Mint Stamps",
+    "Postal": "Only Postal History"
   },
   "deception": {
     "FAKE_CANCEL":"Fake Cancel",

@@ -19,6 +19,18 @@ export class ConditionHelper {
     return g ? localeUtil.t(`condition.${g}`) : ''
   }
 
+  static AllUsed(): Array<Condition> {
+    return [Condition.USED, Condition.CTO, Condition.ON_PAPER]
+  }
+
+  static AllMint(): Array<Condition> {
+    return [Condition.MINT, Condition.MINT_NG, Condition.MINT_NH, Condition.MINT_HH]
+  }
+
+  static AllPostalHistory(): Array<Condition> {
+    return [Condition.COVER]
+  }
+
   static isUsed(condition: Condition): boolean {
     let result = false
     switch (condition) {
