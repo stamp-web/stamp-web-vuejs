@@ -17,6 +17,7 @@ export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
   }
 
   abstract newEditorInstance(): T
+  abstract getModelName(): string
   abstract getCreateAction(): string
   abstract getPageURL(): string
 
@@ -46,7 +47,7 @@ export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
   }
 
   getDeleteButton(): Locator {
-    return this.page.locator('button span:text("Delete")')
+    return this.page.locator(`button[id="delete-${this.getModelName()}"]`)
   }
 
   async goto() {

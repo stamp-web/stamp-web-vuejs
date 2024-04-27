@@ -118,11 +118,12 @@
           :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
-        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
+        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus" id="create-seller">
           {{ t('actions.new-seller') }}
         </PrimaryButton>
         <SecondaryButton
           class=""
+          id="delete-seller"
           @click="remove()"
           :disabled="!getSelected()"
           icon="sw-icon-delete"

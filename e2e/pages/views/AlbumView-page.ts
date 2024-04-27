@@ -7,6 +7,10 @@ export class AlbumViewPage extends AbstractNamedViewPage<AlbumEditorCmp> {
     super(page)
   }
 
+  getModelName(): string {
+    return 'album'
+  }
+
   newEditorInstance(): AlbumEditorCmp {
     return new AlbumEditorCmp(this.page)
   }

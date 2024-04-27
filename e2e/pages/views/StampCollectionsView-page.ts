@@ -7,6 +7,10 @@ export class StampCollectionsViewPage extends AbstractNamedViewPage<StampCollect
     super(page)
   }
 
+  getModelName(): string {
+    return 'stampCollection'
+  }
+
   newEditorInstance(): StampCollectionEditorCmp {
     return new StampCollectionEditorCmp(this.page)
   }

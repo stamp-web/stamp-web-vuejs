@@ -9,7 +9,6 @@
   import { stampCollectionStore } from '@/stores/stampCollectionStore'
   import { createInstance } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
-  import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import FilterInput from '@/components/inputs/FilterInput.vue'
   import { Operators, Predicate } from 'odata-filter-parser'
@@ -111,19 +110,30 @@
 <template>
   <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
     <div class="flex-grow flex-auto flex flex-col">
-      <div class="flex mb-1">
+      <div class="flex mb-1 h-[32.5px]" ref="buttonToolbar">
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 border !border-gray-400 hidden lg:block"
+          icon="sw-icon-plus"
+          id="create-stampCollection"
+          :tooltip="t('actions.new-stamp-collection')"
+          @click="create()"
+          >{{ t('actions.new-stamp-collection') }}</SecondaryButton
+        >
+        <SecondaryButton
+          class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden lg:block"
+          icon="sw-icon-delete"
+          :tooltip="getSelected() ? t('actions.delete') : ''"
+          id="delete-stampCollection"
+          @click="remove()"
+          :disabled="!getSelected()"
+        ></SecondaryButton>
         <FilterInput
-          class="mr-4 filter-input"
+          class="mr-4 filter-input scale-90"
+          :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
           :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
-        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
-          {{ t('actions.new-stamp-collection') }}
-        </PrimaryButton>
-        <SecondaryButton @click="remove()" :disabled="!getSelected()" icon="sw-icon-delete">
-          {{ t('actions.delete') }}
-        </SecondaryButton>
       </div>
       <DataGridComponent
         class=""

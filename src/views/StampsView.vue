@@ -539,7 +539,7 @@
         ></SecondaryButton>
         <FilterInput
           class="ml-1 w-56 scale-90 hidden lg:block"
-          label="Filter"
+          :label="t('actions.filter')"
           @filter-changed="filterChanged"
         ></FilterInput>
         <WantListFilterInput

@@ -121,10 +121,15 @@
           :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
-        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus">
+        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus" id="create-album">
           {{ t('actions.new-album') }}
         </PrimaryButton>
-        <SecondaryButton @click="remove()" :disabled="!getSelected()" icon="sw-icon-delete">
+        <SecondaryButton
+          id="delete-album"
+          @click="remove()"
+          :disabled="!getSelected()"
+          icon="sw-icon-delete"
+        >
           {{ t('actions.delete') }}
         </SecondaryButton>
       </div>

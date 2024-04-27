@@ -7,6 +7,10 @@ export class CountryViewPage extends AbstractNamedViewPage<CountryEditorCmp> {
     super(page)
   }
 
+  getModelName(): string {
+    return 'country'
+  }
+
   newEditorInstance(): CountryEditorCmp {
     return new CountryEditorCmp(this.page)
   }

@@ -7,6 +7,10 @@ export class SellerViewPage extends AbstractNamedViewPage<SellerEditorCmp> {
     super(page)
   }
 
+  getModelName(): string {
+    return 'seller'
+  }
+
   newEditorInstance(): SellerEditorCmp {
     return new SellerEditorCmp(this.page)
   }
