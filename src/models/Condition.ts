@@ -31,6 +31,20 @@ export class ConditionHelper {
     return [Condition.COVER]
   }
 
+  static isMint(condition: Condition): boolean {
+    let result = false
+    switch (condition) {
+      case Condition.MINT_HH:
+      case Condition.MINT_NH:
+      case Condition.MINT_NG:
+        result = true
+        break
+    }
+    // switch doesn't work correctly with MINT since it is valued at 0
+    result = result || (!result && condition === Condition.MINT)
+    return result
+  }
+
   static isUsed(condition: Condition): boolean {
     let result = false
     switch (condition) {
@@ -52,5 +66,13 @@ export class ConditionHelper {
         break
     }
     return result
+  }
+
+  static isSameFamily(condition1: Condition, condition2: Condition): boolean {
+    return (
+      (ConditionHelper.isMint(condition1) && ConditionHelper.isMint(condition2)) ||
+      (ConditionHelper.isUsed(condition1) && ConditionHelper.isUsed(condition2)) ||
+      (ConditionHelper.isOnCover(condition1) && ConditionHelper.isOnCover(condition2))
+    )
   }
 }

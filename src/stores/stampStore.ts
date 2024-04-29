@@ -7,8 +7,20 @@ import type { BaseModelStore } from '@/stores/baseModelStore'
 import { baseModelStore } from '@/stores/baseModelStore'
 import type { EntityList } from '@/models/entityList'
 import BaseModelService from '@/services/BaseModelService'
+// eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
+import _cloneDeep from 'lodash-es/cloneDeep'
+import { Operators, Predicate } from 'odata-filter-parser'
+import { PredicateUtilities } from '@/util/predicate-util'
+import { ConditionHelper } from '@/models/Condition'
+import { catalogueStore } from '@/stores/catalogueStore'
 
-type StampStoreType = PiniaStore<'stampStore', {}, {}, {}, BaseModelStore<Stamp>>
+type StampStoreType = PiniaStore<
+  'stampStore',
+  {},
+  {},
+  { checkIfExists(stamp: Stamp, cn: CatalogueNumber): Promise<boolean> },
+  BaseModelStore<Stamp>
+>
 
 export const setActiveCatalogueNumber = (s: Stamp): Stamp => {
   const activeCN = s.catalogueNumbers?.find((cn: CatalogueNumber) => {
@@ -16,6 +28,24 @@ export const setActiveCatalogueNumber = (s: Stamp): Stamp => {
   })
   s.activeCatalogueNumber = activeCN
   return s
+}
+
+const createFilter = (stamp: Stamp, cn: CatalogueNumber): {} => {
+  const searchCriteria = [
+    new Predicate({
+      subject: 'countryRef',
+      operator: Operators.EQUAL,
+      value: stamp.countryRef
+    }),
+    new Predicate({
+      subject: 'number',
+      operator: Operators.EQUAL,
+      value: cn.number
+    })
+  ]
+  return {
+    $filter: PredicateUtilities.concat(Operators.AND, searchCriteria).serialize()
+  }
 }
 export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
   'stampStore',
@@ -45,7 +75,39 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
           this.items.total = data.total
         })
         this.items.loading = false
-        return this.items.list
+        return _cloneDeep(this.items.list)
+      },
+
+      async checkIfExists(stamp: Stamp, cn: CatalogueNumber): Promise<boolean> {
+        let result = false
+        const validId = stamp && (!stamp.id || stamp.id <= 0)
+        if (
+          validId &&
+          stamp.countryRef > 0 &&
+          cn &&
+          cn.number &&
+          cn.catalogueRef > 0 &&
+          cn.condition >= 0
+        ) {
+          const results = await this.find(createFilter(stamp, cn))
+          if (results && results.length > 0) {
+            // need to define catalogueStore( ) here since defining it more globally leads to pinia errors in the unit tests
+            const catalogues = await catalogueStore().find()
+            const currentCatalogue = catalogues.find((c) => c.id === cn.catalogueRef)
+            results.forEach((s: Stamp) => {
+              const cId = s.activeCatalogueNumber?.catalogueRef
+              const cat = catalogues.find((c) => c.id === cId)
+              if (cat && currentCatalogue && cat.type === currentCatalogue.type) {
+                const cont = s.activeCatalogueNumber?.condition
+                // @ts-ignore
+                if (ConditionHelper.isSameFamily(cn.condition, cont)) {
+                  result = true
+                }
+              }
+            })
+          }
+        }
+        return result
       },
 
       /**
@@ -65,14 +127,6 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
        * @param stamp
        */
       postUpdate(stamp: Stamp): Stamp {
-        return setActiveCatalogueNumber(stamp)
-      },
-
-      /**
-       * @override
-       * @param stamp
-       */
-      postFind(stamp: Stamp): Stamp {
         return setActiveCatalogueNumber(stamp)
       }
     }

@@ -68,17 +68,20 @@ export default ({ mode }) => {
             vueform: ['@vueform/vueform'],
             prompts: ['sweetalert2'],
             util: [
-              'lodash-es/debounce',
+              'lodash-es/isNumber',
+              'lodash-es/isEqual',
+              'lodash-es/isObject',
+              'lodash-es/isArrayLikeObject',
+              'lodash-es/merge',
               'lodash-es/isEmpty',
               'lodash-es/cloneDeep',
               'odata-filter-parser'
             ],
-            toast: ['vue-toast-notification'],
             fetch: ['axios', 'blueimp-load-image'],
             vueCore: ['vue', 'vue-router', 'vue3-eventbus'],
             pinia: ['pinia', 'pinia-generic'],
             i18n: ['vue-i18n'],
-            tooltip: ['floating-vue'],
+            tooltip: ['floating-vue', 'vue-toast-notification'],
             headlessui: ['@headlessui/vue']
           }
         },

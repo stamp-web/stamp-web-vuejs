@@ -131,7 +131,8 @@
     "delete-collection": "Delete the stamp collection '{collection}'?",
     "delete-seller": "Delete the seller '{seller}'?",
     "delete-stamp": "Delete the stamp `{stamp}'?",
-    "save-failure": "An error occurred saving the object. The message is: <br/>'{message}'"
+    "save-failure": "An error occurred saving the object. The message is: <br/>'{message}'",
+    "stamp-exists": "The stamp already exists"
   },
   "models": {
     "albums": {

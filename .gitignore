@@ -31,3 +31,4 @@ playwright-report/
 /.env.production
 /.env.test
 /public/app-config.json
+/vite.config.ts.timestamp-*.mjs

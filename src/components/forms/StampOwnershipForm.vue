@@ -62,6 +62,7 @@
   <div class="w-full border-gray-300 p-3 border-solid border rounded">
     <h3 class="text-[var(--vf-primary)] mb-1 font-bold">{{ t('titles.ownership-details') }}</h3>
     <Vueform v-model="model" ref="form$" sync size="sm" :display-errors="false" :endpoint="false">
+      <HiddenElement :meta="true" name="id" />
       <GroupElement name="group-stamp-ownership">
         <AlbumSelector v-model="model" :label="t('form.album')"></AlbumSelector>
         <ConditionSelector

@@ -58,4 +58,39 @@ describe('ConditionHelper tests', () => {
       expect(ConditionHelper.isUsed(Condition.ON_PAPER)).toBe(false)
     })
   })
+
+  describe('isMint', () => {
+    it('validate positive conditions', () => {
+      expect(ConditionHelper.isMint(Condition.MINT)).toBe(true)
+      expect(ConditionHelper.isMint(Condition.MINT_NG)).toBe(true)
+      expect(ConditionHelper.isMint(Condition.MINT_HH)).toBe(true)
+      expect(ConditionHelper.isMint(Condition.MINT_NH)).toBe(true)
+    })
+
+    it('validate other conditions', () => {
+      expect(ConditionHelper.isMint(Condition.USED)).toBe(false)
+      expect(ConditionHelper.isMint(Condition.ON_PAPER)).toBe(false)
+    })
+  })
+
+  describe('isSameFamily', () => {
+    it('Conditions are in same family', () => {
+      expect(ConditionHelper.isSameFamily(Condition.MINT, Condition.MINT)).toBe(true)
+      expect(ConditionHelper.isSameFamily(Condition.MINT, Condition.MINT_HH)).toBe(true)
+      expect(ConditionHelper.isSameFamily(Condition.MINT_NH, Condition.MINT_HH)).toBe(true)
+      expect(ConditionHelper.isSameFamily(Condition.MINT_HH, Condition.MINT_NG)).toBe(true)
+      expect(ConditionHelper.isSameFamily(Condition.USED, Condition.USED)).toBe(true)
+      expect(ConditionHelper.isSameFamily(Condition.MANUSCRIPT, Condition.CTO)).toBe(true)
+      expect(ConditionHelper.isSameFamily(Condition.ON_PAPER, Condition.COVER)).toBe(true)
+    })
+
+    it('Conditions are not in same family', () => {
+      expect(ConditionHelper.isSameFamily(Condition.MINT, Condition.USED)).toBe(false)
+      expect(ConditionHelper.isSameFamily(Condition.MINT, Condition.COVER)).toBe(false)
+      expect(ConditionHelper.isSameFamily(Condition.USED, Condition.MINT_HH)).toBe(false)
+      expect(ConditionHelper.isSameFamily(Condition.MANUSCRIPT, Condition.MINT_NG)).toBe(false)
+      expect(ConditionHelper.isSameFamily(Condition.ON_PAPER, Condition.USED)).toBe(false)
+      expect(ConditionHelper.isSameFamily(Condition.MINT_NH, Condition.CTO)).toBe(false)
+    })
+  })
 })

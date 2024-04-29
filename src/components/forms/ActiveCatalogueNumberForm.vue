@@ -13,9 +13,14 @@
 
   const model = defineModel<CatalogueNumber>()
   const cataloguesStore = catalogueStore()
+
+  const $props = defineProps({
+    exists: { type: Boolean, default: false }
+  })
   const $emit = defineEmits([
     'validation-changed',
     'catalogue-prefix',
+    'check-existence',
     'catalogueNumber-info-changed'
   ])
   const state = ref({
@@ -23,10 +28,21 @@
     currency: CurrencyCode.USD
   })
 
+  const audio = ref<HTMLAudioElement>()
+
   watch(
     () => [form$.value?.invalid],
     () => {
       $emit('validation-changed', !form$.value?.invalid)
+    }
+  )
+
+  watch(
+    () => [$props.exists],
+    () => {
+      if ($props.exists) {
+        audio.value?.play()
+      }
     }
   )
 
@@ -37,6 +53,7 @@
         // we only want to emit the event if there was a change in the values we are watching
         if (item !== oldVal[idx]) {
           $emit('catalogueNumber-info-changed')
+          $emit('check-existence')
           return false
         }
       })
@@ -56,6 +73,7 @@
         state.value.currencyRegex = `regex:${CurrencyTools.formatRegex(catalogue.code, false)}`
         state.value.currency = catalogue.code
         $emit('catalogue-prefix', CatalogueModelHelper.getPrefix(catalogue))
+        $emit('check-existence')
       }
     },
     {
@@ -75,6 +93,8 @@
     </h3>
     <Vueform v-model="model" ref="form$" sync size="sm" :display-errors="false">
       <GroupElement name="group-cn-details">
+        <HiddenElement :meta="true" name="id" />
+        <HiddenElement :meta="true" name="active" />
         <CatalogueSelector
           v-model="model"
           :label="t('form.catalogue')"
@@ -85,14 +105,36 @@
           :label="t('form.condition')"
           :columns="{ container: 12, label: 12, wrapper: 7 }"
         ></ConditionSelector>
-        <TextElement
-          v-model="model"
-          name="number"
-          :columns="{ container: 12, label: 12, wrapper: 6 }"
+        <GroupElement
           :label="t('form.number')"
-          rules="required|max:25"
-          autocomplete="off"
-        ></TextElement>
+          name="group-number"
+          :columns="{ container: 12, label: 12, wrapper: 12 }"
+        >
+          <TextElement
+            v-model="model"
+            name="number"
+            :columns="{ default: 6 }"
+            rules="required|max:25"
+            autocomplete="off"
+            :add-classes="{
+              ElementError: {
+                container: 'text-nowrap'
+              }
+            }"
+          ></TextElement>
+          <span v-if="$props.exists" class="flex items-top mt-2 text-orange-300"
+            ><i
+              id="conflict-icon"
+              class="sw-icon-attention"
+              v-tooltip="t('messages.stamp-exists')"
+            ></i
+          ></span>
+          <audio ref="audio" hidden="true">
+            <!-- <source src="../../assets/sound/ring.ogg" type="audio/ogg" /> -->
+            <source src="../../assets/sound/wrong-answer.mp3" type="audio/mpeg" />
+          </audio>
+        </GroupElement>
+
         <GroupElement
           :label="t('form.value')"
           name="group-value"

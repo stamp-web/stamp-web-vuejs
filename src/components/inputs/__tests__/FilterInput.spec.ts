@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import FilterInput from '@/components/inputs/FilterInput.vue'
-import debounce from 'lodash-es/debounce'
+import { debounce } from '@/util/timer-utils'
 
 describe('FilterInput', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mock('lodash-es/debounce')
+    vi.mock('@/util/timer-utils')
     // @ts-ignore
     debounce.mockImplementation((fn) => fn)
   })

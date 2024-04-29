@@ -4,6 +4,7 @@ import {
   CatalogueTestHelper,
   CountryTestHelper,
   SellerTestHelper,
+  StampTestHelper,
   StampCollectionTestHelper
 } from '../../helpers/api-helpers.js'
 import { CountryViewPage } from '../../pages/views/CountryView-page.js'
@@ -16,6 +17,8 @@ test.describe('creation tests', () => {
   let countryName: string
   let sellerName: string
   let timestamp: number
+  let countryId: number
+  let catalogueId: number
 
   test.beforeEach(async ({ request }) => {
     timestamp = new Date().getTime()
@@ -24,8 +27,11 @@ test.describe('creation tests', () => {
     albumName = `createStamp-${timestamp}`
     collectionName = `collectionAlbum-${timestamp}`
     sellerName = `createStamp-${timestamp}`
-    await CountryTestHelper.create(request, { name: countryName })
-    await CatalogueTestHelper.create(request, { name: catalogueName, issue: '2024', type: 1 })
+
+    countryId = (await CountryTestHelper.create(request, { name: countryName })).id
+    catalogueId = (
+      await CatalogueTestHelper.create(request, { name: catalogueName, issue: '2024', type: 1 })
+    ).id
     const sc = await StampCollectionTestHelper.create(request, { name: collectionName })
     await AlbumTestHelper.create(request, { name: albumName, stampCollectionRef: sc.id })
     await SellerTestHelper.create(request, { name: sellerName })
@@ -91,5 +97,37 @@ test.describe('creation tests', () => {
     expect(await editor.isValid()).toBe(true)
     await editor.getSaveButton().click()
     await stampView.getGrid().getRowByText(num)
+  })
+
+  test('verify conflict', async ({ page }) => {
+    const num = `45a-${timestamp}`
+    StampTestHelper.create(page.request, {
+      countryRef: countryId,
+      rate: '1d',
+      description: 'red',
+      wantList: true,
+      catalogueNumbers: [
+        {
+          catalogueRef: catalogueId,
+          number: num,
+          value: 12.5,
+          condition: 2,
+          active: true
+        }
+      ]
+    })
+    const stampView = await navigateToStampView(page, countryName)
+    await stampView.getCreateWantListButton().click()
+    const editor = stampView.getEditor()
+    await expect(editor.getTitle()).toHaveText('New Stamp')
+    await editor.getCountry().select(countryName)
+    await editor.getRate().fill('1d')
+    await editor.getDescription().fill(`wantlist description - ${timestamp}`)
+    await editor.getCatalogue().select(catalogueName)
+    await editor.getCatalogueCondition().select('Used')
+    await editor.getCatalogueNumber().fill(num)
+    await editor.getCatalogueValue().fill('12.50')
+    expect(await editor.isValid()).toBe(true)
+    expect(await editor.hasConflict()).toBe(true)
   })
 })

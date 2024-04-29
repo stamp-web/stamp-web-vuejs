@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onBeforeMount, ref, watch } from 'vue'
-  import _debounce from 'lodash-es/debounce'
   import { isNil } from '@/util/object-utils'
+  import { debounce } from '@/util/timer-utils'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
@@ -21,7 +21,7 @@
     text: ''
   })
 
-  const filterChanged = _debounce(
+  const filterChanged = debounce(
     () => {
       if (!isNil(model.value.text)) {
         emit('filter-changed', model.value.text)

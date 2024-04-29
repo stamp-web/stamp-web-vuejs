@@ -12,7 +12,7 @@
   const rateEl = ref()
   const countries = countryStore()
   const model = defineModel<Stamp>()
-  const $emit = defineEmits(['validation-changed', 'country-updated'])
+  const $emit = defineEmits(['validation-changed', 'country-updated', 'check-existence'])
 
   watch(
     () => [form$.value?.invalid],
@@ -37,6 +37,7 @@
       })
       if (country) {
         $emit('country-updated', country.name)
+        $emit('check-existence')
       }
     },
     {
@@ -64,6 +65,8 @@
   <div class="border-gray-300 p-3 border-solid border rounded">
     <h3 class="text-[var(--vf-primary)] mb-1 font-bold">{{ t('titles.details') }}</h3>
     <Vueform v-model="model" ref="form$" sync size="sm" :display-errors="false">
+      <HiddenElement :meta="true" name="id" />
+      <HiddenElement :meta="true" name="wantList" />
       <GroupElement name="group-stamp-details">
         <CountrySelector
           v-model="model"

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, computed, watch } from 'vue'
+  import { ref, onMounted, computed, watch, nextTick, inject } from 'vue'
   import { useI18n } from 'vue-i18n'
 
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
@@ -12,9 +12,14 @@
   import { type Ownership } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { fixFraction } from '@/util/object-utils'
+  import { debounce } from '@/util/timer-utils'
   import { StampModelHelper } from '@/models/Stamp'
+  import { stampStore } from '@/stores/stampStore'
+  import { type Log } from 'vuejs3-logger'
 
   const { t } = useI18n()
+
+  const logger = inject('vuejs3-logger') as Log
 
   const $props = defineProps({
     // @ts-ignore
@@ -25,11 +30,14 @@
   const activeCatalogueNumber = ref<CatalogueNumber>()
   const stampOwnership = ref<Ownership>()
 
+  const store = stampStore()
+
   const state = ref({
     wantList: false,
     edit: false,
     prefix: '',
-    countryName: ''
+    countryName: '',
+    exists: false
   })
 
   const validation = ref({
@@ -46,6 +54,18 @@
       setRefs()
     }
   )
+
+  const checkIfExists = async () => {
+    // clear value so it guarantees a check (otherwise if we were positive and remain positive no change occurs)
+    state.value.exists = false
+    await nextTick()
+    state.value.exists = await store.checkIfExists(
+      stampModel.value as Stamp,
+      activeCatalogueNumber.value as CatalogueNumber
+    )
+  }
+
+  const checkIfExistsDebounced = debounce(checkIfExists, 1000)
 
   const setCountryName = (countryName: string) => {
     state.value.countryName = countryName
@@ -110,11 +130,13 @@
       m.stampOwnerships[0] = Object.assign(m.stampOwnerships[0], stampOwnership.value)
       // Fix any data members that are not in the pure data formats (despite editor configurations)
       if (m.stampOwnerships[0].pricePaid && typeof m.stampOwnerships[0].pricePaid === 'string') {
+        logger.info('Ownership price paid was a string. Converting to a number')
         m.stampOwnerships[0].pricePaid = fixFraction(m.stampOwnerships[0].pricePaid)
       }
     }
     // Fix any data members that are not in the pure data formats (despite editor configurations)
     if (typeof m.activeCatalogueNumber.value === 'string') {
+      logger.info('Catalogue value was a string. Converting to a number')
       m.activeCatalogueNumber.value = fixFraction(m.activeCatalogueNumber.value)
     }
     return m
@@ -146,13 +168,16 @@
           v-model="stampModel"
           @validationChanged="(v: boolean) => (validation.stamp = v)"
           @country-updated="setCountryName"
+          @check-existence="checkIfExistsDebounced"
           class="mb-2"
         ></StampDetailsForm>
         <ActiveCatalogueNumberForm
           v-model="activeCatalogueNumber"
+          :exists="state.exists"
           @validationChanged="(v: boolean) => (validation.cn = v)"
           @catalogueNumber-info-changed="calculateImagePath"
           @catalogue-prefix="setImagePrefix"
+          @check-existence="checkIfExistsDebounced"
         ></ActiveCatalogueNumberForm>
       </div>
       <div v-if="!state.wantList" class="flex flex-col w-full p-2 pl-0 pt-0">

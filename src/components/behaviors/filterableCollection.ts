@@ -1,8 +1,8 @@
 import type { PersistedNamedModel } from '@/models/entityModels'
 import { reactive } from 'vue'
 import _isEmpty from 'lodash-es/isEmpty'
-import _debounce from 'lodash-es/debounce'
 import LocalCache from '@/stores/LocalCache'
+import { debounce } from '@/util/timer-utils'
 
 /**
  * The filterableCollection behavior will add a reactive collection field that contains the following:
@@ -23,7 +23,7 @@ const filterableCollection = (filterKey?: string) => {
    * to store this in the local cache immediately since the local cache is only used for page refresh
    * restoring the local cache.
    */
-  const UpdateLocalCache = _debounce((value: string) => {
+  const UpdateLocalCache = debounce((value: string) => {
     LocalCache.setItem(FILTER_KEY, value)
   }, 500)
 
