@@ -30,7 +30,7 @@ const filterableCollection = (filterKey?: string) => {
   const collection = reactive({
     list: new Array<PersistedNamedModel>(),
     filteredList: new Array<PersistedNamedModel>(),
-    selected: {} as PersistedNamedModel,
+    selected: {} as PersistedNamedModel | undefined,
     filterString: ''
   })
 
@@ -74,7 +74,7 @@ const filterableCollection = (filterKey?: string) => {
     return _isEmpty(collection.selected) ? undefined : collection.selected
   }
 
-  const setSelected = (selected: PersistedNamedModel) => {
+  const setSelected = (selected: PersistedNamedModel | undefined) => {
     collection.selected = selected
   }
 

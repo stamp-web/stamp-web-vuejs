@@ -1,5 +1,7 @@
 import { CurrencyCode } from '@/models/CurrencyCode'
 import { type PersistedNamedModel } from '@/models/entityModels'
+import { EnumHelper } from '@/util/object-utils'
+import localeUtil from '@/util/locale-utils'
 
 export interface Catalogue extends PersistedNamedModel {
   issue: number
@@ -29,5 +31,11 @@ export class CatalogueModelHelper {
       }
     }
     return prefix
+  }
+
+  static toString(value: number): string {
+    // @ts-ignore
+    const c = EnumHelper.enumToString(CatalogueType, value)
+    return c ? localeUtil.t(`catalogueType.${c}`) : ''
   }
 }

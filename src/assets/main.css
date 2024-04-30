@@ -56,6 +56,7 @@ body {
       }
     }
   }
+
 }
 
 /**
@@ -89,4 +90,12 @@ body {
     }
   }
 
+}
+
+#app {
+
+  form [multiple], form [type=checkbox], form [type=date], form [type=datetime-local], form [type=email], form [type=month], form [type=number], form [type=password], form [type=radio], form [type=search], form [type=tel], form [type=text], form [type=time], form [type=url], form [type=week], form select, form textarea {
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+  }
 }

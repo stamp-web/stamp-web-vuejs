@@ -9,7 +9,7 @@ export abstract class AbstractNamedEditorCmp {
     this.page = page
   }
 
-  private getLocator() {
+  protected getLocator() {
     if (!this.editorLocator) {
       this.editorLocator = this.page.getByRole('form')
     }
@@ -37,11 +37,11 @@ export abstract class AbstractNamedEditorCmp {
   }
 
   isInvalid() {
-    return this.getLocator().locator('div.form-bg-danger').isVisible()
+    return this.getLocator().locator('div.form-color-danger').first().isVisible()
   }
 
   async isValid() {
-    const count = await this.getLocator().locator('div.form-bg-danger').count()
+    const count = await this.getLocator().locator('div.form-color-danger').count()
     return count === 0
   }
 }

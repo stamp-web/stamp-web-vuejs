@@ -66,6 +66,7 @@
       autocomplete="off"
       :floating="false"
       name="text"
+      size="sm"
       :disabled="props.disabled || false"
       :columns="{ label: 2, wrapper: 12 }"
     >

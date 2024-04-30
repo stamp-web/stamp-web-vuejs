@@ -48,7 +48,8 @@
       <TextElement
         :label="localeUtil.t('form.name')"
         name="name"
-        autocomplete="none"
+        input-type="search"
+        autocomplete="off"
         rules="required|max:150"
       />
       <TextareaElement

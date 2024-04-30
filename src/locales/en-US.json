@@ -7,6 +7,7 @@
     "filter": "Filter",
     "find-stamps": "Find Stamps",
     "new-album": "New Album",
+    "new-catalogue": "New Catalogue",
     "new-country": "New Country",
     "new-seller": "New Seller",
     "new-stamp": "New Stamp",
@@ -23,6 +24,17 @@
     "show-list-view": "Show List View",
     "show-reference-catalogueNumbers": "Show Reference Catalogue Numbers",
     "yes": "Yes"
+  },
+  "catalogueType": {
+    "STANLEY_GIBBONS" :"Stanley Gibbons",
+    "SCOTT" : "Scott Publishing",
+    "MICHEL": "Michel",
+    "FACIT" : "Facit",
+    "OTHER":"Other",
+    "DARNELL":"Darnell",
+    "BRIDGER_AND_KAY":"Bridge & Kay",
+    "VAN_DAM": "Van Dam",
+    "JSCA": "JSCA Specialized"
   },
   "cell": {
     "stamp-count": "0 Stamps | 1 Stamp | {count} Stamps"
@@ -95,6 +107,7 @@
     "copy-to-clipboard": "Copy to clipboard",
     "country": "Country",
     "created": "Created",
+    "currency": "Currency",
     "deceptions": "Deceptions",
     "defects": "Defects",
     "description": "Description",
@@ -130,6 +143,7 @@
     "cert-exists": "A certificate or expertization opinion exists",
     "copied": "Value copied",
     "delete-album": "Delete the album '{album}'?",
+    "delete-catalogue": "Delete the catalogue '{issue} - {catalogue}'?",
     "delete-country": "Delete the country '{country}'?",
     "delete-collection": "Delete the stamp collection '{collection}'?",
     "delete-seller": "Delete the seller '{seller}'?",
@@ -197,6 +211,7 @@
     "country": "Country",
     "description": "Description",
     "grade": "Grade",
+    "issue": "Issue",
     "name": "Name",
     "notes": "Notes",
     "price-paid": "Price Paid",

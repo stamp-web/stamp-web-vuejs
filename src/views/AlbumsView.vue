@@ -134,7 +134,7 @@
         >
         </SecondaryButton>
         <FilterInput
-          class="mr-4 filter-input scale-90"
+          class="ml-4 filter-input"
           :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
           :filter-text="getFilterString()"
@@ -147,6 +147,7 @@
         :columnDefs="columnDefs"
         :rowData="getFilteredList()"
         @selected="setSelected"
+        @deselected="setSelected(undefined)"
       >
       </DataGridComponent>
     </div>
