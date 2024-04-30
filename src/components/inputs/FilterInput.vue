@@ -31,6 +31,14 @@
   )
 
   watch(
+    () => [props.filterText],
+    () => {
+      if (model.value.text !== props.filterText) {
+        model.value.text = props.filterText || ''
+      }
+    }
+  )
+  watch(
     () => [model.value.text],
     () => {
       filterChanged()

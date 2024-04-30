@@ -1,6 +1,7 @@
-import { Operators, Predicate } from 'odata-filter-parser'
+import { Operators, Parser, Predicate } from 'odata-filter-parser'
 import { PredicateUtilities } from '@/util/predicate-util'
 import { Condition, ConditionHelper } from '@/models/Condition'
+import type { LocationQuery } from 'vue-router'
 const stampFilters = () => {
   const pushCondition = (conditions: Array<Predicate>, list: Array<Condition>) => {
     list.forEach((c) => {
@@ -97,9 +98,17 @@ const stampFilters = () => {
     }
   }
 
+  const parseQueryFilter = (query: LocationQuery) => {
+    const q = {
+      ...structuredClone(query)
+    }
+    return q.$filter ? Parser.parse(q.$filter) : undefined
+  }
+
   return {
     conditionChanged,
     descriptionChanged,
+    parseQueryFilter,
     wantListChanged
   }
 }

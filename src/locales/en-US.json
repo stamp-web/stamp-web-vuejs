@@ -17,6 +17,7 @@
     "print": "Print Current List",
     "save": "Save",
     "save-and-new": "Save and new",
+    "search": "Search",
     "select-all": "Select All",
     "show-card-view": "Show Card View",
     "show-list-view": "Show List View",
@@ -93,6 +94,7 @@
     "condition": "Condition",
     "copy-to-clipboard": "Copy to clipboard",
     "country": "Country",
+    "created": "Created",
     "deceptions": "Deceptions",
     "defects": "Defects",
     "description": "Description",
@@ -112,6 +114,7 @@
     "regenerate-image": "Regenerate image path",
     "seller": "Seller",
     "stampCollection": "Stamp Collection",
+    "updated": "Modified",
     "value": "Value"
   },
   "grade": {

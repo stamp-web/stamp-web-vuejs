@@ -115,23 +115,31 @@
   <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1">
+        <PrimaryButton
+          class="!pl-0.5 !py-0.25 w-38 h-6 mt-auto mb-1 border hidden lg:block"
+          icon="sw-icon-plus"
+          :tooltip="t('actions.new-album')"
+          @click="create()"
+          id="create-album"
+        >
+          {{ t('actions.new-album') }}
+        </PrimaryButton>
+        <SecondaryButton
+          class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden lg:block"
+          icon="sw-icon-delete"
+          :tooltip="getSelected() ? t('actions.delete') : ''"
+          id="delete-album"
+          @click="remove()"
+          :disabled="!getSelected()"
+        >
+        </SecondaryButton>
         <FilterInput
-          class="mr-4 filter-input"
+          class="mr-4 filter-input scale-90"
+          :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
           :filter-text="getFilterString()"
           @filter-changed="filterChanged"
         ></FilterInput>
-        <PrimaryButton class="mr-1" @click="create()" icon="sw-icon-plus" id="create-album">
-          {{ t('actions.new-album') }}
-        </PrimaryButton>
-        <SecondaryButton
-          id="delete-album"
-          @click="remove()"
-          :disabled="!getSelected()"
-          icon="sw-icon-delete"
-        >
-          {{ t('actions.delete') }}
-        </SecondaryButton>
       </div>
       <DataGridComponent
         class=""

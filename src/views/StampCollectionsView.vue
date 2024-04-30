@@ -10,6 +10,7 @@
   import { createInstance } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import FilterInput from '@/components/inputs/FilterInput.vue'
   import { Operators, Predicate } from 'odata-filter-parser'
   import { useRouter } from 'vue-router'
@@ -111,13 +112,13 @@
   <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row">
     <div class="flex-grow flex-auto flex flex-col">
       <div class="flex mb-1 h-[32.5px]" ref="buttonToolbar">
-        <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 border !border-gray-400 hidden lg:block"
+        <PrimaryButton
+          class="!pl-0.5 !py-0.25 w-38 h-6 mt-auto mb-1 border hidden lg:block"
           icon="sw-icon-plus"
           id="create-stampCollection"
           :tooltip="t('actions.new-stamp-collection')"
           @click="create()"
-          >{{ t('actions.new-stamp-collection') }}</SecondaryButton
+          >{{ t('actions.new-stamp-collection') }}</PrimaryButton
         >
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden lg:block"

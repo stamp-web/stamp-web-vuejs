@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { computed, inject, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
+  import { computed, inject, nextTick, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
-  import { TransitionRoot } from '@headlessui/vue'
+  import { TransitionRoot, PopoverPanel, Popover, PopoverButton } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
   import { Parser, Operators, Predicate } from 'odata-filter-parser'
   import type { Log } from 'vuejs3-logger'
@@ -22,6 +22,7 @@
   import PricePaidCellRenderer from '@/components/renderers/PricePaidCellRenderer.vue'
   import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
+  import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import DisplayStats from '@/components/display/DisplayStats.vue'
   import StampReportValues from '@/components/display/StampReportValues.vue'
   import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
@@ -54,6 +55,7 @@
   import { PredicateUtilities } from '@/util/predicate-util'
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
+  import SearchForm from '@/components/forms/SearchForm.vue'
 
   const { t } = useI18n()
 
@@ -80,7 +82,9 @@
 
   const state = ref({
     predicates: new Array<Predicate>(),
+    filterPredicates: new Array<Predicate>(),
     condition: 'All',
+    filterText: '',
     wantList: 'All'
   })
   const stampView = ref()
@@ -108,7 +112,7 @@
     updateCollectionEntry
   } = stampSelectableCollection()
 
-  const { conditionChanged, descriptionChanged, wantListChanged } = stampFilters
+  const { conditionChanged, descriptionChanged, wantListChanged, parseQueryFilter } = stampFilters
 
   const {
     endingCount,
@@ -301,10 +305,10 @@
 
   const gotoPage = (page: number) => {
     setActivePage(page)
-    setQueryPagingParams((getActivePage() - 1) * getPageSize(), getPageSize())
+    setQueryPagingParams(Math.max((getActivePage() - 1) * getPageSize(), 0), getPageSize())
     query.value.$filter = PredicateUtilities.concat(
       Operators.AND,
-      state.value.predicates
+      state.value.predicates.concat(state.value.filterPredicates)
     ).serialize()
     findWithQuery(query.value)
   }
@@ -341,15 +345,27 @@
   const deleteSelected = () => {}
 
   const wantListFilterChanged = (wantListFilter: string) => {
-    wantListChanged(state.value.predicates, wantListFilter)
+    wantListChanged(state.value.filterPredicates, wantListFilter)
     gotoPage(getActivePage())
   }
   const conditionFilterChanged = (conditionFilter: string) => {
-    conditionChanged(state.value.predicates, conditionFilter)
+    conditionChanged(state.value.filterPredicates, conditionFilter)
+    gotoPage(getActivePage())
+  }
+
+  const goSearch = async (searchFilter: Predicate) => {
+    state.value.predicates = []
+    await nextTick()
+    state.value.predicates.push(searchFilter)
+    await router.push({
+      query: {
+        $filter: PredicateUtilities.concat(Operators.AND, state.value.predicates).serialize()
+      }
+    })
     gotoPage(getActivePage())
   }
   const filterChanged = (filterText: string) => {
-    descriptionChanged(state.value.predicates, filterText)
+    descriptionChanged(state.value.filterPredicates, filterText)
     gotoPage(getActivePage())
   }
 
@@ -436,21 +452,41 @@
   >
     <div class="flex-grow flex-auto flex flex-col h-full overflow-y-hidden">
       <div class="flex mb-1 h-[32.5px]" ref="buttonToolbar">
-        <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-24 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
+        <PrimaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-24 border rounded-tr-none rounded-br-none border-[var(--vf-primary)] border-r-[var(--vf-color-on-primary)] hidden lg:block"
           icon="sw-icon-plus"
           id="create-stamp"
           :tooltip="t('actions.new-stamp')"
           @click="createStamp()"
-          >{{ t('actions.new-stamp') }}</SecondaryButton
+          >{{ t('actions.new-stamp') }}</PrimaryButton
         >
-        <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-tl-none rounded-bl-none border !border-gray-400 !border-l-transparent hidden lg:block"
+        <PrimaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border border-r-[var(--vf-color-on-primary)] border-[var(--vf-primary)] !border-l-transparent hidden lg:block"
           icon="sw-icon-plus"
           id="create-wantList"
           :tooltip="t('actions.new-wantlist')"
           @click="createStamp(true)"
-        ></SecondaryButton>
+        ></PrimaryButton>
+        <Popover class="relative mt-auto">
+          <PopoverButton
+            class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 focus:outline-none focus:bg-[var(--vf-primary-darker)] !focus-visible:border-transparent rounded-tl-none rounded-bl-none border border-[var(--vf-primary)] !border-l-transparent enabled:bg-[var(--vf-primary)] enabled:text-[var(--vf-color-on-primary)] hover:enabled:bg-[var(--vf-primary-darker)] !disabled:cursor-auto rounded border border-[var(--vf-bg-disabled)]"
+            icon="sw-icon-search"
+            id="search-stamps"
+            :disabled="isEditorShown()"
+            :tooltip="t('actions.search')"
+            ><i class="sw-icon-search"></i>
+          </PopoverButton>
+          <PopoverPanel
+            v-slot="{ close }"
+            class="mt-0.5 w-[24rem] overlow-y-auto flex flex-col max-h-[29rem] p-3 border border-2 border-[var(--vf-primary)] rounded rounded-xl z-999 absolute bg-white shadow-xl"
+          >
+            <SearchForm
+              :close="close"
+              @search-options="goSearch"
+              :criteria="parseQueryFilter(route.query)"
+            ></SearchForm>
+          </PopoverPanel>
+        </Popover>
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400"
           icon="sw-icon-list"

@@ -119,7 +119,7 @@
   <div ref="imgBlock" @click.stop="showFullImage" class="m-auto bg-transparent"></div>
   <teleport :to="props.containerSelector ?? 'body'" :disabled="!showingFullImage">
     <div
-      class="fullImage shadow-lg shadow-slate-600 fixed top-[50%] left-[50%] -translate-y-[50%] -translate-x-[50%] z-40"
+      class="fullImage shadow-lg shadow-slate-600 fixed top-[50%] left-[50%] -translate-y-[50%] -translate-x-[50%] z-999"
       ref="fullImage"
       @click="closeFullImage"
     ></div>
