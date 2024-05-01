@@ -300,6 +300,7 @@
     logger.info('query info', query.value)
     const results = await store.find(theQuery)
     setCollection(results)
+    fetchReportData()
     setupStats()
   }
 
@@ -325,7 +326,8 @@
     }
   }
 
-  async function fetchReportData() {
+  const fetchReportData = async () => {
+    reporting.value.reportValue = t('messages.calculating')
     const result: ReportResult = await reportService.executeReport(
       reporting.value.reportType,
       query.value
@@ -442,7 +444,6 @@
     prefPaths.value.imagePath = imagePref.value ?? '/'
     await setupInitialQuery()
     gotoPage(1)
-    await fetchReportData()
   })
 </script>
 <template>

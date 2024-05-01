@@ -140,6 +140,7 @@
     "CTS": "Cut-To-Shape (CTS)"
   },
   "messages": {
+    "calculating": "Calculating...",
     "cert-exists": "A certificate or expertization opinion exists",
     "copied": "Value copied",
     "delete-album": "Delete the album '{album}'?",

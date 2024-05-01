@@ -36,6 +36,24 @@ export function baseNamedModelStore<T extends PersistedNamedModel>(): any {
             }
           })
           return counts
+        },
+
+        /**
+         * For Named entities ensure the list is returned sorted by name
+         * @override
+         * @param models
+         */
+        postFind(models: T[], options?: any): T[] {
+          if (!options || options.$orderby.startsWith('name')) {
+            const m = models.sort((a, b) =>
+              a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+            )
+            if (options && options.$orderby === 'name desc') {
+              return m.reverse()
+            }
+            return m
+          }
+          return models
         }
       }
     },
