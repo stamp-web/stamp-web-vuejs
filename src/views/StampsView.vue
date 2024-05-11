@@ -292,6 +292,9 @@
   const onSortChanged = (columnDef: any) => {
     if (columnDef?.sort) {
       query.value.$orderby = OdataUtil.createSort(columnDef.colId, columnDef.sort)
+    } else if (query.value.$orderby) {
+      // @ts-ignore
+      delete query.value.$orderby
     }
     gotoPage(1)
   }
