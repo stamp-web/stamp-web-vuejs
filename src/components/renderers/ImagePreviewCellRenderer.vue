@@ -38,6 +38,7 @@
   <div :v-if="hasImage" class="items-center flex h-full">
     <image-preview
       :image-url="image"
+      :show-na="true"
       :full-size-image-url="fullSizeImage"
       max-width="32"
       max-height="32"

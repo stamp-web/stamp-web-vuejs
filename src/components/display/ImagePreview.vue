@@ -55,7 +55,8 @@
         loadImageByPath(props.imageUrl, options).catch(() => {
           hasValidImage.value = false
           if (props.showNa) {
-            const noPath = new URL('../../assets/images/not-available.png', import.meta.url).href
+            const noPath = new URL('../../assets/images/not-available-plus.jpg', import.meta.url)
+              .href
             loadImageByPath(noPath, options).catch(() => {
               // do nothing and swallow error
             })
@@ -95,7 +96,7 @@
   }
 
   const showFullImage = () => {
-    if (showingFullImage.value || !hasValidImage.value) {
+    if (showingFullImage.value || (!hasValidImage.value && !props.showNa)) {
       return
     }
     bus.emit('showingImage', fullImage.value)
