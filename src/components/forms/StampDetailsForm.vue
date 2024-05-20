@@ -10,9 +10,15 @@
 
   const form$ = ref()
   const rateEl = ref()
-  const countries = countryStore()
+  const countries = ref()
+
   const model = defineModel<Stamp>()
-  const $emit = defineEmits(['validation-changed', 'country-updated', 'check-existence'])
+  const $emit = defineEmits([
+    'validation-changed',
+    'country-updated',
+    'check-existence',
+    'tab-forward'
+  ])
 
   watch(
     () => [form$.value?.invalid],
@@ -31,7 +37,10 @@
   watch(
     () => model.value?.countryRef,
     async () => {
-      const list: Array<Country> = await countries.find()
+      if (!countries.value) {
+        countries.value = countryStore()
+      }
+      const list: Array<Country> = await countries.value.find()
       const country = list.find((c) => {
         return c.id === model?.value?.countryRef
       })
@@ -45,11 +54,18 @@
     }
   )
 
+  const onKeyDown = (evt: KeyboardEvent) => {
+    if (evt.key === 'Tab' && model.value && (model.value.id < 1 || !model.value.id)) {
+      $emit('tab-forward')
+    }
+  }
+
   const focusRate = () => {
     if (
       model.value &&
       (model.value.id < 1 || !model.value.id) &&
-      (model.value.rate === '' || !model.value.rate)
+      (model.value.rate === '' || !model.value.rate) &&
+      rateEl.value
     ) {
       rateEl.value.focus()
     }
@@ -57,9 +73,13 @@
 
   onMounted(async () => {
     await nextTick()
-    await form$.value.validate()
+    if (form$.value && form$.value.validate) {
+      await form$.value.validate()
+    }
     focusRate()
   })
+
+  defineExpose({ onKeyDown })
 </script>
 <template>
   <div class="border-gray-300 p-3 border-solid border rounded">
@@ -87,6 +107,7 @@
           v-model="model"
           name="description"
           rules="required|max:250"
+          @keydown="onKeyDown"
           autocomplete="off"
         ></TextElement>
       </GroupElement>

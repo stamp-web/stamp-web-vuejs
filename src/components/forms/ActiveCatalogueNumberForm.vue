@@ -10,12 +10,14 @@
 
   const { t } = useI18n()
   const form$ = ref()
+  const cvNumber = ref()
 
   const model = defineModel<CatalogueNumber>()
   const cataloguesStore = catalogueStore()
 
   const $props = defineProps({
-    exists: { type: Boolean, default: false }
+    exists: { type: Boolean, default: false },
+    autoTab: { type: Boolean, default: false }
   })
   const $emit = defineEmits([
     'validation-changed',
@@ -34,6 +36,15 @@
     () => [form$.value?.invalid],
     () => {
       $emit('validation-changed', !form$.value?.invalid)
+    }
+  )
+
+  watch(
+    () => [$props.autoTab],
+    () => {
+      if ($props.autoTab) {
+        cvNumber.value.focus()
+      }
     }
   )
 
@@ -113,6 +124,7 @@
           <TextElement
             v-model="model"
             name="number"
+            ref="cvNumber"
             :columns="{ default: 6 }"
             rules="required|max:25"
             autocomplete="off"

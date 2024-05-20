@@ -34,6 +34,7 @@
 
   const state = ref({
     wantList: false,
+    tabToNumber: false,
     edit: false,
     prefix: '',
     countryName: '',
@@ -142,6 +143,14 @@
     return m
   }
 
+  const processTabForward = async () => {
+    setTimeout(async () => {
+      state.value.tabToNumber = true
+      await nextTick()
+      state.value.tabToNumber = false
+    }, 125)
+  }
+
   const setRefs = () => {
     stampModel.value = $props.model
     activeCatalogueNumber.value = $props.model.activeCatalogueNumber
@@ -169,11 +178,13 @@
           @validationChanged="(v: boolean) => (validation.stamp = v)"
           @country-updated="setCountryName"
           @check-existence="checkIfExistsDebounced"
+          @tab-forward="processTabForward"
           class="mb-2"
         ></StampDetailsForm>
         <ActiveCatalogueNumberForm
           v-model="activeCatalogueNumber"
           :exists="state.exists"
+          :autoTab="state.tabToNumber"
           @validationChanged="(v: boolean) => (validation.cn = v)"
           @catalogueNumber-info-changed="calculateImagePath"
           @catalogue-prefix="setImagePrefix"
