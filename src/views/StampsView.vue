@@ -7,6 +7,7 @@
   import { Parser, Operators, Predicate } from 'odata-filter-parser'
   import type { Log } from 'vuejs3-logger'
 
+  import dayjs from 'dayjs'
   import editableModel from '@/components/behaviors/editableModel'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
   import stampFilters from '@/components/behaviors/stampFilters'
@@ -56,6 +57,7 @@
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
   import SearchForm from '@/components/forms/SearchForm.vue'
+  import { asLocalDate } from '@/util/date-utils'
 
   const { t } = useI18n()
 
@@ -386,8 +388,8 @@
       const sModified = structuredClone(toRaw(s))
       if (sModified.stampOwnerships?.length > 0) {
         if (!updating && sModified.stampOwnerships[0].purchased) {
-          let d = new Date(sModified.stampOwnerships[0].purchased)
-          LocalCache.setItem('ownership-purchased', d.toLocaleDateString())
+          const d = asLocalDate(sModified.stampOwnerships[0].purchased)
+          LocalCache.setItem('ownership-purchased', dayjs(d).format('YYYY-MM-DD'))
         }
         OwnershipHelper.fromTagElementView(sModified.stampOwnerships[0])
       }

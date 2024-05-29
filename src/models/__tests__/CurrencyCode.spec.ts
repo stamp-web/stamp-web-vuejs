@@ -22,6 +22,17 @@ describe('CurrencyTools', () => {
       const v = CurrencyTools.asCurrencyString(100542, CurrencyCode.JPY)
       expect(v).toBe('¥100,542')
     })
+
+    it('USD invalid value', () => {
+      const v = CurrencyTools.asCurrencyString(NaN, CurrencyCode.USD)
+      expect(v).toBe('')
+    })
+
+    it('USD null value', () => {
+      // @ts-ignore
+      const v = CurrencyTools.asCurrencyString(null, CurrencyCode.USD)
+      expect(v).toBe('')
+    })
   })
 
   describe('formatRegex', () => {

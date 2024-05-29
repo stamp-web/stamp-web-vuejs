@@ -37,7 +37,7 @@ export class CurrencyTools {
   static asCurrencyString(value: number, currency: string = CurrencyCode.USD): string {
     const minFractions = currency === CurrencyCode.JPY ? 0 : 2
     let text = ''
-    if (currency) {
+    if (currency && !isNaN(value) && value) {
       text = value.toLocaleString('en', {
         style: 'currency',
         currencyDisplay: 'symbol',

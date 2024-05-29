@@ -8,6 +8,7 @@ import LocalCache from '@/stores/LocalCache'
 import { EnumHelper } from '@/util/object-utils'
 import { Defects } from '@/models/Defects'
 import { Deception } from '@/models/Deception'
+import { asLocalDate } from '@/util/date-utils'
 
 export interface Ownership extends PersistedModel {
   pricePaid: number
@@ -31,7 +32,7 @@ export class OwnershipHelper {
     const purchased = LocalCache.getItem('ownership-purchased')
     if (purchased) {
       // We need to offset the plain date string to account for UTC offset
-      ownership.purchased = new Date(new Date(purchased).toUTCString())
+      ownership.purchased = asLocalDate(purchased)
     }
     if (preferences && preferences.length > 0) {
       const intPrefKeys = ['albumRef', 'sellerRef', 'condition', 'grade']

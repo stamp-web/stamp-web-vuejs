@@ -130,6 +130,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
         return this.items.total
       },
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       postFind(models: T[], options?: any): T[] {
         return models
       },

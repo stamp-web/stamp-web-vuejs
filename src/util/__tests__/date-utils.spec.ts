@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseDateString } from '@/util/date-utils'
+import { asLocalDate, parseDateString } from '@/util/date-utils'
 
 describe('date-utils', () => {
   describe('parseDateString', () => {
@@ -20,6 +20,23 @@ describe('date-utils', () => {
     it('test invalid date', () => {
       const result = parseDateString('this is not valid')
       expect(result).toBeUndefined()
+    })
+  })
+
+  describe('asLocalDate', () => {
+    it('test valid string date', () => {
+      const d = asLocalDate('2024-01-01')
+      expect(d.getMonth()).toBe(0)
+      expect(d.getFullYear()).toBe(2024)
+      expect(d.getDay()).toBe(1)
+    })
+
+    it('test valid date', () => {
+      const date = new Date()
+      const d = asLocalDate(date)
+      expect(d.getMonth()).toBe(date.getMonth())
+      expect(d.getFullYear()).toBe(date.getFullYear())
+      expect(d.getDay()).toBe(date.getDay())
     })
   })
 })
