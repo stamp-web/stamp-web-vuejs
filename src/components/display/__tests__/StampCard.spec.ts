@@ -31,6 +31,43 @@ describe('StampCard', () => {
     })
   })
 
+  describe('actionClicked', () => {
+    let comp: VueWrapper<any, any>
+
+    beforeEach(() => {
+      comp = shallowMount(StampCard, {
+        propsData: {
+          stamp: {
+            id: 45,
+            wantList: false,
+            stampOwnerships: []
+          }
+        }
+      })
+    })
+    it('verify edit action emitted', () => {
+      const evt = new MouseEvent('click')
+      comp.vm.actionClicked(evt, 'edit-stamp')
+      expect(comp.emitted('edit-stamp')).toBeTruthy()
+    })
+
+    it('verify delete action emitted on click', async () => {
+      const deleteCmp = comp.find('.sw-icon-delete')
+      expect(deleteCmp).not.toBeUndefined()
+      const evt = new MouseEvent('click', { bubbles: true, cancelable: true })
+      deleteCmp.element.dispatchEvent(evt)
+      expect(comp.emitted('delete-stamp')).toBeTruthy()
+    })
+
+    it('verify edit action emitted on click', async () => {
+      const deleteCmp = comp.find('.sw-icon-edit')
+      expect(deleteCmp).not.toBeUndefined()
+      const evt = new MouseEvent('click', { bubbles: true, cancelable: true })
+      deleteCmp.element.dispatchEvent(evt)
+      expect(comp.emitted('edit-stamp')).toBeTruthy()
+    })
+  })
+
   describe('imageUrl', () => {
     const stamp = {
       wantList: false,

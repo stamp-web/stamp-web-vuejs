@@ -111,6 +111,7 @@
     getCollection,
     setCollection,
     isCollectionEmpty,
+    removeCollectionEntry,
     updateCollectionEntry
   } = stampSelectableCollection()
 
@@ -351,6 +352,19 @@
 
   const deleteSelected = () => {}
 
+  const deleteStamp = (s: Stamp) => {
+    // TODO: Replace with delete stamp modal when available
+    Prompt.confirm({
+      message: t('messages.delete-stamp', { stamp: `${s.rate} - ${s.description}` })
+    }).then((confirmed) => {
+      if (confirmed) {
+        store.remove(s).then(() => {
+          removeCollectionEntry(s)
+        })
+      }
+    })
+  }
+
   const wantListFilterChanged = (wantListFilter: string) => {
     wantListChanged(state.value.filterPredicates, wantListFilter)
     gotoPage(getActivePage())
@@ -544,7 +558,7 @@
         ></SecondaryButton>
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"
-          icon="sw-icon-trash"
+          icon="sw-icon-delete"
           :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="deleteSelected()"
           :disabled="areNoneSelected() || true"
@@ -588,7 +602,7 @@
           </DataGridComponent>
         </div>
         <div
-          class="flex-grow flex flex-grow-0 flex-shrink-0 flex-row flex-auto w-full overflow-y-auto border border-gray-300"
+          class="flex-grow flex flex-grow-0 flex-shrink-1 flex-row flex-auto w-full overflow-y-auto border border-gray-300"
           v-if="viewDef.mode === 'card'"
           ref="cardLayout"
         >
@@ -605,6 +619,8 @@
                 path="stampOwnerships[0].img"
                 @selected="setSelected"
                 @deselected="setDeselected"
+                @edit-stamp="setEditModel"
+                @delete-stamp="deleteStamp"
               ></stamp-card>
             </template>
           </div>

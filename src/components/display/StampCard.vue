@@ -23,7 +23,7 @@
   const imageFrame = ref()
   const imageVisible = ref(false)
 
-  const emit = defineEmits(['selected', 'deselected'])
+  const emit = defineEmits(['selected', 'deselected', 'edit-stamp', 'delete-stamp'])
 
   watch(
     () => [[props.isSelected]],
@@ -59,6 +59,12 @@
     return img
   })
 
+  const actionClicked = (evt: MouseEvent, action: string) => {
+    evt.stopPropagation()
+    // @ts-ignore
+    emit(action, props.stamp)
+  }
+
   onUnmounted(() => {
     observer.disconnect()
   })
@@ -82,7 +88,7 @@
 <template>
   <div
     @click="toggleSelection($event)"
-    class="flex flex-col bg-gray-200 select-none"
+    class="flex flex-col bg-gray-200 select-none relative"
     ref="imageFrame"
   >
     <div
@@ -96,6 +102,18 @@
         :image-url="imageUrl"
         :full-size-image-url="fullSizeImage"
       ></image-preview>
+    </div>
+    <div class="absolute right-[0.85rem] top-[0.85rem] bg-transparent text-gray-400 flex flex-col">
+      <i
+        :class="`scale-90 sw-icon-edit ${props.stamp?.wantList ? 'hover:text-gray-700' : 'hover:text-white'} hover:cursor-pointer mb-0.5`"
+        v-tooltip="t('actions.edit')"
+        @click="actionClicked($event, 'edit-stamp')"
+      ></i>
+      <i
+        :class="`scale-90 sw-icon-delete ${props.stamp?.wantList ? 'hover:text-gray-700' : 'hover:text-white'} hover:cursor-pointer`"
+        v-tooltip="t('actions.delete')"
+        @click="actionClicked($event, 'delete-stamp')"
+      ></i>
     </div>
     <div
       class="h-[150px] w-full align-middle text-center leading-[150px] inline-block italic text-[0.75rem]"

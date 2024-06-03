@@ -48,6 +48,22 @@ const stampSelectableCollection = () => {
     }
   }
 
+  async function removeCollectionEntry(stamp: Stamp) {
+    const findAndRemove = (col: Array<Stamp>) => {
+      const selIndex = col
+        .map((sel) => {
+          return sel.id
+        })
+        .indexOf(stamp.id)
+      if (selIndex >= 0) {
+        col.splice(selIndex, 1)
+      }
+    }
+
+    findAndRemove(getCurrentSelected())
+    findAndRemove(getCollection())
+  }
+
   const isCollectionEmpty = (): boolean => {
     return data.list.length === 0
   }
@@ -136,6 +152,7 @@ const stampSelectableCollection = () => {
     areAllSelected,
     areNoneSelected,
     isSelected,
+    removeCollectionEntry,
     setSelected,
     setDeselected,
     selectAll,
