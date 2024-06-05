@@ -57,7 +57,6 @@
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
   import SearchForm from '@/components/forms/SearchForm.vue'
-  import { asLocalDate } from '@/util/date-utils'
 
   const { t } = useI18n()
 
