@@ -11,7 +11,7 @@
   import editableModel from '@/components/behaviors/editableModel'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
   import stampFilters from '@/components/behaviors/stampFilters'
-
+  import StampDeleteDialog from '@/components/dialogs/DeleteStampDialog.vue'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
@@ -89,6 +89,11 @@
     filterText: '',
     wantList: 'All'
   })
+
+  const deleteModel = ref({
+    showDelete: false,
+    deletingStamps: new Array<Stamp>()
+  })
   const stampView = ref()
   const cardLayout = ref()
   const buttonToolbar = ref()
@@ -111,7 +116,7 @@
     getCollection,
     setCollection,
     isCollectionEmpty,
-    removeCollectionEntry,
+    removeCollectionEntries,
     updateCollectionEntry
   } = stampSelectableCollection()
 
@@ -276,7 +281,8 @@
     return isSelectedWantlist.value ? 'min-w-80 max-w-80' : 'min-w-160 max-w-160'
   }
 
-  const setupStats = () => {
+  const setupStats = async () => {
+    await nextTick()
     setPagingItems(getCollection())
     setCollectionTotal(store.getCount())
     calculatePagingStats(getCollectionTotal())
@@ -307,7 +313,7 @@
     const results = await store.find(theQuery)
     setCollection(results)
     fetchReportData()
-    setupStats()
+    await setupStats()
   }
 
   const gotoPage = (page: number) => {
@@ -350,19 +356,30 @@
 
   const purchase = () => {}
 
-  const deleteSelected = () => {}
+  const deleteSelected = () => {
+    deleteModel.value.deletingStamps = getCurrentSelected().slice()
+    deleteModel.value.showDelete = true
+  }
+
+  const processDelete = async (stamps: Array<Stamp>) => {
+    if (stamps && stamps.length > 0) {
+      const toUpdate = new Array<Stamp>()
+      const promises = new Array<Promise<any>>()
+      stamps.forEach((s) => {
+        toUpdate.push(s)
+        promises.push(store.remove(s))
+      })
+      Promise.all(promises).then(async () => {
+        await removeCollectionEntries(toUpdate)
+        await setupStats()
+      })
+    }
+    deleteModel.value.showDelete = false
+  }
 
   const deleteStamp = (s: Stamp) => {
-    // TODO: Replace with delete stamp modal when available
-    Prompt.confirm({
-      message: t('messages.delete-stamp', { stamp: `${s.rate} - ${s.description}` })
-    }).then((confirmed) => {
-      if (confirmed) {
-        store.remove(s).then(() => {
-          removeCollectionEntry(s)
-        })
-      }
-    })
+    deleteModel.value.deletingStamps = [s]
+    deleteModel.value.showDelete = true
   }
 
   const wantListFilterChanged = (wantListFilter: string) => {
@@ -402,8 +419,10 @@
       const sModified = structuredClone(toRaw(s))
       if (sModified.stampOwnerships?.length > 0) {
         if (!updating && sModified.stampOwnerships[0].purchased) {
-          const d = asLocalDate(sModified.stampOwnerships[0].purchased)
-          LocalCache.setItem('ownership-purchased', dayjs(d).format('YYYY-MM-DD'))
+          LocalCache.setItem(
+            'ownership-purchased',
+            dayjs(sModified.stampOwnerships[0].purchased).format('YYYY-MM-DD')
+          )
         }
         OwnershipHelper.fromTagElementView(sModified.stampOwnerships[0])
       }
@@ -561,7 +580,7 @@
           icon="sw-icon-delete"
           :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="deleteSelected()"
-          :disabled="areNoneSelected() || true"
+          :disabled="areNoneSelected()"
         ></SecondaryButton>
         <FilterInput
           class="ml-1 w-56 scale-90 hidden lg:block"
@@ -637,6 +656,12 @@
         >
           <StampEditor :model="getEditModel()" @cancel="hideEditor()" @save="save"></StampEditor>
         </TransitionRoot>
+        <StampDeleteDialog
+          :is-open="deleteModel.showDelete"
+          :pref-paths="prefPaths"
+          :stamps="deleteModel.deletingStamps"
+          @close="processDelete"
+        ></StampDeleteDialog>
       </div>
       <div class="flex mb-1 mt-1 h-[22.5px]" ref="footer">
         <paging-component

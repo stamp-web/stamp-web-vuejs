@@ -1,55 +1,57 @@
 import type { Stamp } from '@/models/Stamp'
-import { nextTick, reactive } from 'vue'
+import { nextTick, ref } from 'vue'
 
 const stampSelectableCollection = () => {
-  let data = reactive({
+  const data = ref({
     list: new Array<Stamp>(),
     total: 0,
     selected: new Array<Stamp>()
   })
 
   const initializeCollection = (theRef: any) => {
-    data = theRef
+    data.value = theRef
   }
 
   const setCollection = async (list: Array<Stamp>) => {
-    data.list = []
-    data.selected = [] // clear the selection whenever we set stamps
-    await nextTick()
-    data.list = list
+    data.value.selected = [] // clear the selection whenever we set stamps
+    data.value.list = list
   }
 
   const getCollection = () => {
-    return data.list
+    return data.value.list
   }
 
   async function updateCollectionEntry(savedStamp?: Stamp) {
     const currentList = getCollection()
     const currentSelected = getCurrentSelected()
-    data.list = []
-    data.selected = []
+    data.value.list = []
+    data.value.selected = []
     let found = false
     await nextTick()
     currentList.forEach((stamp: Stamp) => {
       let comparator = stamp
       if (savedStamp && stamp.id === savedStamp.id) {
-        data.list.push(savedStamp)
+        data.value.list.push(savedStamp)
         comparator = savedStamp
         found = true
       } else {
-        data.list.push(stamp)
+        data.value.list.push(stamp)
       }
       if (currentSelected && currentSelected.some((s: Stamp) => s.id === comparator.id)) {
-        data.selected.push(comparator)
+        data.value.selected.push(comparator)
       }
     })
     if (savedStamp && !found) {
-      data.list.unshift(savedStamp)
+      data.value.list.unshift(savedStamp)
     }
   }
 
-  async function removeCollectionEntry(stamp: Stamp) {
-    const findAndRemove = (col: Array<Stamp>) => {
+  async function removeCollectionEntries(stamps: Array<Stamp>) {
+    const col = getCollection()
+    const sel = getCurrentSelected()
+    setCollection([])
+    await nextTick()
+    const findAndRemove = (col: Array<Stamp>, stamp: Stamp) => {
       const selIndex = col
         .map((sel) => {
           return sel.id
@@ -59,85 +61,88 @@ const stampSelectableCollection = () => {
         col.splice(selIndex, 1)
       }
     }
-
-    findAndRemove(getCurrentSelected())
-    findAndRemove(getCollection())
+    stamps.forEach((stamp: Stamp) => {
+      findAndRemove(sel, stamp)
+      findAndRemove(col, stamp)
+    })
+    setCollection(col)
+    setCurrentSelected(sel)
   }
 
   const isCollectionEmpty = (): boolean => {
-    return data.list.length === 0
+    return data.value.list.length === 0
   }
 
   const isSelected = (stamp: Stamp): boolean => {
     // @ts-ignore
-    return data.selected.includes(stamp)
+    return data.value.selected.includes(stamp)
   }
 
   const areAllSelected = () => {
-    return data.list.length === data.selected.length
+    return data.value.list.length === data.value.selected.length
   }
 
   const areNoneSelected = () => {
-    return data.selected.length < 1
+    return data.value.selected.length < 1
   }
 
   const setSelected = (stamp: Stamp, options?: Partial<any>) => {
-    const indx = data.selected.findIndex((s: Stamp) => s.id === stamp.id)
+    const indx = data.value.selected.findIndex((s: Stamp) => s.id === stamp.id)
     if (indx < 0) {
       // @ts-ignore
-      data.selected.push(stamp)
+      data.value.selected.push(stamp)
     }
-    if (data.selected.length > 1 && options?.shiftKey) {
-      const lastSelected: Stamp = data.selected[data.selected.length - 2]
-      let lastIndex = data.list.findIndex((s: Stamp) => s.id === stamp.id)
-      let startingIndx = data.list.findIndex((s: Stamp) => s.id === lastSelected.id)
+    if (data.value.selected.length > 1 && options?.shiftKey) {
+      const lastSelected: Stamp = data.value.selected[data.value.selected.length - 2]
+      let lastIndex = data.value.list.findIndex((s: Stamp) => s.id === stamp.id)
+      let startingIndx = data.value.list.findIndex((s: Stamp) => s.id === lastSelected.id)
       if (startingIndx > lastIndex) {
         const tempIndex = lastIndex
         lastIndex = startingIndx
         startingIndx = tempIndex
       }
       for (let i = startingIndx + 1; i < lastIndex; i++) {
-        const currentStamp: Stamp = data.list[i]
-        const c_indx = data.selected.findIndex((s: Stamp) => s.id === currentStamp.id)
+        const currentStamp: Stamp = data.value.list[i]
+        const c_indx = data.value.selected.findIndex((s: Stamp) => s.id === currentStamp.id)
         if (c_indx < 0) {
           // @ts-ignore
-          data.selected.push(currentStamp)
+          data.value.selected.push(currentStamp)
         }
       }
     }
   }
 
   const setCollectionTotal = (total: number) => {
-    data.total = total
+    data.value.total = total
   }
 
   const getCollectionTotal = () => {
-    return data.total
+    return data.value.total
   }
 
   const getCurrentSelected = () => {
-    return data.selected
+    return data.value.selected
   }
 
   const setCurrentSelected = async (stamps: Array<Stamp>) => {
-    data.selected = []
+    data.value.selected = []
     await nextTick()
     // @ts-ignore
-    data.selected = stamps
+    data.value.selected = stamps
   }
 
   const setDeselected = (stamp: Stamp) => {
-    const indx = data.selected.findIndex((s: Stamp) => s.id === stamp.id)
+    const indx = data.value.selected.findIndex((s: Stamp) => s.id === stamp.id)
     if (indx >= 0) {
-      data.selected.splice(indx, 1)
+      data.value.selected.splice(indx, 1)
     }
   }
 
   const selectAll = (allSelect: boolean = true) => {
-    data.selected.splice(
+    data.value.selected.splice(
       0,
-      data.selected.length,
-      ...data.list.slice(0, allSelect ? data.list.length : 0)
+      data.value.selected.length,
+      ...data.value.list.slice(0, allSelect ? data.value.list.length : 0)
     )
   }
 
@@ -152,7 +157,7 @@ const stampSelectableCollection = () => {
     areAllSelected,
     areNoneSelected,
     isSelected,
-    removeCollectionEntry,
+    removeCollectionEntries,
     setSelected,
     setDeselected,
     selectAll,

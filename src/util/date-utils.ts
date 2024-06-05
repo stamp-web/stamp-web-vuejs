@@ -6,7 +6,7 @@ export function toISOString(date: Date): String {
 
 export function asLocalDate(pureDate: string | Date): Date {
   if (pureDate) {
-    const dt = `${dayjs(pureDate).format('YYYY-MM-DD')}T${new Date().toISOString().substring(11)}`
+    const dt = `${dayjs(pureDate).format('YYYY-MM-DD')}T23:59:00Z`
     return new Date(dt)
   }
   return new Date(new Date().toISOString())

@@ -93,6 +93,7 @@
     "SOILED": "Soiled Paper"
   },
   "display": {
+    "deleting-count": "{count} of {total} selected for deletion",
     "selected-count": "Selected: {count}",
     "total-selected": "Total: {start} - {end} of {total}",
     "wantlist-item": "Wantlist Item"
@@ -149,6 +150,7 @@
     "delete-collection": "Delete the stamp collection '{collection}'?",
     "delete-seller": "Delete the seller '{seller}'?",
     "delete-stamp": "Delete the stamp `{stamp}'?",
+    "delete-stamps": "Delete the selected stamps?",
     "save-failure": "An error occurred saving the object. The message is: <br/>'{message}'",
     "stamp-exists": "The stamp already exists"
   },
@@ -222,6 +224,7 @@
   "titles": {
     "active-catalogueNumber": "Active Catalogue Number",
     "details": "Details",
+    "delete-stamps": "Delete Selected Stamps",
     "edit-album": "Edit Album",
     "edit-catalogue": "Edit Catalogue",
     "edit-country": "Edit Country",

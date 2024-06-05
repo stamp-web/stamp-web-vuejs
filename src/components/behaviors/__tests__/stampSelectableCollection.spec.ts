@@ -141,22 +141,32 @@ describe('stampSelectableCollection', () => {
     it('stamp not in collection', async () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({ list: list, selected: new Array<Stamp>() })
-      await sc.removeCollectionEntry({ id: 555, description: 'red' } as Stamp)
+      await sc.removeCollectionEntries([{ id: 555, description: 'red' } as Stamp])
       expect(sc.getCollection().length).toBe(2)
     })
 
     it('stamp in collection but not selected', async () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({ list: list, selected: new Array<Stamp>() })
-      await sc.removeCollectionEntry({ id: 125, description: 'test' } as Stamp)
+      await sc.removeCollectionEntries([{ id: 125, description: 'test' } as Stamp])
       expect(sc.getCollection().length).toBe(1)
     })
 
     it('stamp in collection and selected', async () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({ list: list, selected: [list[0]] })
-      await sc.removeCollectionEntry({ id: 125, description: 'test' } as Stamp)
+      await sc.removeCollectionEntries([{ id: 125, description: 'test' } as Stamp])
       expect(sc.getCollection().length).toBe(1)
+    })
+
+    it('stamp in collection and selected', async () => {
+      const sc = stampSelectableCollection()
+      sc.initializeCollection({ list: list, selected: [list[0]] })
+      await sc.removeCollectionEntries([
+        { id: 125, description: 'test' } as Stamp,
+        { id: 456, description: 'foo' } as Stamp
+      ])
+      expect(sc.getCollection().length).toBe(0)
     })
   })
 
