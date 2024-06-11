@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-  import { onBeforeMount, ref } from 'vue'
+  import { computed, onBeforeMount, ref } from 'vue'
   import { countryStore } from '@/stores/countryStore'
   import type { Country } from '@/models/entityModels'
+  import type { SelectElement } from '@vueform/vueform'
+  import { scrollOnOpen } from '@/components/inputs/select-helper'
 
   const countriesStore = countryStore()
 
@@ -15,13 +17,20 @@
     rules: String
   })
 
+  const propName = computed((): string => {
+    return $props.name || 'countryRef'
+  })
+  const onOpen = async (instance: SelectElement) => {
+    scrollOnOpen(instance, propName.value)
+  }
+
   onBeforeMount(async () => {
     items.value = await countriesStore.find()
   })
 </script>
 <template>
   <select-element
-    :name="$props.name || 'countryRef'"
+    :name="propName"
     :native="false"
     :search="$props.search || true"
     :track-by="['name']"
@@ -33,6 +42,7 @@
     :items="items"
     :label="$props.label || ''"
     :rules="$props.rules || ''"
+    @open="onOpen"
     autocomplete="off"
   ></select-element>
 </template>

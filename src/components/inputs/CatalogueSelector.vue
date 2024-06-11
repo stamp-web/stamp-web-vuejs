@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-  import { onBeforeMount, ref } from 'vue'
+  import { computed, onBeforeMount, ref } from 'vue'
   import { catalogueStore } from '@/stores/catalogueStore'
   import type { Catalogue } from '@/models/Catalogue'
+  import type { SelectElement } from '@vueform/vueform'
+  import { scrollOnOpen } from '@/components/inputs/select-helper'
 
   const cataloguesStore = catalogueStore()
   const items = ref(new Array<Catalogue>())
@@ -14,13 +16,20 @@
     rules: String
   })
 
+  const propName = computed((): string => {
+    return $props.name || 'catalogueRef'
+  })
+  const onOpen = async (instance: SelectElement) => {
+    scrollOnOpen(instance, propName.value)
+  }
+
   onBeforeMount(async () => {
     items.value = await cataloguesStore.find()
   })
 </script>
 <template>
   <select-element
-    :name="$props.name || 'catalogueRef'"
+    :name="propName"
     :native="false"
     :search="$props.search || true"
     :filter-results="true"
@@ -33,5 +42,6 @@
     :label="$props.label || ''"
     :rules="$props.rules || ''"
     autocomplete="off"
+    @open="onOpen"
   ></select-element>
 </template>
