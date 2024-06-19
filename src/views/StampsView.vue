@@ -569,6 +569,24 @@
           @click="print()"
           :disabled="true"
         ></SecondaryButton>
+
+        <SecondaryButton
+          class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
+          icon=" sw-icon-purchased"
+          id="btn-purchased"
+          :tooltip="areNoneSelected() ? '' : t('actions.purchased')"
+          @click="purchase()"
+          :disabled="areNoneSelected()"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"
+          icon="sw-icon-delete"
+          id="btn-delete"
+          :tooltip="areNoneSelected() ? '' : t('actions.delete-selected')"
+          @click="deleteSelected()"
+          :disabled="areNoneSelected()"
+        ></SecondaryButton>
+
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
           icon="sw-icon-select-all"
@@ -578,27 +596,11 @@
           :disabled="isCollectionEmpty()"
         ></SecondaryButton>
         <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
-          icon=" sw-icon-purchased"
-          id="btn-purchased"
-          :tooltip="areNoneSelected() ? '' : t('actions.purchased')"
-          @click="purchase()"
-          :disabled="areNoneSelected()"
-        ></SecondaryButton>
-        <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"
           icon="sw-icon-clear-all"
           id="btn-clear-selection"
           :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="selectAll(false)"
-          :disabled="areNoneSelected()"
-        ></SecondaryButton>
-        <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"
-          icon="sw-icon-delete"
-          id="btn-delete"
-          :tooltip="areNoneSelected() ? '' : t('actions.delete-selected')"
-          @click="deleteSelected()"
           :disabled="areNoneSelected()"
         ></SecondaryButton>
         <FilterInput
