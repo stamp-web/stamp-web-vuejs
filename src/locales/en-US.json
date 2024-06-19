@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "clear-selection": "Clear All Selections",
     "delete": "Delete",
+    "delete-selected": "Delete Selected",
     "edit": "Edit",
     "filter": "Filter",
     "find-stamps": "Find Stamps",
@@ -16,6 +17,7 @@
     "new-wantlist": "New Wantlist Stamp",
     "no": "No",
     "print": "Print Current List",
+    "purchased": "Set Purchase Price",
     "save": "Save",
     "save-and-new": "Save and new",
     "search": "Search",
@@ -116,6 +118,7 @@
     "grade": "Grade",
     "image-path": "Image path",
     "issue": "Issue Year",
+    "modify-existing": "Modify existing values",
     "name": "Name",
     "notes": "Notes",
     "no-space": "No space available",
@@ -141,6 +144,7 @@
     "CTS": "Cut-To-Shape (CTS)"
   },
   "messages": {
+    "calculated-cost": "Cost Basis is {percentage}% for 0 stamps | Cost Basis is {percentage}% for 1 stamp | Cost Basis is {percentage}% for {count} stamps",
     "calculating": "Calculating...",
     "cert-exists": "A certificate or expertization opinion exists",
     "copied": "Value copied",
@@ -238,6 +242,7 @@
     "new-stamp": "New Stamp",
     "new-stamp-collection": "New Stamp Collection",
     "ownership-details": "Ownership Details",
+    "purchase-price": "Set Purchase Price",
     "save-failure": "Save Error",
     "stamp-web-editor": "Stamp Web Editor"
   }

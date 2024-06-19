@@ -64,6 +64,16 @@ export class StampEditorCmp {
     return new SelectCmp(this.page, 'group-stamp-ownership.albumRef')
   }
 
+  getOwnershipPricePaid(): Locator {
+    return this.getLocator().locator(
+      `input[id="${encodeId('group-stamp-ownership.group-price.pricePaid')}"]`
+    )
+  }
+
+  getOwnershipCurrency(): SelectCmp {
+    return new SelectCmp(this.page, 'group-stamp-ownership.group-price.code', false)
+  }
+
   getOwnershipCondition(): SelectCmp {
     return new SelectCmp(this.page, 'group-stamp-ownership.condition', false)
   }

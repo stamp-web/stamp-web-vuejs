@@ -9,7 +9,104 @@ import {
 } from '../../helpers/api-helpers.js'
 import { CountryViewPage } from '../../pages/views/CountryView-page.js'
 import { StampViewPage } from '../../pages/views/StampView-page.js'
+import { StampPurchaseDialogCmp } from '../../pages/components/StampPurchaseDialog-cmp.js'
 
+async function navigateToStampView(page: Page, countryName: string) {
+  const countryView = new CountryViewPage(page)
+  await countryView.goto()
+  await countryView.getFilter().getInput().fill(countryName)
+  await countryView.getGrid().waitForLoadingComplete()
+  const selectedRow = countryView.getGrid().getRowByText(countryName)
+  await countryView.getGrid().getAction('sw-icon-search', selectedRow).click()
+  const stampView = new StampViewPage(page)
+  return stampView
+}
+
+test.describe('purchase tests', () => {
+  let albumName: string
+  let collectionName: string
+  let catalogueName: string
+  let countryName: string
+  let timestamp: number
+  let albumId: number
+  let countryId: number
+  let catalogueId: number
+
+  test.beforeEach(async ({ request }) => {
+    timestamp = new Date().getTime()
+    catalogueName = `createStamp-${timestamp}`
+    countryName = `createStamp-${timestamp}`
+    albumName = `createStamp-${timestamp}`
+    collectionName = `collectionAlbum-${timestamp}`
+
+    countryId = (await CountryTestHelper.create(request, { name: countryName })).id
+    catalogueId = (
+      await CatalogueTestHelper.create(request, { name: catalogueName, issue: '2024', type: 1 })
+    ).id
+    const sc = await StampCollectionTestHelper.create(request, { name: collectionName })
+    albumId = (
+      await AlbumTestHelper.create(request, { name: albumName, stampCollectionRef: sc.id })
+    ).id
+  })
+
+  test.afterEach(async ({ request }) => {
+    await AlbumTestHelper.deleteByName(request, albumName)
+    await StampCollectionTestHelper.deleteByName(request, collectionName)
+    await CountryTestHelper.deleteByName(request, countryName)
+    await CatalogueTestHelper.deleteByName(request, catalogueName)
+  })
+
+  test('verify basic purchase', async ({ page }) => {
+    const num = `23a-${timestamp}`
+    StampTestHelper.create(page.request, {
+      countryRef: countryId,
+      rate: '1d',
+      description: 'red',
+      wantList: false,
+      catalogueNumbers: [
+        {
+          catalogueRef: catalogueId,
+          number: num,
+          value: 100,
+          condition: 2,
+          active: true
+        }
+      ],
+      stampOwnerships: [
+        {
+          albumRef: albumId,
+          condition: 2,
+          grade: 0,
+          pricePaid: 100,
+          code: 'CAD'
+        }
+      ]
+    })
+    const stampView = await navigateToStampView(page, countryName)
+    await stampView.getGrid().getRowByText(num).click()
+    expect(await stampView.getPurchaseButton().isEnabled()).toBe(true)
+    await stampView.getPurchaseButton().click()
+    const purchaseDialog = new StampPurchaseDialogCmp(page)
+    expect(await purchaseDialog.isVisible()).toBe(true)
+    expect(await purchaseDialog.getTitle().textContent()).toBe('Set Purchase Price')
+    expect(await purchaseDialog.getSaveButton().isEnabled()).toBe(false)
+    await purchaseDialog.getPricePaid().fill('50')
+    await purchaseDialog.getCurrencyCode().select('EUR')
+    expect(await purchaseDialog.getCalculatedCostMessage().textContent()).toBe(
+      'Cost Basis is 50.00% for 1 stamp'
+    )
+    expect(await purchaseDialog.getSaveButton().isEnabled()).toBe(true)
+
+    await purchaseDialog.getSaveButton().click()
+    expect(await stampView.getGrid().getCellLocatorByText('€50.00')).toHaveText('€50.00')
+    const rowLoc = await stampView.getGrid().getRowByText(num)
+    await stampView.getGrid().getAction('sw-icon-edit', rowLoc).click()
+    const editor = await stampView.getEditor()
+    await editor.getOwnershipPricePaid().scrollIntoViewIfNeeded()
+    expect(await editor.getOwnershipCurrency().getText()).toBe('EUR')
+    expect(await editor.getOwnershipPricePaid()).toHaveValue('50')
+  })
+})
 test.describe('creation tests', () => {
   let albumName: string
   let collectionName: string
@@ -44,17 +141,6 @@ test.describe('creation tests', () => {
     await CatalogueTestHelper.deleteByName(request, catalogueName)
     await SellerTestHelper.deleteByName(request, sellerName)
   })
-
-  async function navigateToStampView(page: Page, countryName: string) {
-    const countryView = new CountryViewPage(page)
-    await countryView.goto()
-    await countryView.getFilter().getInput().fill(countryName)
-    await countryView.getGrid().waitForLoadingComplete()
-    const selectedRow = countryView.getGrid().getRowByText(countryName)
-    await countryView.getGrid().getAction('sw-icon-search', selectedRow).click()
-    const stampView = new StampViewPage(page)
-    return stampView
-  }
 
   test('create wantlist', async ({ page }) => {
     const stampView = await navigateToStampView(page, countryName)

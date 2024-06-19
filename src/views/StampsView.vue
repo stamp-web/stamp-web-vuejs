@@ -57,6 +57,7 @@
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
   import SearchForm from '@/components/forms/SearchForm.vue'
+  import StampPurchaseDialog from '@/components/dialogs/StampPurchaseDialog.vue'
 
   const { t } = useI18n()
 
@@ -87,6 +88,11 @@
     condition: 'All',
     filterText: '',
     wantList: 'All'
+  })
+
+  const purchaseModel = ref({
+    show: false,
+    stamps: new Array<Stamp>()
   })
 
   const deleteModel = ref({
@@ -353,7 +359,10 @@
 
   const print = () => {}
 
-  const purchase = () => {}
+  const purchase = () => {
+    purchaseModel.value.stamps = getCurrentSelected().slice()
+    purchaseModel.value.show = true
+  }
 
   const deleteSelected = () => {
     deleteModel.value.deletingStamps = getCurrentSelected().slice()
@@ -374,6 +383,13 @@
       })
     }
     deleteModel.value.showDelete = false
+  }
+
+  const processPurchase = (processed: boolean = false) => {
+    purchaseModel.value.show = false
+    if (processed) {
+      gotoPage(getActivePage())
+    }
   }
 
   const deleteStamp = (s: Stamp) => {
@@ -556,6 +572,7 @@
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
           icon="sw-icon-select-all"
+          id="btn-select-all"
           :tooltip="areAllSelected() ? '' : t('actions.select-all')"
           @click="selectAll()"
           :disabled="isCollectionEmpty()"
@@ -563,13 +580,15 @@
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
           icon=" sw-icon-purchased"
-          :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
+          id="btn-purchased"
+          :tooltip="areNoneSelected() ? '' : t('actions.purchased')"
           @click="purchase()"
-          :disabled="areNoneSelected() || true"
+          :disabled="areNoneSelected()"
         ></SecondaryButton>
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden lg:block"
           icon="sw-icon-clear-all"
+          id="btn-clear-selection"
           :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
           @click="selectAll(false)"
           :disabled="areNoneSelected()"
@@ -577,7 +596,8 @@
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"
           icon="sw-icon-delete"
-          :tooltip="areNoneSelected() ? '' : t('actions.clear-selection')"
+          id="btn-delete"
+          :tooltip="areNoneSelected() ? '' : t('actions.delete-selected')"
           @click="deleteSelected()"
           :disabled="areNoneSelected()"
         ></SecondaryButton>
@@ -661,6 +681,11 @@
           :stamps="deleteModel.deletingStamps"
           @close="processDelete"
         ></StampDeleteDialog>
+        <StampPurchaseDialog
+          :is-open="purchaseModel.show"
+          :stamps="purchaseModel.stamps"
+          @close="processPurchase"
+        ></StampPurchaseDialog>
       </div>
       <div class="flex mb-1 mt-1 h-[22.5px]" ref="footer">
         <paging-component

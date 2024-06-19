@@ -2,6 +2,7 @@
   import { CurrencyCode } from '@/models/CurrencyCode'
 
   const $props = defineProps({
+    value: String,
     appendToBody: Boolean,
     label: String,
     search: { type: Boolean, default: false },
@@ -23,6 +24,7 @@
     :name="$props.name || 'condition'"
     :native="false"
     :search="false"
+    :default="$props.value"
     label-prop="name"
     value-prop="value"
     :items="getCurrencies"

@@ -42,6 +42,10 @@ export class DataGridComponentCmp {
     return this.getTableLocator().getByRole('gridcell').locator(`text=${text}`).locator('..')
   }
 
+  getCellLocatorByText(text: string): Locator {
+    return this.getTableLocator().getByRole('gridcell').locator(`text='${text}'`)
+  }
+
   getAction(icon: string, rowLocator: Locator) {
     return rowLocator.locator(`.icon-cell.${icon}`)
   }

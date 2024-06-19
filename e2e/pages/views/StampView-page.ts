@@ -43,4 +43,8 @@ export class StampViewPage {
   getCreateWantListButton(): Locator {
     return this.page.locator(`button[id='create-wantList']`)
   }
+
+  getPurchaseButton(): Locator {
+    return this.page.locator(`button[id='btn-purchased']`)
+  }
 }

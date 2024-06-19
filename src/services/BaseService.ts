@@ -43,7 +43,7 @@ export default abstract class BaseService<T> {
     return s
   }
 
-  createURI(options: Object, id?: number | string): string {
+  createURI(options: Object | undefined, id?: number | string): string {
     let uri = `/stamp-webservices/rest/${this.getResourceName()}`
     if (id) {
       uri += `/${id}`
