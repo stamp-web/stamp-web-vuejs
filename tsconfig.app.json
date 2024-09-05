@@ -4,7 +4,7 @@
   "exclude": ["src/**/__tests__/*", "src/vitest-setup.ts", "src/@custom_types/*"],
   "compilerOptions": {
     "composite": true,
-    "isolatedModules ": true,
+    "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "experimentalDecorators": true,
     "baseUrl": ".",

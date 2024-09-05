@@ -135,15 +135,16 @@
   const onSortChanged = (event: SortChangedEvent<any>) => {
     emit(
       'sortChanged',
-      event.columnApi.getColumnState().find((col) => col.sort)
+      event.api.getColumnState().find((col) => col.sort)
     )
   }
 
   const resizeColumns = async () => {
-    await nextTick()
-    if (gridApi.value) {
-      gridApi.value.sizeColumnsToFit()
-    }
+    setTimeout(() => {
+      if (gridApi.value) {
+        gridApi.value.sizeColumnsToFit()
+      }
+    }, 0)
   }
 
   const loadingStarted = () => {
@@ -174,7 +175,8 @@
 <template>
   <ag-grid-vue
     ref="gridEl"
-    :class="`ag-theme-stamp-web grid flex-shrink h-full flex-auto flex-grow min-h-[5rem] grid-loading-${loading}`"
+    style="width: 100%; height: 100%"
+    :class="`ag-theme-stamp-web flex-shrink flex-auto flex-grow min-h-[5rem] grid-loading-${loading}`"
     :columnDefs="columns"
     :rowData="props.rowData"
     :rowSelection="`${props.multiSelect ? 'multiple' : 'single'}`"
@@ -195,7 +197,7 @@
       theme: stamp-web,
       extend-theme: alpine,
       row-hover-color: #f3f4f6,
-      // green-50
+      --ag-header-height: 28px,
       --ag-foreground-color: #374151,
       --ag-selected-row-background-color: #ecfdf5,
       //--ag-header-foreground-color: #ffffff,
