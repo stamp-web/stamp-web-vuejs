@@ -108,7 +108,7 @@
               class="w-full max-w-md max-h-96 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
             >
               <DialogTitle as="h3" class="text-lg font-medium">
-                {{ t('titles.delete-stamps') }}
+                <span class="sw-icon-delete"></span>{{ t('titles.delete-stamps') }}
               </DialogTitle>
               <div class="mt-2 flex flex-col flex-grow-0 overflow-hidden">
                 <span>{{ t('messages.delete-stamps') }}</span>

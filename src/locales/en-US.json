@@ -1,5 +1,6 @@
 {
   "actions": {
+    "bulk-edit": "Bulk Edit Properties",
     "cancel": "Cancel",
     "clear-selection": "Clear All Selections",
     "delete": "Delete",
@@ -119,6 +120,7 @@
     "image-path": "Image path",
     "issue": "Issue Year",
     "modify-existing": "Modify existing values",
+    "modify-image-path": "Modify image path",
     "name": "Name",
     "notes": "Notes",
     "no-space": "No space available",
@@ -129,6 +131,7 @@
     "purchased": "Purchased",
     "rate": "Denomination",
     "regenerate-image": "Regenerate image path",
+    "select-property": "Properties to edit",
     "seller": "Seller",
     "stampCollection": "Stamp Collection",
     "updated": "Modified",
@@ -155,7 +158,10 @@
     "delete-seller": "Delete the seller '{seller}'?",
     "delete-stamp": "Delete the stamp `{stamp}'?",
     "delete-stamps": "Delete the selected stamps?",
+    "loading": "Loading...",
+    "no-properties": "No properties are selected",
     "save-failure": "An error occurred saving the object. The message is: <br/>'{message}'",
+    "saving": "Saving...",
     "stamp-exists": "The stamp already exists"
   },
   "models": {
@@ -227,6 +233,7 @@
   },
   "titles": {
     "active-catalogueNumber": "Active Catalogue Number",
+    "bulk-edit": "Bulk Edit Properties",
     "details": "Details",
     "delete-stamps": "Delete Selected Stamps",
     "edit-album": "Edit Album",

@@ -69,11 +69,13 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
         this.items.list.splice(0, this.items.list.length)
         this.items.loading = true
         const data: EntityList<Stamp> = await this.service.find(options)
+        const list = new Array<Stamp>()
         data.items.forEach((e) => {
           e = setActiveCatalogueNumber(e)
-          this.items.list.push(e)
-          this.items.total = data.total
+          list.push(e)
         })
+        this.items.total = data.total
+        this.items.list = list
         this.items.loading = false
         return _cloneDeep(this.items.list)
       },

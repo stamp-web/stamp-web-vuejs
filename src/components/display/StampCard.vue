@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import ImagePreview from '@/components/display/ImagePreview.vue'
-  import { watch, computed, onMounted, onUnmounted, ref } from 'vue'
+  import { watch, computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
   import { resolvePath } from '@/util/object-utils'
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
   import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
@@ -20,7 +20,7 @@
   const status = ref({
     selected: false
   })
-  const imageFrame = ref()
+  const imageFrame = useTemplateRef('imageFrame')
   const imageVisible = ref(false)
 
   const emit = defineEmits(['selected', 'deselected', 'edit-stamp', 'delete-stamp'])
@@ -72,7 +72,7 @@
   onMounted(async () => {
     status.value.selected = props.isSelected
     if (imageFrame.value) {
-      observer.observe(imageFrame.value)
+      observer.observe(imageFrame.value as Element)
     }
   })
 

@@ -176,7 +176,7 @@
               class="flex flex-col max-w-md max-h-64 min-h-64 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
             >
               <DialogTitle as="h3" class="text-lg font-medium border-gray-300 border-b pb-2">
-                {{ t('titles.purchase-price') }}
+                <span class="sw-icon-purchased"></span>{{ t('titles.purchase-price') }}
               </DialogTitle>
               <div class="mt-2 flex flex-col flex-grow-0 overflow-hidden">
                 <Vueform

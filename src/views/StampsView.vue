@@ -6,12 +6,14 @@
   import _isEmpty from 'lodash-es/isEmpty'
   import { Parser, Operators, Predicate } from 'odata-filter-parser'
   import type { Log } from 'vuejs3-logger'
-
   import dayjs from 'dayjs'
+
   import editableModel from '@/components/behaviors/editableModel'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
   import stampFilters from '@/components/behaviors/stampFilters'
   import StampDeleteDialog from '@/components/dialogs/DeleteStampDialog.vue'
+  import StampPurchaseDialog from '@/components/dialogs/StampPurchaseDialog.vue'
+  import StampBulkEditDialog from '@/components/dialogs/StampBulkEditDialog.vue'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
@@ -41,6 +43,7 @@
   import { type Stamp, StampModelHelper } from '@/models/Stamp'
   import { OwnershipHelper } from '@/models/Ownership'
   import { ReportType } from '@/models/ReportType'
+  import { StampModelUtils } from '@/models/StampModelUtils'
   import { ReportResult } from '@/models/ReportResult'
   import { CurrencyTools } from '@/models/CurrencyCode'
 
@@ -57,7 +60,6 @@
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
   import SearchForm from '@/components/forms/SearchForm.vue'
-  import StampPurchaseDialog from '@/components/dialogs/StampPurchaseDialog.vue'
 
   const { t } = useI18n()
 
@@ -65,6 +67,7 @@
 
   const route = useRoute()
   const router = useRouter()
+
   const dataGridRef = ref()
   const columnControl = ref({
     cert: true,
@@ -99,6 +102,13 @@
     showDelete: false,
     deletingStamps: new Array<Stamp>()
   })
+
+  const bulkEditModel = ref({
+    show: false,
+    progress: false,
+    stamps: new Array<Stamp>()
+  })
+
   const stampView = ref()
   const cardLayout = ref()
   const buttonToolbar = ref()
@@ -149,6 +159,8 @@
     imagePath: '/',
     thumbPath: '/'
   })
+
+  const stampModelUtils = new StampModelUtils()
 
   const noSort = () => {
     return 0
@@ -318,17 +330,17 @@
     const results = await store.find(theQuery)
     setCollection(results)
     fetchReportData()
-    await setupStats()
+    return await setupStats()
   }
 
-  const gotoPage = (page: number) => {
+  const gotoPage = async (page: number) => {
     setActivePage(page)
     setQueryPagingParams(Math.max((getActivePage() - 1) * getPageSize(), 0), getPageSize())
     query.value.$filter = PredicateUtilities.concat(
       Operators.AND,
       state.value.predicates.concat(state.value.filterPredicates)
     ).serialize()
-    findWithQuery(query.value)
+    return findWithQuery(query.value)
   }
 
   const setQueryPagingParams = (skip: number, size: number) => {
@@ -364,6 +376,11 @@
     purchaseModel.value.show = true
   }
 
+  const bulkEdit = () => {
+    bulkEditModel.value.stamps = getCurrentSelected().slice()
+    bulkEditModel.value.show = true
+  }
+
   const deleteSelected = () => {
     deleteModel.value.deletingStamps = getCurrentSelected().slice()
     deleteModel.value.showDelete = true
@@ -392,18 +409,31 @@
     }
   }
 
+  const processBulkEdit = async (bulkEdit: boolean = false, values: Record<string, any>) => {
+    if (bulkEdit) {
+      const selectedStamps = getCurrentSelected().slice()
+      if (selectedStamps && selectedStamps.length > 0) {
+        bulkEditModel.value.progress = true
+        await Promise.all(stampModelUtils.bulkEditStamps(selectedStamps, values))
+        await gotoPage(getActivePage())
+      }
+    }
+    bulkEditModel.value.progress = false
+    bulkEditModel.value.show = false
+  }
+
   const deleteStamp = (s: Stamp) => {
     deleteModel.value.deletingStamps = [s]
     deleteModel.value.showDelete = true
   }
 
-  const wantListFilterChanged = (wantListFilter: string) => {
+  const wantListFilterChanged = async (wantListFilter: string) => {
     wantListChanged(state.value.filterPredicates, wantListFilter)
-    gotoPage(getActivePage())
+    await gotoPage(getActivePage())
   }
-  const conditionFilterChanged = (conditionFilter: string) => {
+  const conditionFilterChanged = async (conditionFilter: string) => {
     conditionChanged(state.value.filterPredicates, conditionFilter)
-    gotoPage(getActivePage())
+    await gotoPage(getActivePage())
   }
 
   const goSearch = async (searchFilter: Predicate) => {
@@ -415,11 +445,11 @@
         $filter: PredicateUtilities.concat(Operators.AND, state.value.predicates).serialize()
       }
     })
-    gotoPage(getActivePage())
+    await gotoPage(getActivePage())
   }
-  const filterChanged = (filterText: string) => {
+  const filterChanged = async (filterText: string) => {
     descriptionChanged(state.value.filterPredicates, filterText)
-    gotoPage(getActivePage())
+    await gotoPage(getActivePage())
   }
 
   const createStamp = async (wantList: boolean = false) => {
@@ -572,10 +602,18 @@
 
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
-          icon=" sw-icon-purchased"
+          icon="sw-icon-purchased"
           id="btn-purchased"
           :tooltip="areNoneSelected() ? '' : t('actions.purchased')"
           @click="purchase()"
+          :disabled="areNoneSelected()"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
+          icon="sw-icon-bulk-edit"
+          id="btn-bulk-edit"
+          :tooltip="areNoneSelected() ? '' : t('actions.bulk-edit')"
+          @click="bulkEdit()"
           :disabled="areNoneSelected()"
         ></SecondaryButton>
         <SecondaryButton
@@ -688,6 +726,12 @@
           :stamps="purchaseModel.stamps"
           @close="processPurchase"
         ></StampPurchaseDialog>
+        <StampBulkEditDialog
+          :is-open="bulkEditModel.show"
+          :show-progress="bulkEditModel.progress"
+          :stamps="bulkEditModel.stamps"
+          @close="processBulkEdit"
+        ></StampBulkEditDialog>
       </div>
       <div class="flex mb-1 mt-1 h-[22.5px]" ref="footer">
         <paging-component
