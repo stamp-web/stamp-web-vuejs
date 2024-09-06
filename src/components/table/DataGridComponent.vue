@@ -50,7 +50,7 @@
     () => props.rowData,
     async () => {
       if (!isNil(gridApi.value)) {
-        gridApi.value.setRowData(props.rowData)
+        gridApi.value.setGridOption('rowData', props.rowData)
         gridApi.value.deselectAll()
         dataLoadTime.value = new Date().getTime()
         setSelected(props.selectedData ?? new Array<T>())
@@ -74,12 +74,13 @@
     () => {
       if (!isNil(gridApi.value)) {
         if (loading.value) {
-          gridApi.value.showLoadingOverlay()
+          gridApi.value.setGridOption('loading', true)
         } else {
-          gridApi.value.hideOverlay()
+          gridApi.value.setGridOption('loading', false)
         }
       }
-    }
+    },
+    { deep: true }
   )
 
   const setSelected = async (selected: Array<T>) => {
@@ -118,7 +119,7 @@
   const onGridReady = (params: any) => {
     gridApi.value = params.api
     if (loading.value) {
-      gridApi.value.showLoadingOverlay()
+      gridApi.value.setGridOption('loading', false)
     }
     resizeColumns()
     setSelected(props.selectedData ?? new Array<T>())

@@ -8,3 +8,7 @@ export function debounce(cb: Function, duration: number) {
     }, duration)
   }
 }
+
+export function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}

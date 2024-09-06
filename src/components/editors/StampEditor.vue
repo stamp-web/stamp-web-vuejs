@@ -122,7 +122,7 @@
    * that are not edited or used (such as IDs) so we restore the objects by merging in the new values
    * into the previous values
    *
-   * TODO: cleck clearing fields like purchased works
+   * With Vueform 10.1.4 the code to convert the numbers to strings should no longer be needed
    */
   const getSaveModel = () => {
     const m = Object.assign($props.model, stampModel.value)

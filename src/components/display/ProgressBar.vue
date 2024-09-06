@@ -1,12 +1,21 @@
 <script lang="ts" setup>
   import { watch, ref, useTemplateRef, onMounted } from 'vue'
 
-  const $props = defineProps({
-    indeterminant: Boolean,
-    value: Number,
-    min: Number,
-    max: Number
-  })
+  const {
+    indeterminant = false,
+    increment = 5,
+    interval = 500,
+    value = 0,
+    min = 0,
+    max = 100
+  } = defineProps<{
+    indeterminant?: boolean
+    increment?: number
+    interval?: number
+    value?: number
+    min?: number
+    max?: number
+  }>()
 
   const count = ref(0)
   const limits = ref({
@@ -16,53 +25,58 @@
   const $progressBar = useTemplateRef('$progressBar')
 
   watch(
-    () => [$props.indeterminant],
+    () => [indeterminant],
     () => {
-      if ($props.indeterminant) {
+      if (indeterminant) {
         renderIndeterminant()
       }
     }
   )
 
   watch(
-    () => [$props.value],
+    () => [value],
     () => {
-      if (!$props.indeterminant && $props.value) {
-        const el = $progressBar.value as Element
-        let v = $props.value
-        if ($props.value > limits.value.max) {
-          v = limits.value.max
-        }
-        el.setAttribute('style', `width: ${(v / limits.value.max) * 100.0}%`)
+      if (!indeterminant && value) {
+        count.value = value
+        setValue()
       }
     }
   )
 
   const renderIndeterminant = () => {
     setInterval(() => {
-      count.value = count.value + 5
-      if (count.value > 100) {
-        count.value = 0
-      }
-      const el = $progressBar.value as Element
-      el.setAttribute('style', `width: ${count.value}%`)
-    }, 500)
+      count.value = count.value + increment
+      setValue(true)
+    }, interval)
+  }
+
+  const setValue = (resetOnOverflow: boolean = false) => {
+    if (count.value > limits.value.max) {
+      count.value = resetOnOverflow ? limits.value.min : limits.value.max
+    }
+    const el = $progressBar.value as Element
+    el.setAttribute('style', `width: ${count.value}%`)
   }
 
   onMounted(() => {
-    if ($props.indeterminant) {
-      renderIndeterminant()
+    if (min) {
+      limits.value.min = min
     }
-    if ($props.min) {
-      limits.value.min = +$props.min
-    }
-    if ($props.max) {
-      if (+$props.max < limits.value.min) {
+    if (max) {
+      if (max < limits.value.min) {
         throw new Error("'max' must be greater than 'min'")
       }
-      limits.value.max = +$props.max
+      limits.value.max = max
+    }
+    count.value = value
+      ? Math.max(Math.min(limits.value.max, value), limits.value.min)
+      : limits.value.min
+    if (indeterminant) {
+      renderIndeterminant()
     }
   })
+
+  defineExpose({ count, $progressBar })
 </script>
 <template>
   <div class="bg-[var(--vf-gray-100)] border-gray-300 border-2 w-full p-0.25 h-full flex">
