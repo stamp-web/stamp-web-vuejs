@@ -32,13 +32,15 @@
     () => [[props.columnVisibility]],
     async () => {
       if (!isNil(gridApi.value)) {
-        const keys = Object.keys(props.columnVisibility as KeyIndexable)
-        keys.forEach((key) => {
-          gridApi.value.columnModel.setColumnVisible(
-            key,
-            (props.columnVisibility as KeyIndexable)[key]
-          )
-        })
+        const obj = props.columnVisibility as KeyIndexable
+        gridApi.value.setColumnsVisible(
+          Object.keys(obj).filter((key) => obj[key] === true),
+          true
+        )
+        gridApi.value.setColumnsVisible(
+          Object.keys(obj).filter((key) => obj[key] === false),
+          false
+        )
         await nextTick()
         resizeColumns()
       }

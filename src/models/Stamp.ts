@@ -47,7 +47,8 @@ export class StampModelHelper {
     catalogueNumber: CatalogueNumber,
     countryName: string,
     prefix: string = '',
-    includeUsedInPath: boolean = true
+    includeUsedInPath: boolean = true,
+    preserveFilename: boolean = false
   ) => {
     let path = ''
     if (!stamp.wantList) {
@@ -59,11 +60,18 @@ export class StampModelHelper {
         } else if (includeUsedInPath && ConditionHelper.isOnCover(catalogueNumber.condition)) {
           path += 'on-cover/'
         }
-        if (prefix) {
-          path += prefix
+        if (preserveFilename) {
+          const img = stamp.stampOwnerships[0].img
+          if (img) {
+            path += img.substring(img.lastIndexOf('/') + 1)
+          }
+        } else {
+          if (prefix) {
+            path += prefix
+          }
+          path += `${catalogueNumber.number.replace('/', '_')}.jpg`
+          path = path.replace(/[[<>'";`%{}\]]/gi, '-')
         }
-        path += `${catalogueNumber.number.replace('/', '_')}.jpg`
-        path = path.replace(/[[<>'";`%{}\]]/gi, '-')
       }
     }
 

@@ -55,7 +55,9 @@
       count.value = resetOnOverflow ? limits.value.min : limits.value.max
     }
     const el = $progressBar.value as Element
-    el.setAttribute('style', `width: ${count.value}%`)
+    if (el) {
+      el.setAttribute('style', `width: ${count.value}%`)
+    }
   }
 
   onMounted(() => {

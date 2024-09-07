@@ -130,5 +130,19 @@ describe('StampModelHelper tests', () => {
         'test country/sc45a.jpg'
       )
     })
+
+    it('preserves existing image file', () => {
+      const stamp = StampModelHelper.newInstance(false)
+      stamp.stampOwnerships[0].img = 'test/path/someStamp-23.jpg'
+      const cn = stamp.activeCatalogueNumber
+      if (cn) {
+        cn.condition = Condition.CTO
+        cn.number = '45a'
+      }
+      // @ts-ignore
+      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'mk', true, true)).toBe(
+        'test country/used/someStamp-23.jpg'
+      )
+    })
   })
 })
