@@ -143,11 +143,9 @@
   }
 
   const resizeColumns = async () => {
-    setTimeout(() => {
-      if (gridApi.value) {
-        gridApi.value.sizeColumnsToFit()
-      }
-    }, 0)
+    if (gridApi.value) {
+      gridApi.value.sizeColumnsToFit()
+    }
   }
 
   const loadingStarted = () => {

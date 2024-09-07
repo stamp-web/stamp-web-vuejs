@@ -66,7 +66,7 @@
     )
   }
 
-  const checkIfExistsDebounced = debounce(checkIfExists, 1000)
+  const checkIfExistsDebounced = debounce(checkIfExists, 750)
 
   const setCountryName = (countryName: string) => {
     state.value.countryName = countryName
