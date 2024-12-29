@@ -9,6 +9,8 @@
   import type { PersistedModel } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
+  import { debounce } from '@/util/timer-utils'
+
   import type { KeyIndexable } from '@/util/ts/key-accessor'
 
   const gridApi = ref()
@@ -27,6 +29,10 @@
 
   const columns = Object.freeze(props.columnDefs)
   const allowSelectionEvent = ref(true)
+
+  const setSelectedDebounced = debounce((selected: Array<T>) => {
+    setSelected(selected)
+  }, 125)
 
   watch(
     () => [[props.columnVisibility]],
@@ -55,7 +61,7 @@
         gridApi.value.setGridOption('rowData', props.rowData)
         gridApi.value.deselectAll()
         dataLoadTime.value = new Date().getTime()
-        setSelected(props.selectedData ?? new Array<T>())
+        setSelectedDebounced(props.selectedData ?? new Array<T>())
       }
     },
     { deep: true }
@@ -65,7 +71,7 @@
     () => [[props.selectedData]],
     async () => {
       if (!isNil(gridApi.value)) {
-        setSelected(props.selectedData ?? new Array<T>())
+        setSelectedDebounced(props.selectedData ?? new Array<T>())
       }
     },
     { deep: true }
@@ -124,7 +130,7 @@
       gridApi.value.setGridOption('loading', false)
     }
     resizeColumns()
-    setSelected(props.selectedData ?? new Array<T>())
+    setSelectedDebounced(props.selectedData ?? new Array<T>())
   }
 
   const onSelected = (event: any) => {

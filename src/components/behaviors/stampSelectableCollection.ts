@@ -24,26 +24,27 @@ const stampSelectableCollection = () => {
   async function updateCollectionEntry(savedStamp?: Stamp) {
     const currentList = getCollection()
     const currentSelected = getCurrentSelected()
-    data.value.list = []
-    data.value.selected = []
+    const list = new Array<Stamp>()
+    const selected = new Array<Stamp>()
     let found = false
-    await nextTick()
     currentList.forEach((stamp: Stamp) => {
       let comparator = stamp
       if (savedStamp && stamp.id === savedStamp.id) {
-        data.value.list.push(savedStamp)
+        list.push(savedStamp)
         comparator = savedStamp
         found = true
       } else {
-        data.value.list.push(stamp)
+        list.push(stamp)
       }
       if (currentSelected && currentSelected.some((s: Stamp) => s.id === comparator.id)) {
-        data.value.selected.push(comparator)
+        selected.push(comparator)
       }
     })
     if (savedStamp && !found) {
-      data.value.list.unshift(savedStamp)
+      list.unshift(savedStamp)
     }
+    data.value.list = list
+    data.value.selected = selected
   }
 
   async function removeCollectionEntries(stamps: Array<Stamp>) {
