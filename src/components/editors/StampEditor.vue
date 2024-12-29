@@ -131,15 +131,21 @@
       m.stampOwnerships[0] = Object.assign(m.stampOwnerships[0], stampOwnership.value)
       // Fix any data members that are not in the pure data formats (despite editor configurations)
       if (m.stampOwnerships[0].pricePaid && typeof m.stampOwnerships[0].pricePaid === 'string') {
-        logger.info('Ownership price paid was a string. Converting to a number')
+        logger.warn('Ownership price paid was a string. Converting to a number')
         m.stampOwnerships[0].pricePaid = fixFraction(m.stampOwnerships[0].pricePaid)
       }
     }
     // Fix any data members that are not in the pure data formats (despite editor configurations)
     if (typeof m.activeCatalogueNumber.value === 'string') {
-      logger.info('Catalogue value was a string. Converting to a number')
+      logger.warn('Catalogue value was a string. Converting to a number')
       m.activeCatalogueNumber.value = fixFraction(m.activeCatalogueNumber.value)
     }
+    // Since we assign the activeCatalogueNumber into the m.activeCatalogueNumber we may break the chain of reference
+    // so we need to reestablish it
+    const indx = m.catalogueNumbers.findIndex((v: CatalogueNumber) => {
+      return v.active
+    })
+    m.catalogueNumbers[indx] = m.activeCatalogueNumber
     return m
   }
 
