@@ -12,8 +12,10 @@ const stampSelectableCollection = () => {
     data.value = theRef
   }
 
-  const setCollection = async (list: Array<Stamp>) => {
-    data.value.selected = [] // clear the selection whenever we set stamps
+  const setCollection = async (list: Array<Stamp>, clearSelection: boolean = false) => {
+    if (clearSelection) {
+      data.value.selected = new Array<Stamp>()
+    }
     data.value.list = list
   }
 
@@ -43,14 +45,14 @@ const stampSelectableCollection = () => {
     if (savedStamp && !found) {
       list.unshift(savedStamp)
     }
-    data.value.list = list
-    data.value.selected = selected
+    await setCollection(list)
+    await setCurrentSelected(selected)
   }
 
   async function removeCollectionEntries(stamps: Array<Stamp>) {
     const col = getCollection()
     const sel = getCurrentSelected()
-    setCollection([])
+    setCollection(new Array<Stamp>())
     await nextTick()
     const findAndRemove = (col: Array<Stamp>, stamp: Stamp) => {
       const selIndex = col
@@ -66,8 +68,8 @@ const stampSelectableCollection = () => {
       findAndRemove(sel, stamp)
       findAndRemove(col, stamp)
     })
-    setCollection(col)
-    setCurrentSelected(sel)
+    await setCollection(col)
+    await setCurrentSelected(sel)
   }
 
   const isCollectionEmpty = (): boolean => {
@@ -126,9 +128,6 @@ const stampSelectableCollection = () => {
   }
 
   const setCurrentSelected = async (stamps: Array<Stamp>) => {
-    data.value.selected = []
-    await nextTick()
-    // @ts-ignore
     data.value.selected = stamps
   }
 

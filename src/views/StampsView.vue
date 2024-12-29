@@ -328,7 +328,7 @@
   const findWithQuery = async (theQuery: any) => {
     logger.info('query info', query.value)
     const results = await store.find(theQuery)
-    setCollection(results)
+    setCollection(results, true)
     fetchReportData()
     return await setupStats()
   }

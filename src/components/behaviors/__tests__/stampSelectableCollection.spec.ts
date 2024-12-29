@@ -111,7 +111,7 @@ describe('stampSelectableCollection', () => {
   })
 
   describe('setCollection', () => {
-    it('verify collection setting resets selection', async () => {
+    it('verify collection setting does not reset selection', async () => {
       const list = [
         { id: 125, description: 'test' } as Stamp,
         { id: 456, description: 'foo' } as Stamp
@@ -119,6 +119,18 @@ describe('stampSelectableCollection', () => {
       const sc = stampSelectableCollection()
       sc.setSelected({ id: 23, description: 'orange' } as Stamp)
       await sc.setCollection(list)
+      expect(sc.getCollection()).toStrictEqual(list)
+      expect(sc.getCurrentSelected()[0].id).toBe(23)
+    })
+
+    it('verify collection setting resets selection', async () => {
+      const list = [
+        { id: 125, description: 'test' } as Stamp,
+        { id: 456, description: 'foo' } as Stamp
+      ]
+      const sc = stampSelectableCollection()
+      sc.setSelected({ id: 23, description: 'orange' } as Stamp)
+      await sc.setCollection(list, true)
       expect(sc.getCollection()).toStrictEqual(list)
       expect(sc.getCurrentSelected().length).toBe(0)
     })
