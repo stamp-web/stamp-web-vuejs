@@ -1,6 +1,8 @@
 <script setup lang="ts" generic="T extends PersistedModel">
   import { AgGridVue } from 'ag-grid-vue3'
   import type { SortChangedEvent } from 'ag-grid-community'
+  import type { ColDef } from 'ag-grid-community'
+  import type { RowSelectionOptions } from 'ag-grid-community'
   import { RowNode } from 'ag-grid-community'
   import '../../../node_modules/ag-grid-community/styles/ag-grid.css'
   import '../../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
@@ -27,12 +29,19 @@
   })
   const emit = defineEmits(['selected', 'deselected', 'sortChanged'])
 
-  const columns = Object.freeze(props.columnDefs)
+  const columns = Object.freeze(Object.assign([] as ColDef[], props.columnDefs))
+
+  const rowSelection = {
+    mode: 'singleRow',
+    enableClickSelection: true,
+    checkboxes: false
+  } as RowSelectionOptions
+
   const allowSelectionEvent = ref(true)
 
   const setSelectedDebounced = debounce((selected: Array<T>) => {
     setSelected(selected)
-  }, 125)
+  }, 250)
 
   watch(
     () => [[props.columnVisibility]],
@@ -58,8 +67,9 @@
     () => props.rowData,
     async () => {
       if (!isNil(gridApi.value)) {
+        // we require to set this to false with rowData being set
+        allowSelectionEvent.value = false
         gridApi.value.setGridOption('rowData', props.rowData)
-        gridApi.value.deselectAll()
         dataLoadTime.value = new Date().getTime()
         setSelectedDebounced(props.selectedData ?? new Array<T>())
       }
@@ -95,6 +105,7 @@
     if (selected) {
       let leastIndex = -1
       const selectedNodes = new Array<RowNode<T>>()
+      allowSelectionEvent.value = false
       if (selected.length > 0) {
         const lastSelected = selected[selected.length - 1]
         gridApi.value.forEachNode((node: RowNode<T>) => {
@@ -106,14 +117,12 @@
           }
         })
       }
-      allowSelectionEvent.value = false
       gridApi.value.deselectAll()
       gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
-      await nextTick()
       if (leastIndex >= 0 && leastIndex < gridApi.value.getDisplayedRowCount()) {
         // will scroll to selection if  the time between setting the data is greater than
-        // 250ms so it doesn't scroll on individual selections (only on data reload)
-        const placement = new Date().getTime() - dataLoadTime.value < 250 ? 'middle' : null
+        // 125ms so it doesn't scroll on individual selections (only on data reload)
+        const placement = new Date().getTime() - dataLoadTime.value < 125 ? 'middle' : null
         gridApi.value.ensureIndexVisible(leastIndex, placement)
       }
       allowSelectionEvent.value = true
@@ -163,6 +172,11 @@
   }
 
   onMounted(async () => {
+    rowSelection.mode = props.multiSelect ? 'multiRow' : 'singleRow'
+    if (props.multiSelect) {
+      // @ts-ignore
+      rowSelection.headerCheckbox = false
+    }
     if (gridEl.value.$el) {
       observer.observe(gridEl.value.$el)
     }
@@ -186,11 +200,9 @@
     :class="`ag-theme-stamp-web flex-shrink flex-auto flex-grow min-h-[5rem] grid-loading-${loading}`"
     :columnDefs="columns"
     :rowData="props.rowData"
-    :rowSelection="`${props.multiSelect ? 'multiple' : 'single'}`"
-    rowMultiSelectWithClick="true"
-    rowHeight="36"
+    :rowSelection="rowSelection"
+    :rowHeight="36"
     @sortChanged="onSortChanged"
-    suppressRowDeselection="false"
     @grid-ready="onGridReady"
     @rowSelected="onSelected"
   >

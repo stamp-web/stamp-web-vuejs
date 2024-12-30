@@ -83,7 +83,8 @@ test.describe('purchase tests', () => {
       ]
     })
     const stampView = await navigateToStampView(page, countryName)
-    await stampView.getGrid().getRowByText(num).click()
+    await stampView.getGrid().waitForLoadingComplete()
+    await stampView.getGrid().getRowByText(num).click({ delay: 500 })
     expect(await stampView.getPurchaseButton().isEnabled()).toBe(true)
     await stampView.getPurchaseButton().click()
     const purchaseDialog = new StampPurchaseDialogCmp(page)
@@ -98,6 +99,7 @@ test.describe('purchase tests', () => {
     expect(await purchaseDialog.getSaveButton().isEnabled()).toBe(true)
 
     await purchaseDialog.getSaveButton().click()
+    await stampView.getGrid().getRowByText(num).click({ delay: 500 })
     expect(await stampView.getGrid().getCellLocatorByText('€50.00')).toHaveText('€50.00')
     const rowLoc = await stampView.getGrid().getRowByText(num)
     await stampView.getGrid().getAction('sw-icon-edit', rowLoc).click()

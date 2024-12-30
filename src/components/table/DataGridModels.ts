@@ -13,6 +13,8 @@ export class ColumnDefinition {
   resizable?: boolean = false
   sortable?: boolean = true
   sort?: string
+  tooltipField?: string
+  tooltipValueGetter?: Function
   suppressMovable?: boolean = true
   suppressSizeToFit?: boolean = false
   width?: number

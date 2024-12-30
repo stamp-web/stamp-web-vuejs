@@ -6,6 +6,7 @@ import VueLogger from 'vuejs3-logger'
 import { createI18n } from 'vue-i18n'
 
 import enUS from './locales/en-US.json'
+import { ModuleRegistry, ClientSideRowModelModule } from 'ag-grid-community'
 
 const i18n = createI18n<false>({
   legacy: false,
@@ -18,6 +19,9 @@ const i18n = createI18n<false>({
 })
 
 require('intersection-observer')
+
+// Bootstrap ag-grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 config.global.plugins = config.global.plugins || []
 config.global.plugins.push([Vueform, vueformConfig])

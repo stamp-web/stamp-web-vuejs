@@ -13,10 +13,10 @@ const stampSelectableCollection = () => {
   }
 
   const setCollection = async (list: Array<Stamp>, clearSelection: boolean = false) => {
-    if (clearSelection) {
-      data.value.selected = new Array<Stamp>()
-    }
     data.value.list = list
+    if (clearSelection) {
+      await setCurrentSelected(new Array<Stamp>())
+    }
   }
 
   const getCollection = () => {

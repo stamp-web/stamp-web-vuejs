@@ -18,6 +18,16 @@ import { createPinia } from 'pinia'
 
 // @ts-ignore
 import eventBus from 'vue3-eventbus'
+import {
+  ModuleRegistry,
+  ColumnAutoSizeModule,
+  CellStyleModule,
+  RowSelectionModule,
+  ColumnApiModule,
+  ClientSideRowModelModule,
+  ScrollApiModule,
+  provideGlobalGridOptions
+} from 'ag-grid-community'
 
 import ProgressBar from '@/components/display/ProgressBar.vue'
 import ClickableIconCellRenderer from '@/components/renderers/ClickableIconCellRenderer.vue'
@@ -32,6 +42,19 @@ const logOptions = {
   logLevel: isDebug ? 'debug' : 'error',
   showConsoleColors: true
 } as ILoggerOptions
+
+// Register all community features
+ModuleRegistry.registerModules([
+  ColumnAutoSizeModule,
+  CellStyleModule,
+  RowSelectionModule,
+  ColumnApiModule,
+  ClientSideRowModelModule,
+  ScrollApiModule
+])
+//ModuleRegistry.registerModules([AllCommunityModule])
+// Mark all grids as using legacy themes
+provideGlobalGridOptions({ theme: 'legacy' })
 
 // @ts-ignore
 const app = createApp(App)
