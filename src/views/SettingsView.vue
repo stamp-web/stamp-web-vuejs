@@ -14,7 +14,6 @@
   import { preferenceStore } from '@/stores/PreferenceStore'
   import type { Preference } from '@/models/Preference'
   import type { KeyIndexable } from '@/util/ts/key-accessor'
-  import { debounce } from '@/util/timer-utils'
 
   const { t } = useI18n()
 
@@ -52,7 +51,7 @@
     })
     showMessage.value = true
 
-    debounce(() => {
+    setTimeout(() => {
       saving.value = false
       showMessage.value = false
     }, 1000)

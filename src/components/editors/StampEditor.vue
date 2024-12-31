@@ -11,8 +11,8 @@
   import type { Stamp } from '@/models/Stamp'
   import { type Ownership } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
-  import { fixFraction } from '@/util/object-utils'
   import { debounce } from '@/util/timer-utils'
+  import { fixFraction } from '@/util/object-utils'
   import { StampModelHelper } from '@/models/Stamp'
   import { stampStore } from '@/stores/stampStore'
   import { type Log } from 'vuejs3-logger'
@@ -150,7 +150,7 @@
   }
 
   const processTabForward = async () => {
-    debounce(async () => {
+    setTimeout(async () => {
       state.value.tabToNumber = true
       await nextTick()
       state.value.tabToNumber = false
