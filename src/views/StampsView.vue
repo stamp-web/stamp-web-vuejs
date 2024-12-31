@@ -452,6 +452,10 @@
     await gotoPage(getActivePage())
   }
 
+  const refresh = async () => {
+    await gotoPage(getActivePage())
+  }
+
   const createStamp = async (wantList: boolean = false) => {
     const stampPrefs = await prefStore.findByCategory('stamps')
     const model = StampModelHelper.newInstance(wantList, stampPrefs)
@@ -624,7 +628,6 @@
           @click="deleteSelected()"
           :disabled="areNoneSelected()"
         ></SecondaryButton>
-
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400 hidden lg:block"
           icon="sw-icon-select-all"
@@ -657,6 +660,13 @@
           :condition="state.condition"
           @condition-filter-changed="conditionFilterChanged"
         ></ConditionFilterInput>
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden xl:block"
+          icon="sw-icon-refresh"
+          id="btn-refresh"
+          :tooltip="t('actions.refresh')"
+          @click="refresh()"
+        ></SecondaryButton>
         <PagingSizeInput
           class="ml-auto mr-2 scale-90 hidden md:block"
           @page-size-changed="pageSizeChanges"
