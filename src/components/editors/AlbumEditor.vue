@@ -1,22 +1,52 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed } from 'vue'
+  import { ref, onMounted, nextTick, computed, watch } from 'vue'
   import type { Album } from '@/models/entityModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import localeUtil from '@/util/locale-utils'
   import StampCollectionSelector from '@/components/inputs/StampCollectionSelector.vue'
+  import { preferenceStore } from '@/stores/PreferenceStore'
+
+  const prefStore = preferenceStore()
 
   const props = defineProps({
     // @ts-ignore
     model: {} as Album
   })
+
+  const model$ = ref()
+  const form$ = ref()
+
   defineEmits(['cancel', 'save'])
 
-  const form$ = ref()
+  watch(
+    () => [props.model],
+    async () => {
+      modelValue.value = props.model
+      if (!props.model.id || props.model.id < 1) {
+        const v = await prefStore.findByNameAndCategory('stampCollectionRef', 'stamps')
+        if (v) {
+          modelValue.value.stampCollectionRef = v.value ? Number.parseInt(v.value) : -1
+        }
+      }
+    },
+    {
+      deep: true
+    }
+  )
+
+  const modelValue = computed({
+    get: () => {
+      return model$.value
+    },
+    set: (value: Album) => {
+      model$.value = value
+    }
+  })
 
   const title = computed(() => {
     return localeUtil.t(
-      props.model && props.model.id >= 0 ? 'titles.edit-album' : 'titles.new-album'
+      modelValue.value && modelValue.value.id >= 0 ? 'titles.edit-album' : 'titles.new-album'
     )
   })
   const invalid = computed(() => {

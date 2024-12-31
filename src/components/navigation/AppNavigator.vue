@@ -16,7 +16,7 @@
     <AppNavButton :title="t('navigation.sellers')" link="/sellers"></AppNavButton>
     <AppNavButton :title="t('navigation.catalogues')" link="/catalogues"></AppNavButton>
     <AppNavButton :title="t('navigation.stamps')" link="/stamps"></AppNavButton>
-    <AppNavButton :title="t('navigation.about')" link="/about" class="mt-auto"></AppNavButton>
-    <AppNavButton :title="t('navigation.settings')" link="/settings"></AppNavButton>
+    <AppNavButton :title="t('navigation.settings')" link="/settings" class="mt-auto"></AppNavButton>
+    <AppNavButton :title="t('navigation.about')" link="/about"></AppNavButton>
   </nav>
 </template>

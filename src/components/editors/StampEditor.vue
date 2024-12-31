@@ -150,7 +150,7 @@
   }
 
   const processTabForward = async () => {
-    setTimeout(async () => {
+    debounce(async () => {
       state.value.tabToNumber = true
       await nextTick()
       state.value.tabToNumber = false

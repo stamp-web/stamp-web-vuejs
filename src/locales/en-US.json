@@ -162,6 +162,7 @@
     "loading": "Loading...",
     "no-properties": "No properties are selected",
     "save-failure": "An error occurred saving the object. The message is: <br/>'{message}'",
+    "saved": "Save Successful",
     "saving": "Saving...",
     "stamp-exists": "The stamp already exists"
   },
@@ -243,6 +244,7 @@
     "edit-seller": "Edit Seller",
     "edit-stamp": "Edit Stamp",
     "edit-stamp-collection": "Edit Stamp Collection",
+    "editing-defaults": "Edit Defaults",
     "new-album": "New Album",
     "new-catalogue": "New Catalogue",
     "new-country": "New Country",
