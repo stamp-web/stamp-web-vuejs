@@ -14,6 +14,7 @@
   import StampDeleteDialog from '@/components/dialogs/DeleteStampDialog.vue'
   import StampPurchaseDialog from '@/components/dialogs/StampPurchaseDialog.vue'
   import StampBulkEditDialog from '@/components/dialogs/StampBulkEditDialog.vue'
+  import ReportGenerationDialog from '@/components/dialogs/ReportGenerationDialog.vue'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
@@ -99,6 +100,10 @@
   const purchaseModel = ref({
     show: false,
     stamps: new Array<Stamp>()
+  })
+
+  const reportPrintModel = ref({
+    show: false
   })
 
   const deleteModel = ref({
@@ -372,16 +377,24 @@
     await fetchReportData()
   }
 
+  const processPrintReport = async (generate: boolean, options: any) => {
+    reportPrintModel.value.show = false
+    if (generate) {
+      let opts = reportService.buildReport(
+        getCollection(),
+        await countriesStore.find(),
+        await cataloguesStore.find(),
+        reporting.value.reportValue,
+        {
+          model: options
+        }
+      )
+      new PdfGenerator().printReport(opts)
+    }
+  }
+
   const print = async () => {
-    let opts = reportService.buildReport(
-      getCollection(),
-      await countriesStore.find(),
-      await cataloguesStore.find(),
-      reporting.value.reportValue,
-      // @ts-ignore
-      {}
-    )
-    new PdfGenerator().printReport(opts)
+    reportPrintModel.value.show = true
   }
 
   const purchase = () => {
@@ -743,6 +756,10 @@
           :stamps="deleteModel.deletingStamps"
           @close="processDelete"
         ></StampDeleteDialog>
+        <ReportGenerationDialog
+          :is-open="reportPrintModel.show"
+          @close="processPrintReport"
+        ></ReportGenerationDialog>
         <StampPurchaseDialog
           :is-open="purchaseModel.show"
           :stamps="purchaseModel.stamps"
