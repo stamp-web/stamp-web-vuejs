@@ -213,6 +213,15 @@
     "next": "Next Page",
     "page": "Page {start} of {end}"
   },
+  "reports": {
+    "condition": "Condition",
+    "country": "Country",
+    "defaultTitle": "Stamp List",
+    "description": "Description",
+    "notes": "Notes",
+    "number": "Number",
+    "value": "Value"
+  },
   "reportType": {
     "CashValue": "Estimate Cash Value",
     "CatalogueValue": "Catalogue Value",

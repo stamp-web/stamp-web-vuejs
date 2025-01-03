@@ -67,6 +67,7 @@ export default ({ mode }) => {
             gridcm: ['ag-grid-community'],
             vueform: ['@vueform/vueform'],
             prompts: ['sweetalert2'],
+            pdfMake: ['pdfmake/build/pdfmake', 'pdfmake/build/vfs_fonts'],
             util: [
               'lodash-es/isNumber',
               'lodash-es/isEqual',

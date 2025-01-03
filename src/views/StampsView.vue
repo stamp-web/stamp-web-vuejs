@@ -50,6 +50,7 @@
   import reportService from '@/services/ReportService'
 
   import { preferenceStore } from '@/stores/PreferenceStore'
+  import { catalogueStore } from '@/stores/catalogueStore'
   import { countryStore } from '@/stores/countryStore'
   import { stampStore } from '@/stores/stampStore'
   import LocalCache from '@/stores/LocalCache'
@@ -57,6 +58,7 @@
   import type { KeyIndexable } from '@/util/ts/key-accessor'
   import { extractErrorMessage } from '@/util/object-utils'
   import { PredicateUtilities } from '@/util/predicate-util'
+  import { PdfGenerator } from '@/util/reports/pdf-generator'
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
   import SearchForm from '@/components/forms/SearchForm.vue'
@@ -77,6 +79,7 @@
   })
   const store = stampStore()
   const countriesStore = countryStore()
+  const cataloguesStore = catalogueStore()
   const prefStore = preferenceStore()
   const query = ref({
     $skip: 1000,
@@ -369,7 +372,17 @@
     await fetchReportData()
   }
 
-  const print = () => {}
+  const print = async () => {
+    let opts = reportService.buildReport(
+      getCollection(),
+      await countriesStore.find(),
+      await cataloguesStore.find(),
+      reporting.value.reportValue,
+      // @ts-ignore
+      {}
+    )
+    new PdfGenerator().printReport(opts)
+  }
 
   const purchase = () => {
     purchaseModel.value.stamps = getCurrentSelected().slice()
@@ -601,7 +614,6 @@
           icon="sw-icon-print"
           :tooltip="t('actions.print')"
           @click="print()"
-          :disabled="true"
         ></SecondaryButton>
 
         <SecondaryButton
