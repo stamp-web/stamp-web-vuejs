@@ -33,7 +33,7 @@ test.describe('purchase tests', () => {
   let catalogueId: number
 
   test.beforeEach(async ({ request }) => {
-    timestamp = new Date().getTime()
+    timestamp = new Date().getTime() + Math.floor(Math.random() * 100)
     catalogueName = `createStamp-${timestamp}`
     countryName = `createStamp-${timestamp}`
     albumName = `createStamp-${timestamp}`
@@ -120,7 +120,7 @@ test.describe('creation tests', () => {
   let catalogueId: number
 
   test.beforeEach(async ({ request }) => {
-    timestamp = new Date().getTime()
+    timestamp = new Date().getTime() + Math.floor(Math.random() * 100)
     catalogueName = `createStamp-${timestamp}`
     countryName = `createStamp-${timestamp}`
     albumName = `createStamp-${timestamp}`
@@ -149,7 +149,7 @@ test.describe('creation tests', () => {
     await stampView.getCreateWantListButton().click()
     const num = `23a-${timestamp}`
     const editor = stampView.getEditor()
-    await expect(editor.getTitle()).toHaveText('New Stamp')
+    await expect(editor.getTitle()).toHaveText('New Wantlist Stamp')
     await editor.getCountry().select(countryName)
     await editor.getRate().fill('1d')
     await editor.getDescription().fill(`wantlist description - ${timestamp}`)
@@ -157,6 +157,41 @@ test.describe('creation tests', () => {
     await editor.getCatalogueCondition().select('Mint (NH)')
     await editor.getCatalogueNumber().fill(num)
     await editor.getCatalogueValue().fill('12.50')
+    expect(await editor.isValid()).toBe(true)
+    await editor.getSaveButton().click()
+    await stampView.getGrid().getRowByText(num)
+  })
+
+  test('convert wantlist', async ({ page }) => {
+    const num = `56a-${timestamp}`
+    StampTestHelper.create(page.request, {
+      countryRef: countryId,
+      rate: '1d',
+      description: 'red',
+      wantList: true,
+      catalogueNumbers: [
+        {
+          catalogueRef: catalogueId,
+          number: num,
+          value: 12.5,
+          condition: 2,
+          active: true
+        }
+      ]
+    })
+
+    const stampView = await navigateToStampView(page, countryName)
+    await stampView.getGrid().waitForLoadingComplete()
+    const rowLoc = await stampView.getGrid().getRowByText(num)
+    await stampView.getGrid().getAction('sw-icon-edit', rowLoc).click()
+    const editor = stampView.getEditor()
+    await expect(editor.getTitle()).toHaveText('Edit Wantlist Stamp')
+    await editor.getConvertButton().click()
+    await expect(editor.getTitle()).toHaveText('Edit Stamp')
+    await editor.getOwnershipAlbum().select(albumName)
+    await editor.getOwnershipCondition().select('Mint')
+    await editor.getOwnershipGrade().select('Fine (F)')
+    await editor.getOwnershipSeller().select(sellerName)
     expect(await editor.isValid()).toBe(true)
     await editor.getSaveButton().click()
     await stampView.getGrid().getRowByText(num)
@@ -207,7 +242,7 @@ test.describe('creation tests', () => {
     const stampView = await navigateToStampView(page, countryName)
     await stampView.getCreateWantListButton().click()
     const editor = stampView.getEditor()
-    await expect(editor.getTitle()).toHaveText('New Stamp')
+    await expect(editor.getTitle()).toHaveText('New Wantlist Stamp')
     await editor.getCountry().select(countryName)
     await editor.getRate().fill('1d')
     await editor.getDescription().fill(`wantlist description - ${timestamp}`)

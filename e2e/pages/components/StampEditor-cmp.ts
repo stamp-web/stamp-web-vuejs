@@ -93,6 +93,10 @@ export class StampEditorCmp {
     )
   }
 
+  getConvertButton() {
+    return this.getLocator().locator('button span:text("Convert")')
+  }
+
   getSaveButton() {
     return this.getLocator().locator('button span:text("Save")', { hasText: /^Save$/ })
   }

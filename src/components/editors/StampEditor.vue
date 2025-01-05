@@ -47,13 +47,14 @@
     owner: true
   })
 
-  defineEmits(['cancel', 'save'])
+  defineEmits(['cancel', 'save', 'convert'])
 
   watch(
     () => [$props.model],
     () => {
       setRefs()
-    }
+    },
+    { deep: true }
   )
 
   const checkIfExists = async () => {
@@ -105,7 +106,15 @@
   }
 
   const title = computed(() => {
-    return t(state.value.edit ? 'titles.edit-stamp' : 'titles.new-stamp')
+    return t(
+      state.value.edit
+        ? state.value.wantList
+          ? 'titles.edit-stamp-wantlist'
+          : 'titles.edit-stamp'
+        : state.value.wantList
+          ? 'titles.new-stamp-wantlist'
+          : 'titles.new-stamp'
+    )
   })
 
   const validForm = computed(() => {
@@ -171,7 +180,7 @@
     setRefs()
   })
 
-  defineExpose({ calculateImagePath, setRefs })
+  defineExpose({ calculateImagePath, title, setRefs })
 </script>
 
 <template>
@@ -206,6 +215,13 @@
       </div>
     </div>
     <div class="panel-form-buttonbar mt-auto pt-2">
+      <PrimaryButton
+        v-if="state.edit && state.wantList"
+        class="mr-2 text-sm"
+        :disabled="!validForm"
+        @click="$emit('convert')"
+        >{{ t('actions.convert') }}</PrimaryButton
+      >
       <PrimaryButton
         class="mr-2 text-sm"
         :disabled="!validForm"

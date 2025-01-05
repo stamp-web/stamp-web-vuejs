@@ -7,6 +7,83 @@ import { Condition } from '@/models/Condition'
 import { createTestingPinia, type TestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 describe('StampEditor', () => {
+  describe('title', () => {
+    let wrapper: VueWrapper
+    let pinia: TestingPinia
+
+    beforeEach(() => {
+      pinia = createTestingPinia({
+        fakeApp: true,
+        createSpy: vi.fn
+      })
+      setActivePinia(pinia)
+    })
+
+    it('New Wantlist Stamp', async () => {
+      wrapper = shallowMount(StampEditor, {
+        propsData: {
+          model: StampModelHelper.newInstance(true)
+        },
+        global: {
+          plugins: [pinia]
+        }
+      })
+      await nextTick()
+      // @ts-ignore
+      const title = wrapper.vm.title
+      expect(title).toBe('New Wantlist Stamp')
+    })
+
+    it('New Stamp', async () => {
+      wrapper = shallowMount(StampEditor, {
+        propsData: {
+          model: StampModelHelper.newInstance(false)
+        },
+        global: {
+          plugins: [pinia]
+        }
+      })
+      await nextTick()
+      // @ts-ignore
+      const title = wrapper.vm.title
+      expect(title).toBe('New Stamp')
+    })
+
+    it('Edit Stamp', async () => {
+      const m = StampModelHelper.newInstance(false)
+      m.id = 100
+      wrapper = shallowMount(StampEditor, {
+        propsData: {
+          model: m
+        },
+        global: {
+          plugins: [pinia]
+        }
+      })
+      await nextTick()
+      // @ts-ignore
+      const title = wrapper.vm.title
+      expect(title).toBe('Edit Stamp')
+    })
+
+    it('Edit Wantlist Stamp', async () => {
+      const m = StampModelHelper.newInstance(true)
+      m.id = 23
+      wrapper = shallowMount(StampEditor, {
+        propsData: {
+          model: m
+        },
+        global: {
+          plugins: [pinia]
+        }
+      })
+      await nextTick()
+      // @ts-ignore
+      const title = wrapper.vm.title
+      expect(title).toBe('Edit Wantlist Stamp')
+    })
+  })
+
   describe('calculateImagePath', () => {
     let wrapper: VueWrapper
     let pinia: TestingPinia

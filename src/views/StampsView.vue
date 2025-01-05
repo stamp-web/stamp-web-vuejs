@@ -482,6 +482,14 @@
     await gotoPage(getActivePage())
   }
 
+  const convert = async () => {
+    const sm = getEditModel()
+    // add new stamp ownership to model
+    sm.stampOwnerships.push(OwnershipHelper.newInstance(await prefStore.findByCategory('stamps')))
+    sm.wantList = false
+    transformEditModel(sm)
+  }
+
   const createStamp = async (wantList: boolean = false) => {
     const stampPrefs = await prefStore.findByCategory('stamps')
     const model = StampModelHelper.newInstance(wantList, stampPrefs)
@@ -748,7 +756,12 @@
           leave-to="opacity-0"
           :class="`${calculateEditorWidth()} h-full flex flex-col ml-2`"
         >
-          <StampEditor :model="getEditModel()" @cancel="hideEditor()" @save="save"></StampEditor>
+          <StampEditor
+            :model="getEditModel()"
+            @cancel="hideEditor()"
+            @save="save"
+            @convert="convert()"
+          ></StampEditor>
         </TransitionRoot>
         <StampDeleteDialog
           :is-open="deleteModel.showDelete"
