@@ -65,7 +65,7 @@ class ReportService extends BaseService<void> {
       {
         name: localeUtil.t('reports.condition'),
         type: 'condition',
-        value: 'activeCatalogueNumber.condition'
+        value: 'stampOwnerships[0]'
       },
       {
         name: localeUtil.t('reports.value'),

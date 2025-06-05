@@ -27,18 +27,18 @@ export class DataGridComponentCmp {
     return this.getTableLocator().evaluate((el) => el.classList.contains('grid-loading-true'))
   }
 
-  async waitForLoadingComplete() {
+  async waitForLoadingComplete(): Promise<void> {
     if (await this.isLoading()) {
       await this.page.waitForSelector('.grid-loading-false')
     }
-    await this.page.waitForTimeout(500)
+    return this.page.waitForTimeout(500)
   }
 
   getRowCount(): Promise<Number> {
     return this.getTableLocator().locator('div.ag-body-viewport ').getByRole('row').count()
   }
 
-  getRowByText(text: string) {
+  getRowByText(text: string): Locator {
     return this.getTableLocator().getByRole('gridcell').locator(`text=${text}`).locator('..')
   }
 
@@ -46,7 +46,7 @@ export class DataGridComponentCmp {
     return this.getTableLocator().getByRole('gridcell').locator(`text='${text}'`)
   }
 
-  getAction(icon: string, rowLocator: Locator) {
+  getAction(icon: string, rowLocator: Locator): Locator {
     return rowLocator.locator(`.icon-cell.${icon}`)
   }
 }
