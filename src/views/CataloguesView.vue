@@ -24,15 +24,8 @@
   const { t } = useI18n()
   const router = useRouter()
 
-  const {
-    setCollection,
-    filterCollection,
-    setFilterString,
-    getFilteredList,
-    getFilterString,
-    getSelected,
-    setSelected
-  } = filterableCollection('catalogue-filter')
+  const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
+    filterableCollection('catalogue-filter')
 
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
   const dataGridRef = ref()
@@ -64,15 +57,8 @@
     new ColumnDefinition('description', { headerName: t('table-columns.description') })
   ]
 
-  const filterList = () => {
-    dataGridRef.value.loadingStarted()
-    filterCollection()
-    dataGridRef.value.loadingComplete()
-  }
-
   const filterChanged = (filterText: string) => {
     setFilterString(filterText)
-    filterList()
   }
 
   const create = () => {
@@ -80,16 +66,15 @@
   }
 
   const remove = () => {
-    const selected = getSelected() as Catalogue
-    if (selected) {
+    const sel = selected.value as Catalogue
+    if (sel) {
       Prompt.confirm({
-        message: t('messages.delete-catalogue', { issue: selected.issue, catalogue: selected.name })
+        message: t('messages.delete-catalogue', { issue: sel.issue, catalogue: sel.name })
       }).then(async (confirmed) => {
         if (confirmed) {
-          await store.remove(selected)
+          await store.remove(sel)
           // @ts-ignore
           setSelected(undefined)
-          filterList()
         }
       })
     }
@@ -103,14 +88,14 @@
       await store.create(editModel)
     }
     hideEditor()
-    filterList()
   }
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
-    setCollection(await store.find())
+    const list = await store.find()
     await store.getStampCount()
-    filterList()
+    setCollection(list)
+    dataGridRef.value.loadingComplete()
   })
 </script>
 
@@ -130,17 +115,17 @@
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden lg:block"
           icon="sw-icon-delete"
-          :tooltip="getSelected() ? t('actions.delete') : ''"
+          :tooltip="selected ? t('actions.delete') : ''"
           id="delete-catalogue"
           @click="remove()"
-          :disabled="!getSelected()"
+          :disabled="!selected"
         >
         </SecondaryButton>
         <FilterInput
           class="ml-4 filter-input"
           :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
-          :filter-text="getFilterString()"
+          :filter-text="filterString"
           @filter-changed="filterChanged"
         ></FilterInput>
       </div>
@@ -148,9 +133,8 @@
         class=""
         ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="getFilteredList()"
+        :rowData="filteredList"
         @selected="setSelected"
-        @deselected="setSelected(undefined)"
       >
       </DataGridComponent>
     </div>

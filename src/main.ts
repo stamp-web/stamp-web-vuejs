@@ -20,6 +20,7 @@ import { createPinia } from 'pinia'
 import eventBus from 'vue3-eventbus'
 import {
   ModuleRegistry,
+  //ValidationModule,
   ColumnAutoSizeModule,
   CellStyleModule,
   RowSelectionModule,
@@ -45,6 +46,7 @@ const logOptions = {
 
 // Register all community features
 ModuleRegistry.registerModules([
+  //ValidationModule,
   ColumnAutoSizeModule,
   CellStyleModule,
   RowSelectionModule,
@@ -52,6 +54,7 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   ScrollApiModule
 ])
+
 //ModuleRegistry.registerModules([AllCommunityModule])
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' })

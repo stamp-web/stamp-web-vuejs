@@ -106,24 +106,27 @@
       let leastIndex = -1
       const selectedNodes = new Array<RowNode<T>>()
       allowSelectionEvent.value = false
-      if (selected.length > 0) {
-        const lastSelected = selected[selected.length - 1]
-        gridApi.value.forEachNode((node: RowNode<T>) => {
-          if (selected.find((d) => d.id === node.data?.id)) {
-            if (lastSelected.id === node.data?.id && node.rowIndex) {
-              leastIndex = node.rowIndex
+      // Since this could be debounced called, the grid may be in the process of being destroyed
+      if (!gridApi.value.isDestroyed()) {
+        if (selected.length > 0) {
+          const lastSelected = selected[selected.length - 1]
+          gridApi.value.forEachNode((node: RowNode<T>) => {
+            if (selected.find((d) => d.id === node.data?.id)) {
+              if (lastSelected.id === node.data?.id && node.rowIndex) {
+                leastIndex = node.rowIndex
+              }
+              selectedNodes.push(node)
             }
-            selectedNodes.push(node)
-          }
-        })
-      }
-      gridApi.value.deselectAll()
-      gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
-      if (leastIndex >= 0 && leastIndex < gridApi.value.getDisplayedRowCount()) {
-        // will scroll to selection if  the time between setting the data is greater than
-        // 125ms so it doesn't scroll on individual selections (only on data reload)
-        const placement = new Date().getTime() - dataLoadTime.value < 125 ? 'middle' : null
-        gridApi.value.ensureIndexVisible(leastIndex, placement)
+          })
+        }
+        //gridApi.value.deselectAll()
+        gridApi.value.setNodesSelected({ nodes: selectedNodes, newValue: true })
+        if (leastIndex >= 0 && leastIndex < gridApi.value.getDisplayedRowCount()) {
+          // will scroll to selection if  the time between setting the data is greater than
+          // 125ms so it doesn't scroll on individual selections (only on data reload)
+          const placement = new Date().getTime() - dataLoadTime.value < 125 ? 'middle' : null
+          gridApi.value.ensureIndexVisible(leastIndex, placement)
+        }
       }
       allowSelectionEvent.value = true
     }

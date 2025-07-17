@@ -1,3 +1,5 @@
-import { Predicate, Operators, Parser } from 'odata-filter-parser'
+declare module 'odata-filter-parser' {
+  import { Predicate, Operators, Parser } from 'odata-filter-parser'
 
-export { Predicate, Operators, Parser }
+  export { Predicate, Operators, Parser }
+}

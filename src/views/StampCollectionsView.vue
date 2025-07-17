@@ -23,15 +23,8 @@
   const { t } = useI18n()
   const router = useRouter()
 
-  const {
-    setCollection,
-    filterCollection,
-    setFilterString,
-    getFilteredList,
-    getFilterString,
-    getSelected,
-    setSelected
-  } = filterableCollection('stampCollections-filter')
+  const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
+    filterableCollection('stampCollections-filter')
 
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
   const dataGridRef = ref()
@@ -58,15 +51,8 @@
     new ColumnDefinition('description', { headerName: t('table-columns.description') })
   ]
 
-  const filterList = () => {
-    dataGridRef.value.loadingStarted()
-    filterCollection()
-    dataGridRef.value.loadingComplete()
-  }
-
   const filterChanged = (filterText: string) => {
     setFilterString(filterText)
-    filterList()
   }
 
   const create = () => {
@@ -74,16 +60,14 @@
   }
 
   const remove = () => {
-    const selectedCollection = getSelected() as StampCollection
+    const selectedCollection = selected.value as StampCollection
     if (selectedCollection) {
       Prompt.confirm({
         message: t('messages.delete-collection', { collection: selectedCollection.name })
       }).then(async (confirmed) => {
         if (confirmed) {
           await store.remove(selectedCollection)
-          // @ts-ignore
           setSelected(undefined)
-          filterList()
         }
       })
     }
@@ -97,14 +81,14 @@
       await store.create(editModel)
     }
     hideEditor()
-    filterList()
   }
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
-    setCollection(await store.find())
+    const list = await store.find()
     await store.getStampCount()
-    filterList()
+    setCollection(list)
+    dataGridRef.value.loadingComplete()
   })
 </script>
 
@@ -123,16 +107,16 @@
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden lg:block"
           icon="sw-icon-delete"
-          :tooltip="getSelected() ? t('actions.delete') : ''"
+          :tooltip="selected ? t('actions.delete') : ''"
           id="delete-stampCollection"
           @click="remove()"
-          :disabled="!getSelected()"
+          :disabled="!selected"
         ></SecondaryButton>
         <FilterInput
           class="ml-4 filter-input"
           :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
-          :filter-text="getFilterString()"
+          :filter-text="filterString"
           @filter-changed="filterChanged"
         ></FilterInput>
       </div>
@@ -140,9 +124,8 @@
         class=""
         ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="getFilteredList()"
+        :rowData="filteredList"
         @selected="setSelected"
-        @deselected="setSelected(undefined)"
       >
       </DataGridComponent>
     </div>

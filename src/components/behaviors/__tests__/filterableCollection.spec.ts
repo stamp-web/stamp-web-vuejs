@@ -6,71 +6,67 @@ describe('filterableCollection', () => {
     { id: 1, name: 'test', description: 'test description' },
     { id: 2, name: 'another', description: 'some desc' }
   ]
+
   describe('filterCollection', () => {
     it('empty collection with no filter', () => {
       const col = filterableCollection()
-      col.filterCollection()
-      expect(col.collection.filteredList.length).toBe(0)
+      expect(col.filteredList.value.length).toBe(0)
     })
 
     it('collection with no filter', () => {
       const col = filterableCollection()
-      // @ts-ignore
-      col.collection.list = fixedList
-      col.filterCollection()
-      expect(col.collection.filteredList.length).toBe(2)
+      col.setCollection(fixedList)
+      expect(col.filteredList.value.length).toBe(2)
     })
 
     it('collection with partial match filter on name', () => {
       const col = filterableCollection()
-      // @ts-ignore
-      col.collection.list = fixedList
-      col.collection.filterString = 'TeSt'
-      col.filterCollection()
-      expect(col.collection.filteredList.length).toBe(1)
+      col.setCollection(fixedList)
+      col.setFilterString('TeSt')
+      expect(col.filteredList.value.length).toBe(1)
     })
 
     it('collection with partial match filter on description', () => {
       const col = filterableCollection()
-      // @ts-ignore
-      col.collection.list = fixedList
-      col.collection.filterString = 'some'
-      col.filterCollection()
-      expect(col.collection.filteredList.length).toBe(1)
+      col.setCollection(fixedList)
+      col.setFilterString('some')
+      expect(col.filteredList.value.length).toBe(1)
     })
 
-    it('collection with match all filter', () => {
+    it('collection with no matches', () => {
       const col = filterableCollection()
-      // @ts-ignore
-      col.collection.list = fixedList
-      col.collection.filterString = 'dEsC'
-      col.filterCollection()
-      expect(col.collection.filteredList.length).toBe(2)
+      col.setCollection(fixedList)
+      col.setFilterString('nomatch')
+      expect(col.filteredList.value.length).toBe(0)
+    })
+
+    it('collection with whitespace filter', () => {
+      const col = filterableCollection()
+      col.setCollection(fixedList)
+      col.setFilterString('   test   ')
+      expect(col.filteredList.value.length).toBe(1)
     })
   })
 
   describe('setSelected', () => {
     it('verify selection state', () => {
       const col = filterableCollection()
-      expect(col.collection.selected).toStrictEqual({})
+      expect(col.selected.value).toBeUndefined()
       col.setSelected(fixedList[0])
-      expect(col.collection.selected).toStrictEqual(fixedList[0])
+      expect(col.selected.value).toEqual(fixedList[0])
     })
   })
 
   describe('getSelected', () => {
     it('verify selection state when empty', () => {
       const col = filterableCollection()
-      expect(col.getSelected()).toBeUndefined()
+      expect(col.selected.value).toBeUndefined()
     })
 
     it('verify selection state when populated', () => {
       const col = filterableCollection()
-      col.collection.selected = { id: 5, name: 'test album' }
-      const val = col.getSelected()
-      expect(val).not.toBeUndefined()
-      // @ts-ignore
-      expect(val.id).toBe(5)
+      col.setSelected({ id: 5, name: 'test album' })
+      expect(col.selected.value?.id).toBe(5)
     })
   })
 })

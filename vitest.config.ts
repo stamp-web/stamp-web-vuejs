@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import path from 'path'
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config'
 
@@ -7,6 +8,11 @@ export default defineConfig((configEnv) =>
     // @ts-ignore
     viteConfig(configEnv),
     defineConfig({
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, 'src') // Adjust if your source folder is different
+        }
+      },
       test: {
         setupFiles: ['./src/vitest-setup.ts'],
         environment: 'jsdom',

@@ -30,7 +30,7 @@
 
   const loadImageByPath = (path: string, options: any) => {
     return loadImage(path, options).then((data: any) => {
-      if (data.image) {
+      if (data.image && imgBlock.value) {
         imgBlock.value.appendChild(data.image)
       }
     })

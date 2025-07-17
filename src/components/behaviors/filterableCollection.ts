@@ -1,5 +1,5 @@
 import type { PersistedNamedModel } from '@/models/entityModels'
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import _isEmpty from 'lodash-es/isEmpty'
 import LocalCache from '@/stores/LocalCache'
 import { debounce } from '@/util/timer-utils'
@@ -14,8 +14,15 @@ import { debounce } from '@/util/timer-utils'
  *
  *  There are methods added to filterCollection as well as set the selected model
  */
-const filterableCollection = (filterKey?: string) => {
-  const FILTER_KEY: string = filterKey || 'filter-text'
+const useFilterableCollection = (
+  filterKey = 'filter-text',
+  customFilter?: (item: PersistedNamedModel, search: string) => boolean
+) => {
+  const collection = reactive({
+    list: [] as PersistedNamedModel[],
+    selected: undefined as PersistedNamedModel | undefined,
+    filterString: LocalCache.getItem(filterKey) || ''
+  })
 
   /**
    * Will use the local cache to set the filter string value, but will hold updates for ~ 500ms
@@ -23,72 +30,60 @@ const filterableCollection = (filterKey?: string) => {
    * to store this in the local cache immediately since the local cache is only used for page refresh
    * restoring the local cache.
    */
-  const UpdateLocalCache = debounce((value: string) => {
-    LocalCache.setItem(FILTER_KEY, value)
+  const updateLocalCache = debounce((value: string) => {
+    LocalCache.setItem(filterKey, value)
   }, 500)
 
-  const collection = reactive({
-    list: new Array<PersistedNamedModel>(),
-    filteredList: new Array<PersistedNamedModel>(),
-    selected: {} as PersistedNamedModel | undefined,
-    filterString: ''
-  })
-
-  const setCollection = (list: Array<PersistedNamedModel>) => {
+  const setCollection = (list: PersistedNamedModel[]) => {
     collection.list = list
   }
 
-  const getCollection = () => {
-    return collection.list
-  }
-
-  const filterCollection = (): Array<PersistedNamedModel> => {
-    const searchString = collection.filterString.toUpperCase()
-    collection.filteredList = collection.list.filter((item: PersistedNamedModel) => {
+  const filterFunction =
+    customFilter ||
+    ((item: PersistedNamedModel, search: string) => {
+      const upperSearch = search.toUpperCase()
       return (
-        item.name.toUpperCase().includes(searchString) ||
-        (item.description && item.description.toUpperCase().includes(searchString))
+        item.name.toUpperCase().includes(upperSearch) ||
+        (item.description?.toUpperCase().includes(upperSearch) ?? false)
       )
     })
-    return collection.filteredList
-  }
 
-  const getFilteredList = () => {
-    return collection.filteredList
-  }
-
-  const getFilterString = () => {
-    if (collection.filterString === '') {
-      collection.filterString = LocalCache.getItem(FILTER_KEY) || ''
-    }
-    return collection.filterString
-  }
+  const filteredList = computed(() => {
+    const search = collection.filterString.trim()
+    if (!search) return collection.list
+    return collection.list.filter((item) => filterFunction(item, search))
+  })
 
   const setFilterString = (str: string) => {
-    collection.filterString = str
-    UpdateLocalCache(str)
+    const trimmed = str.trim()
+    console.log('set the filter string', trimmed)
+    if (collection.filterString !== trimmed) {
+      collection.filterString = trimmed
+      console.log('yep it was unique')
+      updateLocalCache(trimmed)
+      //const list = filteredList.value
+    }
   }
 
-  const getSelected = () => {
-    // @ts-ignore
-    return _isEmpty(collection.selected) ? undefined : collection.selected
+  const setSelected = (sel: PersistedNamedModel | undefined) => {
+    console.log('selected is', sel)
+    collection.selected = sel
   }
 
-  const setSelected = (selected: PersistedNamedModel | undefined) => {
-    collection.selected = selected
-  }
+  const getSelected = computed(() =>
+    _isEmpty(collection.selected) ? undefined : collection.selected
+  )
 
   return {
     collection,
-    getCollection,
+    list: computed(() => collection.list),
+    filteredList,
+    selected: getSelected,
+    filterString: computed(() => collection.filterString),
     setCollection,
-    filterCollection,
-    getFilteredList,
-    getFilterString,
-    getSelected,
     setFilterString,
     setSelected
   }
 }
 
-export default filterableCollection
+export default useFilterableCollection

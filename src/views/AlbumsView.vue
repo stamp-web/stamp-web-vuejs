@@ -24,15 +24,8 @@
   const { t } = useI18n()
   const router = useRouter()
 
-  const {
-    setCollection,
-    filterCollection,
-    setFilterString,
-    getFilteredList,
-    getFilterString,
-    getSelected,
-    setSelected
-  } = filterableCollection('albums-filter')
+  const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
+    filterableCollection('albums-filter')
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
   const dataGridRef = ref()
   const store = albumStore()
@@ -62,14 +55,8 @@
     })
   ]
 
-  const filterList = () => {
-    dataGridRef.value.loadingStarted()
-    filterCollection()
-    dataGridRef.value.loadingComplete()
-  }
   const filterChanged = (filterText: string) => {
     setFilterString(filterText)
-    filterList()
   }
 
   const create = () => {
@@ -77,16 +64,13 @@
   }
 
   const remove = () => {
-    const selectedAlbum = getSelected() as Album
-    if (selectedAlbum) {
+    if (selected.value) {
       Prompt.confirm({
-        message: t('messages.delete-album', { album: selectedAlbum.name })
+        message: t('messages.delete-album', { album: selected.value.name })
       }).then(async (confirmed) => {
         if (confirmed) {
-          await store.remove(selectedAlbum)
-          // @ts-ignore
+          await store.remove(selected.value as Album)
           setSelected(undefined)
-          filterList()
         }
       })
     }
@@ -100,14 +84,14 @@
       await store.create(editModel)
     }
     hideEditor()
-    filterList()
   }
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
-    setCollection(await store.find())
+    const list = await store.find()
     await store.getStampCount()
-    filterList()
+    setCollection(list)
+    dataGridRef.value.loadingComplete()
   })
 </script>
 
@@ -127,17 +111,17 @@
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border !border-gray-400 hidden lg:block"
           icon="sw-icon-delete"
-          :tooltip="getSelected() ? t('actions.delete') : ''"
+          :tooltip="selected ? t('actions.delete') : ''"
           id="delete-album"
           @click="remove()"
-          :disabled="!getSelected()"
+          :disabled="!selected"
         >
         </SecondaryButton>
         <FilterInput
           class="ml-4 filter-input"
           :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
-          :filter-text="getFilterString()"
+          :filter-text="filterString"
           @filter-changed="filterChanged"
         ></FilterInput>
       </div>
@@ -145,9 +129,8 @@
         class=""
         ref="dataGridRef"
         :columnDefs="columnDefs"
-        :rowData="getFilteredList()"
+        :rowData="filteredList"
         @selected="setSelected"
-        @deselected="setSelected(undefined)"
       >
       </DataGridComponent>
     </div>
