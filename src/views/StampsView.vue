@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { computed, inject, nextTick, onMounted, onUnmounted, ref, toRaw, watch } from 'vue'
+  import { computed, inject, nextTick, onMounted, ref, toRaw, watchEffect } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { TransitionRoot, PopoverPanel, Popover, PopoverButton } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
@@ -18,21 +18,11 @@
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
   import PagingComponent from '@/components/table/PagingComponent.vue'
   import StampCard from '@/components/display/StampCard.vue'
-  import { ColumnDefinition } from '@/components/table/DataGridModels'
-  import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
-  import CatalogueValueCellRenderer from '@/components/renderers/CatalogueValueCellRenderer.vue'
-  import ConditionCellRenderer from '@/components/renderers/ConditionCellRenderer.vue'
-  import GradeCellRenderer from '@/components/renderers/GradeCellRenderer.vue'
-  import PricePaidCellRenderer from '@/components/renderers/PricePaidCellRenderer.vue'
-  import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import DisplayStats from '@/components/display/DisplayStats.vue'
   import StampReportValues from '@/components/display/StampReportValues.vue'
-  import ImagePreviewCellRenderer from '@/components/renderers/ImagePreviewCellRenderer.vue'
-  import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
   import pagingInfo from '@/components/behaviors/pageInfo'
-  import BasicCellValueRenderer from '@/components/renderers/BasicCellValueRenderer.vue'
   import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
   import FilterInput from '@/components/inputs/FilterInput.vue'
   import ConditionFilterInput from '@/components/inputs/ConditionFilterInput.vue'
@@ -56,13 +46,18 @@
   import { stampStore } from '@/stores/stampStore'
   import LocalCache from '@/stores/LocalCache'
 
-  import type { KeyIndexable } from '@/util/ts/key-accessor'
   import { extractErrorMessage } from '@/util/object-utils'
   import { PredicateUtilities } from '@/util/predicate-util'
   import { PdfGenerator } from '@/util/reports/pdf-generator'
   import { OdataUtil } from '@/util/odata-util'
   import WantListFilterInput from '@/components/inputs/WantListFilterInput.vue'
   import SearchForm from '@/components/forms/SearchForm.vue'
+  import type { PreferencePaths } from '@/views/types/preferencePaths'
+  import { createStampColumnDefs } from '@/views/behaviors/columnDefs'
+  import type { ReportData } from '@/views/types/reportDefs'
+  import type { ODataParams } from '@/services/types/odataParams'
+  import { ColumnDefinition } from '@/components/table/DataGridModels'
+  import type { ColumnControl } from '@/views/types/columnControl'
 
   const { t } = useI18n()
 
@@ -72,7 +67,7 @@
   const router = useRouter()
 
   const dataGridRef = ref()
-  const columnControl = ref({
+  const columnControl = ref<ColumnControl>({
     cert: true,
     grade: true,
     notes: true,
@@ -82,12 +77,7 @@
   const countriesStore = countryStore()
   const cataloguesStore = catalogueStore()
   const prefStore = preferenceStore()
-  const query = ref({
-    $skip: 1000,
-    $top: 0,
-    $filter: '',
-    $orderby: ''
-  })
+  const query = ref<ODataParams>({ $skip: 1000, $top: 0, $filter: '', $orderby: '' })
 
   const state = ref({
     predicates: new Array<Predicate>(),
@@ -121,7 +111,7 @@
   const cardLayout = ref()
   const buttonToolbar = ref()
   const footer = ref()
-  const reporting = ref({
+  const reporting = ref<ReportData>({
     reportType: ReportType.CatalogueValue,
     reportValue: '0.0'
   })
@@ -163,140 +153,29 @@
     mode: 'list'
   })
 
-  const prefPaths = ref({
+  const prefPaths = ref<PreferencePaths>({
     imagePath: '/',
     thumbPath: '/'
   })
 
   const stampModelUtils = new StampModelUtils()
 
-  const noSort = () => {
-    return 0
-  }
-
-  const transformEditModel = (m: any) => {
+  const transformEditModel = (m: Stamp) => {
     if (m.stampOwnerships?.length > 0) {
       OwnershipHelper.toTagElementView(m.stampOwnerships[0])
     }
     setEditModel(m)
   }
 
-  const columnDefs = [
-    new ColumnDefinition('', {
-      cellRenderer: ImagePreviewCellRenderer,
-      cellRendererParams: {
-        path: 'stampOwnerships[0].img',
-        prefs: prefPaths.value
-      },
-      cellClass: ['!p-0.75'],
-      maxWidth: 40,
-      sortable: false
-    }),
-    new ColumnDefinition('countryRef', {
-      cellClass: ['!pr-0.25'],
-      cellRenderer: CountryCellRenderer,
-      headerName: t('table-columns.country'),
-      sortable: false
-    }),
-    new ColumnDefinition('rate', {
-      cellClass: ['!pr-0.25'],
-      headerName: t('table-columns.rate'),
-      maxWidth: 150,
-      sortable: true
-    }),
-    new ColumnDefinition('description', {
-      cellClass: ['!pr-0.25'],
-      colId: 'description',
-      headerName: t('table-columns.description'),
-      sortable: true,
-      cellRenderer: BasicCellValueRenderer
-    }),
-    new ColumnDefinition('activeCatalogueNumber.number', {
-      cellClass: ['!pr-0.25'],
-      colId: 'number',
-      comparator: noSort,
-      headerName: t('table-columns.catalogue-number'),
-      maxWidth: 150,
-      sort: 'asc',
-      sortable: true
-    }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', transformEditModel, t('actions.edit')),
-    new ColumnDefinition('activeCatalogueNumber.value', {
-      cellClass: ['!pr-0.25'],
-      cellRenderer: CatalogueValueCellRenderer,
-      colId: 'value',
-      headerName: t('table-columns.catalogue-value'),
-      maxWidth: 150,
-      sortable: true
-    }),
-    new ColumnDefinition(
-      '',
-      Object.assign(ColumnDefinition.getActionIconProperties(), {
-        cellRenderer: NotesCellRenderer,
-        cellRendererParams: {
-          path: 'stampOwnerships[0]'
-        },
-        colId: 'notes',
-        maxWidth: 24,
-        minWidth: 24,
-        sortable: false
-      })
-    ),
-    new ColumnDefinition(
-      '',
-      Object.assign(ColumnDefinition.getActionIconProperties(), {
-        cellRenderer: CertCellRenderer,
-        cellRendererParams: {
-          path: 'stampOwnerships[0]'
-        },
-        colId: 'cert',
-        maxWidth: 24,
-        minWidth: 24,
-        sortable: false
-      })
-    ),
-    new ColumnDefinition('', {
-      cellClass: ['!pr-0.25'],
-      cellRenderer: ConditionCellRenderer,
-      cellRendererParams: {
-        path: 'stampOwnerships[0].condition'
-      },
-      colId: 'condition',
-      headerName: t('table-columns.condition'),
-      maxWidth: 170,
-      sortable: true
-    }),
-    new ColumnDefinition('', {
-      cellClass: ['!pr-0.25'],
-      cellRenderer: GradeCellRenderer,
-      cellRendererParams: {
-        path: 'stampOwnerships[0].grade'
-      },
-      colId: 'grade',
-      headerName: t('table-columns.grade'),
-      maxWidth: 170,
-      sortable: true
-    }),
-    new ColumnDefinition('', {
-      cellClass: ['!pr-0.25'],
-      colId: 'pricePaid',
-      cellRenderer: PricePaidCellRenderer,
-      cellRendererParams: {
-        path: 'stampOwnerships[0]'
-      },
-      headerName: t('table-columns.price-paid'),
-      maxWidth: 150
-    })
-  ]
-
-  watch(
-    () => [isEditorShown()],
-    () => {
-      Object.keys(columnControl.value).forEach((key) => {
-        ;(columnControl.value as KeyIndexable)[key] = !isEditorShown()
-      })
-    }
+  const columnDefs = ref<ColumnDefinition[]>(
+    createStampColumnDefs(prefPaths.value, transformEditModel)
   )
+
+  watchEffect(() => {
+    Object.keys(columnControl.value).forEach((key) => {
+      columnControl.value[key as keyof ColumnControl] = !isEditorShown()
+    })
+  })
 
   const isSelectedWantlist = computed((): boolean => {
     return getEditModel()?.wantList
@@ -397,18 +276,22 @@
     reportPrintModel.value.show = true
   }
 
+  function getCurrentSelectedStamps() {
+    return getCurrentSelected().slice()
+  }
+
   const purchase = () => {
-    purchaseModel.value.stamps = getCurrentSelected().slice()
+    purchaseModel.value.stamps = getCurrentSelectedStamps()
     purchaseModel.value.show = true
   }
 
   const bulkEdit = () => {
-    bulkEditModel.value.stamps = getCurrentSelected().slice()
+    bulkEditModel.value.stamps = getCurrentSelectedStamps()
     bulkEditModel.value.show = true
   }
 
   const deleteSelected = () => {
-    deleteModel.value.deletingStamps = getCurrentSelected().slice()
+    deleteModel.value.deletingStamps = getCurrentSelectedStamps()
     deleteModel.value.showDelete = true
   }
 
@@ -437,7 +320,7 @@
 
   const processBulkEdit = async (bulkEdit: boolean = false, values: Record<string, any>) => {
     if (bulkEdit) {
-      const selectedStamps = getCurrentSelected().slice()
+      const selectedStamps = getCurrentSelectedStamps()
       if (selectedStamps && selectedStamps.length > 0) {
         bulkEditModel.value.progress = true
         await Promise.all(stampModelUtils.bulkEditStamps(selectedStamps, values))
@@ -552,19 +435,14 @@
     query.value.$orderby = OdataUtil.createSort('number', 'asc')
   }
 
-  onUnmounted(() => {
-    //resizeObserver.disconnect()
-  })
-
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
-
     const thumbPref = await prefStore.findByNameAndCategory('thumbPath', 'stamps')
     const imagePref = await prefStore.findByNameAndCategory('imagePath', 'stamps')
     prefPaths.value.thumbPath = thumbPref.value ?? '/'
     prefPaths.value.imagePath = imagePref.value ?? '/'
     await setupInitialQuery()
-    gotoPage(1)
+    await gotoPage(1)
   })
 </script>
 <template>
