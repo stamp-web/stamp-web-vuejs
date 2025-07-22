@@ -19,8 +19,6 @@ const i18n = createI18n<false>({
   }
 })
 
-require('intersection-observer')
-
 // Bootstrap ag-grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 

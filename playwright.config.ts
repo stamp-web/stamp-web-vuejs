@@ -29,7 +29,7 @@ const config: PlaywrightTestConfig = {
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 1,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 2, // undefined,
+  workers: process.env.CI ? 1 : 5, // undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -44,7 +44,7 @@ const config: PlaywrightTestConfig = {
     trace: 'on-first-retry',
 
     /* Only on CI systems run the tests headless */
-    headless: !!process.env.CI
+    headless: true // !!process.env.CI
   },
 
   /* Configure projects for major browsers */
