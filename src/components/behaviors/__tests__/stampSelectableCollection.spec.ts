@@ -171,7 +171,7 @@ describe('stampSelectableCollection', () => {
       expect(sc.getCollection().length).toBe(1)
     })
 
-    it('stamp in collection and selected', async () => {
+    it('stamp in collection all removed', async () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({ list: list, selected: [list[0]] })
       await sc.removeCollectionEntries([
@@ -268,7 +268,7 @@ describe('stampSelectableCollection', () => {
       })
       sc.setSelected(list[2], { shiftKey: true })
       expect(selected.length).toBe(5)
-      expect(selected.includes(list[4]))
+      expect(selected.includes(list[4])).toBe(true)
     })
   })
 

@@ -1,12 +1,12 @@
 import { fileURLToPath } from 'node:url'
 import path from 'path'
-import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
+import { mergeConfig, defineConfig, configDefaults, type ViteUserConfig } from 'vitest/config'
 import viteConfig from './vite.config'
 
-export default defineConfig((configEnv) =>
-  mergeConfig(
-    // @ts-ignore
-    viteConfig(configEnv),
+export default defineConfig(async ({ mode }: { mode: string }): Promise<ViteUserConfig> => {
+  const viteConf = await viteConfig({ mode })
+  return mergeConfig(
+    viteConf,
     defineConfig({
       resolve: {
         alias: {
@@ -36,4 +36,4 @@ export default defineConfig((configEnv) =>
       }
     })
   )
-)
+})

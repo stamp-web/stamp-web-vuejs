@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-// eslint-disable-next-line no-undef
+import tailwind from '@vueform/vueform/tailwind'
 module.exports = {
   content: [
     './index.html',
@@ -19,5 +19,5 @@ module.exports = {
       }
     }
   },
-  plugins: [require('@vueform/vueform/tailwind')]
+  plugins: [tailwind]
 }

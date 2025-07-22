@@ -10,10 +10,9 @@ export default abstract class BaseManagedService<
     const response = await axios.get(
       `/stamp-webservices/rest/${this.getResourceName()}/!countStamps`
     )
-    const list: CountModel[] = new Array<CountModel>()
-    // @ts-ignore
-    response.data.forEach((item) => {
-      list.push(item as CountModel)
+    const list = new Array<CountModel>()
+    response.data.forEach((item: CountModel) => {
+      list.push(item)
     })
     return list
   }

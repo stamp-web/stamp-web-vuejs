@@ -6,17 +6,31 @@ import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import CountryService from '@/services/CountryService'
 import type BaseManagedService from '@/services/BasedManagedService'
 
-type CountryStoreType = PiniaStore<'countryStore', {}, {}, {}, BaseNamedModelStore<Country>>
+const storeId = 'countryStore' as const
 
-export const countryStore = useStore<CountryStoreType, BaseNamedModelStore<Country>>(
-  'countryStore',
+type CountryStoreType = PiniaStore<
+  typeof storeId,
+  object,
+  object,
+  object,
+  BaseNamedModelStore<Country, typeof storeId>
+>
+
+export const countryStore = useStore<
+  CountryStoreType,
+  BaseNamedModelStore<Country, typeof storeId>
+>(
+  storeId,
   {
     state: {},
     getters: {
       service(): BaseManagedService<Country> {
         return CountryService
+      },
+      baseSearchOptions(): object {
+        return { $orderby: 'name asc' }
       }
     }
   },
-  baseNamedModelStore<Country>()
+  baseNamedModelStore<Country, typeof storeId>()
 )

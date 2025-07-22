@@ -2,15 +2,14 @@ import { fileURLToPath, URL } from 'node:url'
 import fs from 'fs'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import process from 'node:process'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
-import replace from '@rollup/plugin-replace'
 
 // https://vitejs.dev/config/
-// @ts-ignore
-export default ({ mode }) => {
+export default ({ mode }: { mode: string }) => {
   const CI = !!process.env.CI
   /**
    * When called from vitest the mode will be 'test'. Any variables defined in .env.test will
@@ -26,8 +25,9 @@ export default ({ mode }) => {
   processEnvironment()
 
   const config = {
-    plugins: [vue(), basicSsl(), tailwindcss, autoprefixer],
-    https: true
+    plugins: [vue(), vueDevTools(), /* this must be last */ basicSsl()],
+    https: true,
+    proxy: {}
   }
 
   if (process.argv.includes('preview')) {
@@ -36,7 +36,6 @@ export default ({ mode }) => {
   }
 
   if (mode !== 'production' && !CI) {
-    // @ts-ignore
     config.proxy = {
       '^/stamp-webservices': {
         target: process.env.VITE_PROXY_URL,
@@ -47,7 +46,7 @@ export default ({ mode }) => {
         },
         changeOrigin: true,
         configure: (proxy: object, options: object) => {
-          // @ts-ignore
+          // @ts-expect-error: unclear what the options object is
           options.auth = `${process.env.VITE_PROXY_USER}:${process.env.VITE_PROXY_PASSWORD}`
         }
       }
@@ -55,59 +54,29 @@ export default ({ mode }) => {
   }
 
   return defineConfig({
-    // @ts-ignore
     plugins: config.plugins,
     base: '',
-    build: {
-      sourcemap: true,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            grid: ['ag-grid-vue3'],
-            gridcm: ['ag-grid-community'],
-            vueform: ['@vueform/vueform'],
-            prompts: ['sweetalert2'],
-            pdfMake: ['pdfmake/build/pdfmake', 'pdfmake/build/vfs_fonts'],
-            util: [
-              'lodash-es/isNumber',
-              'lodash-es/isEqual',
-              'lodash-es/isObject',
-              'lodash-es/isArrayLikeObject',
-              'lodash-es/merge',
-              'lodash-es/isEmpty',
-              'lodash-es/cloneDeep',
-              'odata-filter-parser'
-            ],
-            fetch: ['axios', 'blueimp-load-image'],
-            vueCore: ['vue', 'vue-router', 'vue3-eventbus'],
-            pinia: ['pinia', 'pinia-generic'],
-            i18n: ['vue-i18n'],
-            tooltip: ['floating-vue', 'vue-toast-notification'],
-            headlessui: ['@headlessui/vue']
-          }
-        },
-        plugins: [
-          replace({
-            preventAssignment: true,
-            __INTLIFY_JIT_COMPILATION__: true,
-            __INTLIFY_DROP_MESSAGE_COMPILER__: false
-          })
-        ]
+    css: {
+      postcss: {
+        plugins: [tailwindcss(), autoprefixer()]
       }
+    },
+    build: {
+      sourcemap: true
     },
     optimizeDeps: {
       include: ['nouislider', 'wnumb', 'trix', 'axios', 'lodash']
     },
     server: {
-      // @ts-ignore
+      // @ts-expect-error: ServerOptions defines this but unclear how to resolve
       https: config.https,
-      // @ts-ignore
       proxy: config.proxy
     },
     resolve: {
       alias: {
-        vue: 'vue/dist/vue.esm-bundler',
         '@': fileURLToPath(new URL('./src', import.meta.url))
+        //'@vue/runtime-core': 'vue',
+        //'@vue/reactivity': 'vue'
       }
     }
   })

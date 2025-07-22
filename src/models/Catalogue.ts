@@ -4,6 +4,7 @@ import { EnumHelper } from '@/util/object-utils'
 import localeUtil from '@/util/locale-utils'
 
 export interface Catalogue extends PersistedNamedModel {
+  id: number
   issue: number
   type: number
   code: CurrencyCode

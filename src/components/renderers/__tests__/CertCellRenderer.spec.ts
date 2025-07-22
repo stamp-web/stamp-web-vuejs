@@ -11,7 +11,7 @@ describe('CertCellRenderer', () => {
           }
         }
       })
-      // @ts-ignore
+      // @ts-expect-error: in vm state
       expect(wrapper.vm.certIcon).toBeUndefined()
     })
 
@@ -28,7 +28,7 @@ describe('CertCellRenderer', () => {
           }
         }
       })
-      // @ts-ignore
+      // @ts-expect-error: in vm state
       expect(wrapper.vm.certIcon).toBeUndefined()
     })
 
@@ -45,7 +45,7 @@ describe('CertCellRenderer', () => {
           }
         }
       })
-      // @ts-ignore
+      // @ts-expect-error: in vm state
       expect(wrapper.vm.certIcon).toBeUndefined()
     })
 
@@ -61,9 +61,9 @@ describe('CertCellRenderer', () => {
           }
         }
       })
-      // @ts-ignore
+      // @ts-expect-error: in vm state
       expect(wrapper.vm.certIcon).toBe('sw-icon-ribbon')
-      // @ts-ignore
+      // @ts-expect-error: in vm state
       expect(wrapper.vm.tooltip).toBe('A certificate or expertization opinion exists')
     })
   })

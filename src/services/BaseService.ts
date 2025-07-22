@@ -29,7 +29,7 @@ export default abstract class BaseService<T> {
     }) as RawAxiosRequestHeaders
   }
 
-  toParameters(options: Object): string {
+  toParameters(options: object): string {
     let s = ''
     if (options) {
       Object.keys(options).forEach((k, idx) => {
@@ -43,7 +43,7 @@ export default abstract class BaseService<T> {
     return s
   }
 
-  createURI(options: Object | undefined, id?: number | string): string {
+  createURI(options: object | undefined, id?: number | string): string {
     let uri = `/stamp-webservices/rest/${this.getResourceName()}`
     if (id) {
       uri += `/${id}`

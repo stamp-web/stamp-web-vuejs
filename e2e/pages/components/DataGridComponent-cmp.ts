@@ -2,7 +2,6 @@ import { Locator, Page } from '@playwright/test'
 
 export class DataGridComponentCmp {
   readonly page: Page
-  // @ts-ignore
   tableLocator: Locator
   constructor(page: Page) {
     this.page = page
@@ -34,7 +33,7 @@ export class DataGridComponentCmp {
     return this.page.waitForTimeout(500)
   }
 
-  getRowCount(): Promise<Number> {
+  getRowCount(): Promise<number> {
     return this.getTableLocator().locator('div.ag-body-viewport ').getByRole('row').count()
   }
 

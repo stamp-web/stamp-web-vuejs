@@ -1,41 +1,55 @@
 <script lang="ts">
-  import { defineComponent } from 'vue'
+  import { defineComponent, type PropType } from 'vue'
 
   export default /*#__PURE__*/ defineComponent({
     props: {
-      icon: String,
-      tooltip: String,
-      name: String,
-      id: String
+      icon: { type: String, required: false },
+      tooltip: { type: String, required: false },
+      name: { type: String, required: false },
+      id: { type: String, required: false },
+      type: {
+        type: String as PropType<'button' | 'submit' | 'reset'>,
+        default: 'button',
+        validator: (value: string) => ['button', 'submit', 'reset'].includes(value)
+      }
     },
 
     computed: {
-      appliedStyles() {
+      baseClass(): string {
+        return [
+          'flex items-center flex-nowrap',
+          'py-1 px-3',
+          'hover:cursor-pointer',
+          'rounded border',
+          'bg-[var(--vf-bg-disabled)]',
+          'text-[var(--vf-color-disabled)]',
+          'border-[var(--vf-bg-disabled)]'
+        ].join(' ')
+      },
+
+      appliedStyles(): string {
         return this.baseClass
+      },
+      ariaLabel(): string | undefined {
+        return this.tooltip || undefined
       }
     },
     setup() {
-      const baseClass =
-        'py-1 px-3 hover:cursor-pointer ' +
-        'bg-[var(--vf-bg-disabled)] text-[var(--vf-color-disabled)] ' +
-        'rounded border border-[var(--vf-bg-disabled)] ' +
-        'flex-nowrap item-center flex flex-row '
-
-      return {
-        baseClass
-      }
+      return {}
     }
   })
 </script>
 
 <template>
   <button
-    :class="`${appliedStyles}`"
-    v-tooltip="$props.tooltip"
-    :name="$props.name"
-    :id="$props.id"
+    :class="appliedStyles"
+    v-tooltip="tooltip"
+    :name="name"
+    :id="id"
+    :aria-label="ariaLabel"
+    :type="type"
   >
-    <span v-if="icon" :class="`${icon}`"></span>
+    <span v-if="icon" :class="icon"></span>
     <slot></slot>
   </button>
 </template>

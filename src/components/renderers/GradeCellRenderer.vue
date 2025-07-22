@@ -3,13 +3,19 @@
   import { resolvePath } from '@/util/object-utils'
   import { GradeHelper } from '@/models/Grade'
 
-  const props = defineProps({
-    params: Object as any
-  })
+  interface ParamsProps {
+    data?: Record<string, unknown>
+    path?: string
+  }
+
+  const props = defineProps<{
+    params?: ParamsProps
+  }>()
 
   const grade = computed(() => {
-    const value = +resolvePath(props.params?.data, props.params?.path, -1)
-    return GradeHelper.toString(value)
+    const p = props.params
+    const resolvedValue = resolvePath(p?.data ?? {}, p?.path ?? '', -1) as number | string
+    return GradeHelper.toString(+resolvedValue)
   })
 </script>
 

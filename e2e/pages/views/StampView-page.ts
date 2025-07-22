@@ -4,9 +4,7 @@ import { StampEditorCmp } from '../components/StampEditor-cmp.js'
 
 export class StampViewPage {
   readonly page: Page
-  // @ts-ignore
   private grid: DataGridComponentCmp
-  // @ts-ignore
   private editor: StampEditorCmp
 
   constructor(page: Page) {
@@ -32,7 +30,7 @@ export class StampViewPage {
     return this.editor
   }
 
-  getCount(): Promise<Number> {
+  getCount(): Promise<number> {
     return this.getGrid().getRowCount()
   }
 

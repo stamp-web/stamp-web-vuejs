@@ -8,9 +8,9 @@ import BaseModelService from '@/services/BaseModelService'
 
 type StampCollectionStoreType = PiniaStore<
   'stampCollectionStore',
-  {},
-  {},
-  {},
+  object,
+  object,
+  object,
   BaseNamedModelStore<StampCollection>
 >
 
@@ -24,6 +24,9 @@ export const stampCollectionStore = useStore<
     getters: {
       service(): BaseModelService<StampCollection> {
         return StampCollectionService
+      },
+      baseSearchOptions(): object {
+        return { $orderby: 'name asc' }
       }
     },
     actions: {}

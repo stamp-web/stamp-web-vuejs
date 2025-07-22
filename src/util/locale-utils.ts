@@ -4,7 +4,7 @@ import de from '../locales/de.json'
 import enUS from '@/locales/en-US.json'
 
 class LocaleUtilities {
-  private i18n
+  private readonly i18n
   constructor() {
     this.i18n = createI18n({
       legacy: false,
@@ -26,16 +26,28 @@ class LocaleUtilities {
     return this.i18n
   }
 
-  setLocale(locale: string): void {
-    // @ts-ignore
-    if (this.getI18n().global.availableLocales.includes(locale)) {
-      // @ts-ignore
-      this.getI18n().global.locale.value = locale
+  /**
+   * Sets the application's locale if the provided locale is available
+   * @param locale - The locale to set (e.g., 'en-US', 'de')
+   * @returns boolean indicating whether the locale was successfully set
+   * @throws Error if the locale is not a string
+   */
+  setLocale(locale: 'en-US' | 'de'): boolean {
+    const i18n = this.getI18n()
+
+    if (i18n.global.availableLocales.includes(locale)) {
+      i18n.global.locale.value = locale
+      return true
     }
+
+    console.warn(`Locale '${locale}' is not available. Using fallback locale.`)
+    return false
   }
 
-  t(key: string, options?: {}) {
-    // @ts-ignore
+  t(key: string, options?: Record<string, unknown>) {
+    if (!options) {
+      return this.getI18n().global.t(key)
+    }
     return this.getI18n().global.t(key, options)
   }
 }

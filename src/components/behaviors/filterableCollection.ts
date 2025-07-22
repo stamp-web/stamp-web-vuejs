@@ -30,7 +30,7 @@ const useFilterableCollection = (
    * to store this in the local cache immediately since the local cache is only used for page refresh
    * restoring the local cache.
    */
-  const updateLocalCache = debounce((value: string) => {
+  const updateLocalCache = debounce<string>((value: string) => {
     LocalCache.setItem(filterKey, value)
   }, 500)
 
@@ -51,7 +51,7 @@ const useFilterableCollection = (
   const filteredList = computed(() => {
     const search = collection.filterString.trim()
     if (!search) return collection.list
-    return collection.list.filter((item) => filterFunction(item, search))
+    return collection.list.filter((item: PersistedNamedModel) => filterFunction(item, search))
   })
 
   const setFilterString = (str: string) => {

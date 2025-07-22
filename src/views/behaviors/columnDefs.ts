@@ -13,7 +13,7 @@ import type { PreferencePaths } from '@/views/types/preferencePaths'
 
 export function createStampColumnDefs(
   prefPaths: PreferencePaths,
-  transformationCallback: Function
+  transformationCallback: unknown
 ): ColumnDefinition[] {
   const { t } = useI18n()
   return [

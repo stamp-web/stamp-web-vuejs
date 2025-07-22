@@ -2,9 +2,11 @@
   import { defineComponent } from 'vue'
   import BaseButton from '@/components/buttons/BaseButton.vue'
 
-  export const styleColors: string =
-    'enabled:bg-[var(--vf-primary)] enabled:text-[var(--vf-color-on-primary)] ' +
+  const styleColors = [
+    'enabled:bg-[var(--vf-primary)]',
+    'enabled:text-[var(--vf-color-on-primary)]',
     'hover:enabled:bg-[var(--vf-primary-darker)]'
+  ].join(' ')
 
   export default /*#__PURE__*/ defineComponent({
     extends: BaseButton,
@@ -12,20 +14,27 @@
 
     computed: {
       appliedStyles() {
-        return this.baseClass + styleColors
+        return `${this.baseClass} ${styleColors}`
+      },
+      ariaLabel(): string | undefined {
+        return this.tooltip || undefined
       }
     },
-    setup(props, ctx) {
-      return {
-        // @ts-ignore
-        ...BaseButton.setup(props, ctx)
-      }
+    setup(props: Record<string, any>, ctx: any) {
+      return {}
     }
   })
 </script>
 <template>
-  <button :class="`${appliedStyles}`" v-tooltip="$props.tooltip" :id="$props.id">
-    <span v-if="icon" :class="`${icon}`"></span>
+  <button
+    :class="appliedStyles"
+    v-tooltip="tooltip"
+    :name="name"
+    :id="id"
+    :aria-label="ariaLabel"
+    :type="type"
+  >
+    <span v-if="icon" :class="icon"></span>
     <span class="truncate"><slot></slot></span>
   </button>
 </template>

@@ -5,11 +5,8 @@ import { AbstractNamedEditorCmp } from '../components/AbstractNamedEditor.js'
 
 export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
   protected readonly page: Page
-  // @ts-ignore
   protected grid: DataGridComponentCmp
-  // @ts-ignore
   protected editor: T
-  // @ts-ignore
   protected filter: FilterInputCmp
 
   constructor(page: Page) {
@@ -55,7 +52,7 @@ export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
     await this.getGrid().waitForLoadingComplete()
   }
 
-  getCount(): Promise<Number> {
+  getCount(): Promise<number> {
     return this.getGrid().getRowCount()
   }
 }

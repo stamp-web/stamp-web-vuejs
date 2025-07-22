@@ -6,9 +6,7 @@ import type {
   PersistedNamedModel,
   Seller,
   StampCollection
-} from '../../src/models/entityModels.js'
-import { Stamp } from '../../src/models/Stamp.js'
-import { Catalogue } from '../../src/models/Catalogue.js'
+} from '@/models/entityModels.js'
 
 abstract class entityTestHelper<T extends PersistedModel> {
   abstract getResourceName(): string
@@ -16,7 +14,7 @@ abstract class entityTestHelper<T extends PersistedModel> {
     return this.getResourceName()
   }
 
-  async create(request: APIRequestContext, payload: any) {
+  async create(request: APIRequestContext, payload: unknown) {
     const result = await request.post(`/stamp-webservices/rest/${this.getResourceName()}`, {
       data: payload
     })
@@ -71,8 +69,7 @@ class countryTestHelper extends entityTestHelper<Country> {
   }
 }
 
-// @ts-ignore
-class catalogueTestHelper extends entityTestHelper<Catalogue> {
+class catalogueTestHelper extends entityTestHelper<PersistedModel> {
   getResourceName(): string {
     return 'catalogues'
   }
@@ -84,8 +81,7 @@ class sellerTestHelper extends entityTestHelper<Seller> {
   }
 }
 
-// @ts-ignore
-class stampTestHelper extends entityTestHelper<Stamp> {
+class stampTestHelper extends entityTestHelper<PersistedModel> {
   getResourceName(): string {
     return 'stamps'
   }

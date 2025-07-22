@@ -43,7 +43,7 @@ test.describe('creation tests', () => {
     await view.getGrid().waitForLoadingComplete()
     const selectedRow = view.getGrid().getRowByText(name)
 
-    expect(await selectedRow.isVisible()).toBe(true)
+    await expect(selectedRow).toBeVisible()
   })
 })
 
@@ -51,8 +51,7 @@ test.describe('delete scenarios', () => {
   let view: AlbumViewPage
   let name: string
   let collectionName: string
-  // @ts-ignore
-  let collection
+  let collection: StampCollection
 
   test.beforeEach(async ({ request }) => {
     name = `deleteAlbum-${new Date().getTime()}`
@@ -65,7 +64,6 @@ test.describe('delete scenarios', () => {
   })
 
   test.afterEach(async ({ request }) => {
-    // @ts-ignore
     await StampCollectionTestHelper.delete(request, collection.id)
   })
 
@@ -79,13 +77,13 @@ test.describe('delete scenarios', () => {
     await expect(view.getDeleteButton()).toBeEnabled()
     await view.getDeleteButton().click()
     const prompt: PromptCmp = new PromptCmp(page)
-    expect(await prompt.isVisible()).toBe(true)
+    await expect(prompt).toBeVisible()
     expect(await prompt.getMessage()).toBe(`Delete the album '${name}'?`)
     await prompt.no()
     await view.getGrid().waitForLoadingComplete()
     await view.getDeleteButton().click()
     await prompt.yes()
-    expect(await prompt.isVisible()).toBe(false)
+    await expect(prompt).toBeHidden()
     await page.reload()
     await view.getGrid().waitForLoadingComplete()
     await view.getFilter().getInput().clear()
@@ -142,7 +140,7 @@ test.describe('edit scenarios', () => {
     await view.getFilter().getInput().fill(revisedName)
     await view.getGrid().waitForLoadingComplete()
     const rowItem: Locator = view.getGrid().getRowByText(revisedName)
-    expect(await rowItem.isVisible()).toBe(true)
+    await expect(rowItem).toBeVisible()
   })
 
   test('validation of fields', async ({ page }) => {

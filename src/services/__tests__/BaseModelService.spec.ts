@@ -1,9 +1,14 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { Album } from '@/models/entityModels'
-import axios from 'axios'
+import axios, {
+  type AxiosResponseHeaders,
+  type InternalAxiosRequestConfig,
+  type RawAxiosResponseHeaders
+} from 'axios'
 import type { AxiosResponse } from 'axios'
-import { EntityList } from '../../models/entityList'
-import BaseModelService from '../BaseModelService'
+
+import type { Album } from '@/models/entityModels'
+import { EntityList } from '@/models/entityList'
+import BaseModelService from '@/services/BaseModelService'
 
 describe('BaseModelService', () => {
   class MyService extends BaseModelService<Album> {
@@ -16,16 +21,16 @@ describe('BaseModelService', () => {
     }
   }
 
-  class MyAxiosResponse implements AxiosResponse<any> {
-    // @ts-ignore
-    config: InternalAxiosRequestConfig<any> = undefined
-    data: any
-    // @ts-ignore
+  class MyAxiosResponse implements AxiosResponse<unknown, unknown> {
+    // @ts-expect-error not practical to configure type
+    config: InternalAxiosRequestConfig<unknown>
+    data: unknown
+    // @ts-expect-error not practical to configure either type
     headers: RawAxiosResponseHeaders | AxiosResponseHeaders
     status: number
     statusText: string = ''
 
-    constructor(status: number, data: any) {
+    constructor(status: number, data: unknown) {
       this.status = status
       this.data = data
     }
@@ -48,7 +53,7 @@ describe('BaseModelService', () => {
     })
 
     it('with empty options', async () => {
-      // @ts-ignore
+      // @ts-expect-error: reference to mockResolvedValue
       axios.get.mockResolvedValue({
         data: {
           albums: albums,
@@ -62,7 +67,7 @@ describe('BaseModelService', () => {
     })
 
     it('with no options', async () => {
-      // @ts-ignore
+      // @ts-expect-error: reference to mockResolvedValue
       axios.get.mockResolvedValue({
         data: {
           albums: [albums[0]],
@@ -90,7 +95,7 @@ describe('BaseModelService', () => {
         stampCollectionRef: 1,
         description: ''
       }
-      // @ts-ignore
+      // @ts-expect-error: reference to mockReturnValue
       axios.mockReturnValue(Promise.resolve(new MyAxiosResponse(201, returnModel)))
 
       const album: Album = await service.create(model)
@@ -106,7 +111,7 @@ describe('BaseModelService', () => {
 
     it('simple payload no options', async () => {
       const model = { id: 42, name: 'test-1', stampCollectionRef: 1, description: '' }
-      // @ts-ignore
+      // @ts-expect-error: reference to mockReturnValue
       axios.mockReturnValue(Promise.resolve(new MyAxiosResponse(200, model)))
 
       const album: Album = await service.update(model)
@@ -118,12 +123,11 @@ describe('BaseModelService', () => {
     beforeEach(() => {
       vi.clearAllMocks()
       vi.mock('axios')
-      // @ts-ignore
     })
 
     it('simple remove', async () => {
       const model = { id: 42, name: 'test-1', stampCollectionRef: 1, description: '' }
-      // @ts-ignore
+      // @ts-expect-error: reference to mockReturnValue
       axios.delete.mockReturnValue(Promise.resolve(new MyAxiosResponse(204)))
       await service.remove(model)
       expect(axios.delete).toHaveBeenCalledOnce()
@@ -131,7 +135,7 @@ describe('BaseModelService', () => {
 
     it('non-persisted model', async () => {
       const model = { id: 0, name: 'test-1', stampCollectionRef: 1, description: '' }
-      // @ts-ignore
+      // @ts-expect-error: reference to mockReturnValue
       axios.delete.mockReturnValue(Promise.resolve(new MyAxiosResponse(500)))
       try {
         await service.remove(model)

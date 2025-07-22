@@ -31,7 +31,7 @@
   const store = stampCollectionStore()
 
   const findStamps = (model: StampCollection) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'stampCollectionRef',
       operator: Operators.EQUALS,
       value: model.id

@@ -45,7 +45,7 @@ test.describe('creation tests', () => {
     await view.getGrid().waitForLoadingComplete()
     const selectedRow = view.getGrid().getRowByText(name)
 
-    expect(await selectedRow.isVisible()).toBe(true)
+    await expect(selectedRow).toBeVisible()
   })
 })
 
@@ -68,13 +68,13 @@ test.describe('delete scenarios', () => {
     await expect(view.getDeleteButton()).toBeEnabled()
     await view.getDeleteButton().click()
     const prompt: PromptCmp = new PromptCmp(page)
-    expect(await prompt.isVisible()).toBe(true)
+    await expect(prompt).toBeVisible()
     expect(await prompt.getMessage()).toBe(`Delete the country '${name}'?`)
     await prompt.no()
     await view.getGrid().waitForLoadingComplete()
     await view.getDeleteButton().click()
     await prompt.yes()
-    expect(await prompt.isVisible()).toBe(false)
+    await expect(prompt).toBeHidden()
     await page.reload()
     await view.getGrid().waitForLoadingComplete()
     await view.getFilter().getInput().clear()
@@ -110,7 +110,6 @@ test.describe('navigate to stamps', () => {
       catalogueNumbers: [
         {
           number: 'test-43c',
-          // @ts-ignore
           catalogueRef: catalogue.id,
           value: 25.54,
           condition: 0,
@@ -123,7 +122,6 @@ test.describe('navigate to stamps', () => {
 
   test.afterEach(async ({ request }) => {
     await CountryTestHelper.delete(request, country.id)
-    // @ts-ignore
     await CatalogueTestHelper.delete(request, catalogue.id)
   })
 
@@ -188,7 +186,7 @@ test.describe('edit scenarios', () => {
     await view.getFilter().getInput().fill(revisedName)
     await view.getGrid().waitForLoadingComplete()
     const rowItem: Locator = view.getGrid().getRowByText(revisedName)
-    expect(await rowItem.isVisible()).toBe(true)
+    await expect(rowItem).toBeVisible()
   })
 
   test('validation of fields', async ({ page }) => {

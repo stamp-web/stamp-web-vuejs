@@ -1,15 +1,21 @@
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import { ConditionHelper } from '@/models/Condition'
   import { resolvePath } from '@/util/object-utils'
 
-  const props = defineProps({
-    params: Object as any
-  })
+  interface ParamsProps {
+    data?: Record<string, unknown>
+    path?: string
+  }
+
+  const props = defineProps<{
+    params?: ParamsProps
+  }>()
 
   const condition = computed(() => {
-    const value = +resolvePath(props.params?.data, props.params?.path, -1)
-    return ConditionHelper.toString(value)
+    const p = props.params
+    const resolvedValue = resolvePath(p?.data ?? {}, p?.path ?? '', -1) as number | string
+    return ConditionHelper.toString(+resolvedValue)
   })
 </script>
 

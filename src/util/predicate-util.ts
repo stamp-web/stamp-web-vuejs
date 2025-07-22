@@ -13,7 +13,7 @@ export const PredicateUtilities = {
     }
   },
 
-  removeMatchesByPredicate(subject: string, predicates: any) {
+  removeMatchesByPredicate(subject: string, predicates: Predicate) {
     if (Operators.isLogical(predicates.operator)) {
       if (predicates.subject instanceof Predicate && predicates.subject.subject === subject) {
         predicates = predicates.value
@@ -46,16 +46,15 @@ export const PredicateUtilities = {
     return predicates
   },
 
-  concat(op: Operators, array: Array<any>) {
-    const ret = [].concat(
-      ...array.filter((elm: any) => {
+  concat(op: Operators, array: Array<Predicate | []>) {
+    const ret: Array<Predicate | []> = [].concat(
+      ...array.filter((elm: Predicate | []) => {
         return elm && (Array.isArray(elm) || elm instanceof Predicate)
       })
     )
     if (ret && ret.length > 1) {
       return Predicate.concat(op, ret)
     } else {
-      // @ts-ignore
       if (ret && ret[0] instanceof Predicate) {
         return ret[0]
       }

@@ -54,7 +54,7 @@ class prompt {
       confirmButtonText: options.confirmButtonLabel || 'Yes',
       denyButtonText: options.denyButtonLabel || 'No'
     }
-    // @ts-ignore
+    // @ts-expect-error need to figure out how to handle optional params
     params[options.asHtml ? 'html' : 'text'] = options.message
     return Swal.fire(params).then((result: SweetAlertResult) => {
       return Promise.resolve(result.isConfirmed)
@@ -69,7 +69,7 @@ class prompt {
       showDenyButton: false,
       confirmButtonText: options.confirmButtonLabel || 'Ok'
     }
-    // @ts-ignore
+    // @ts-expect-error need to figure out how to handle optional params
     params[options.asHtml ? 'html' : 'text'] = options.message
     return Swal.fire(params).then(() => {
       return Promise.resolve()

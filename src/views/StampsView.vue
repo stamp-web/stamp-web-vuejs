@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
+  // @ts-expect-error: no idea
   import { computed, inject, nextTick, onMounted, ref, toRaw, watchEffect } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { TransitionRoot, PopoverPanel, Popover, PopoverButton } from '@headlessui/vue'
@@ -7,6 +8,8 @@
   import { Parser, Operators, Predicate } from 'odata-filter-parser'
   import type { Log } from 'vuejs3-logger'
   import dayjs from 'dayjs'
+
+  import { type ColumnState } from 'ag-grid-community'
 
   import editableModel from '@/components/behaviors/editableModel'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
@@ -202,17 +205,16 @@
       : ''
   }
 
-  const onSortChanged = (columnDef: any) => {
+  const onSortChanged = (columnDef: ColumnState) => {
     if (columnDef?.sort) {
       query.value.$orderby = OdataUtil.createSort(columnDef.colId, columnDef.sort)
     } else if (query.value.$orderby) {
-      // @ts-ignore
       delete query.value.$orderby
     }
     gotoPage(1)
   }
 
-  const findWithQuery = async (theQuery: any) => {
+  const findWithQuery = async (theQuery: object) => {
     logger.info('query info', query.value)
     const results = await store.find(theQuery)
     setCollection(results, true)
@@ -256,15 +258,16 @@
     await fetchReportData()
   }
 
-  const processPrintReport = async (generate: boolean, options: any) => {
+  const processPrintReport = async (generate: boolean, options: object) => {
     reportPrintModel.value.show = false
     if (generate) {
-      let opts = reportService.buildReport(
+      const opts = reportService.buildReport(
         getCollection(),
         await countriesStore.find(),
         await cataloguesStore.find(),
         reporting.value.reportValue,
         {
+          // @ts-expect-error: Need to create a type for report model options
           model: options
         }
       )
@@ -298,7 +301,8 @@
   const processDelete = async (stamps: Array<Stamp>) => {
     if (stamps && stamps.length > 0) {
       const toUpdate = new Array<Stamp>()
-      const promises = new Array<Promise<any>>()
+
+      const promises = new Array<Promise<unknown>>()
       stamps.forEach((s) => {
         toUpdate.push(s)
         promises.push(store.remove(s))
@@ -318,7 +322,7 @@
     }
   }
 
-  const processBulkEdit = async (bulkEdit: boolean = false, values: Record<string, any>) => {
+  const processBulkEdit = async (bulkEdit: boolean = false, values: Record<string, unknown>) => {
     if (bulkEdit) {
       const selectedStamps = getCurrentSelectedStamps()
       if (selectedStamps && selectedStamps.length > 0) {
@@ -400,7 +404,7 @@
       } else {
         hideEditor()
       }
-      // @ts-ignore
+      // @ts-expect-error: Handle generic errors on save
     } catch (err: Error) {
       Prompt.alert({
         message: t('messages.save-failure', { message: extractErrorMessage(err) }),
@@ -424,7 +428,6 @@
         ]
       }
     } else {
-      // @ts-ignore
       query.value = {
         ...structuredClone(route.query)
       }
@@ -444,6 +447,8 @@
     await setupInitialQuery()
     await gotoPage(1)
   })
+
+  defineExpose({ createStamp, isEditorShown, viewDef, setView })
 </script>
 <template>
   <div

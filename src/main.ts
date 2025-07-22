@@ -33,6 +33,8 @@ import {
 import ProgressBar from '@/components/display/ProgressBar.vue'
 import ClickableIconCellRenderer from '@/components/renderers/ClickableIconCellRenderer.vue'
 import LocaleUtilities from '@/util/locale-utils'
+import { stampStore } from '@/stores/stampStore.ts'
+import { preferenceStore } from '@/stores/PreferenceStore.ts'
 
 const i18n = LocaleUtilities.getI18n()
 
@@ -59,15 +61,16 @@ ModuleRegistry.registerModules([
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' })
 
-// @ts-ignore
+const pinia = createPinia()
 const app = createApp(App)
-  .use(createPinia())
+  .use(pinia)
   .use(router)
   .use(Vueform, vueformConfig)
   .use(eventBus)
   .use(ToastPlugin)
   .use(VueLogger, logOptions)
   .use(i18n)
+
 /**
  * Globally define cell renderers so they can be used by name without having to import them all in the Grid Component
  */

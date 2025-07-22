@@ -1,22 +1,33 @@
 import { useStore } from 'pinia-generic'
 import type { PiniaStore } from 'pinia-generic'
 import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
-import type { Seller } from '@/models/entityModels'
+import type { Album, Seller } from '@/models/entityModels'
 import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import SellerService from '@/services/SellerService'
 import BaseModelService from '@/services/BaseModelService'
 
-type SellerStoreType = PiniaStore<'sellerStore', {}, {}, {}, BaseNamedModelStore<Seller>>
+const storeId = 'sellerStore' as const
 
-export const sellerStore = useStore<SellerStoreType, BaseNamedModelStore<Seller>>(
-  'sellerStore',
+type SellerStoreType = PiniaStore<
+  typeof storeId,
+  object,
+  object,
+  object,
+  BaseNamedModelStore<Seller, typeof storeId>
+>
+
+export const sellerStore = useStore<SellerStoreType, BaseNamedModelStore<Seller, typeof storeId>>(
+  storeId,
   {
     state: {},
     getters: {
       service(): BaseModelService<Seller> {
         return SellerService
+      },
+      baseSearchOptions(): object {
+        return { $orderby: 'name asc' }
       }
     }
   },
-  baseNamedModelStore<Seller>()
+  baseNamedModelStore<Seller, typeof storeId>()
 )

@@ -52,7 +52,7 @@
 
   const fullSizeImage = computed(() => {
     let img = undefined
-    const value = resolvePath(props.stamp, props.path ?? '') as String
+    const value = resolvePath(props.stamp, props.path ?? '') as string
     if (value) {
       img = `${props.prefPaths?.imagePath ?? ''}/${value}`
     }

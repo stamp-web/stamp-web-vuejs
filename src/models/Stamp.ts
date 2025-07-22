@@ -34,8 +34,7 @@ export class StampModelHelper {
 
     if (preferences && preferences.length > 0) {
       const pref = preferences.find((p) => 'countryRef' === p.name)
-      if (pref) {
-        // @ts-ignore
+      if (pref && pref.value) {
         stamp.countryRef = +pref.value
       }
     }
@@ -52,7 +51,6 @@ export class StampModelHelper {
   ) => {
     let path = ''
     if (!stamp.wantList) {
-      // @ts-ignore
       if (countryName && catalogueNumber && countryName !== '' && catalogueNumber.number) {
         path = `${countryName}/`
         if (includeUsedInPath && ConditionHelper.isUsed(catalogueNumber.condition)) {

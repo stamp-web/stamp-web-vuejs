@@ -8,7 +8,7 @@ const pageInfo = (filterKey?: string) => {
     active: 1, // current page
     total: 1, // total pages
     size: Number.parseInt(LocalCache.getItem(`${FILTER_KEY}.pageSize`) || '1000'),
-    list: new Array<Object>()
+    list: new Array<object>()
   })
 
   const setActivePage = (page: number): void => {
@@ -26,7 +26,7 @@ const pageInfo = (filterKey?: string) => {
     }
   }
 
-  const setPagingItems = (list: Array<Object>) => {
+  const setPagingItems = (list: Array<object>) => {
     info.value.list = list
   }
 

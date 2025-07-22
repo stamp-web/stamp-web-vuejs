@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { setActivePinia } from 'pinia'
+import { setActivePinia, type Store } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
 import { mount, VueWrapper } from '@vue/test-utils'
 import SettingsView from '@/views/SettingsView.vue'
-import { preferenceStore } from '@/stores/PreferenceStore'
+import { preferenceStore, type PreferenceStoreType } from '@/stores/PreferenceStore'
 import type { Preference } from '@/models/Preference'
 
 describe('SettingsView', () => {
-  let store: any = null
+  let store: PreferenceStoreType
   let wrapper: VueWrapper
 
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe('SettingsView', () => {
   })
 
   it('savePreferences', async () => {
-    // @ts-ignore
+    // @ts-expect-error: in vm state
     const model = wrapper.vm.model
     model.countryRef = 115
 
@@ -52,11 +52,17 @@ describe('SettingsView', () => {
     })
     const spyfindByNameAndCategory = vi.spyOn(store, 'findByNameAndCategory')
     const spyUpdate = vi.spyOn(store, 'update')
-    spyUpdate.mockReturnValue(() => {
-      return Promise.resolve({} as Preference)
-    })
+    spyUpdate.mockReturnValue(
+      Promise.resolve({
+        id: 1,
+        name: 'testName',
+        category: 'testCategory',
+        value: 'testValue'
+      } as Preference)
+    )
+
     spyfindByNameAndCategory.mockImplementation(findByNameAndCategory)
-    // @ts-ignore
+    // @ts-expect-error: in vm state
     await wrapper.vm.savePreferences()
     expect(spyfindByNameAndCategory).toHaveBeenCalled()
   })
@@ -66,9 +72,9 @@ describe('SettingsView', () => {
     list.push({ name: 'countryRef', category: 'stamps', value: '101' } as Preference)
     list.push({ name: 'code', category: 'stamps', value: 'USD' } as Preference)
 
-    // @ts-ignore
+    // @ts-expect-error: in vm state
     wrapper.vm.preprocessPreferences(list)
-    // @ts-ignore
+    // @ts-expect-error: in vm state
     const model = wrapper.vm.model
     expect(model.countryRef).toBe(101)
     expect(model.stampCollectionRef).toBe(100)

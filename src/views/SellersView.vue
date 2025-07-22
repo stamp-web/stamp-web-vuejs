@@ -31,7 +31,7 @@
   const store = sellerStore()
 
   const findStamps = (model: Seller) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'sellerRef',
       operator: Operators.EQUALS,
       value: model.id
@@ -67,7 +67,6 @@
       }).then(async (confirmed) => {
         if (confirmed) {
           await store.remove(sel)
-          // @ts-ignore
           setSelected(undefined)
         }
       })

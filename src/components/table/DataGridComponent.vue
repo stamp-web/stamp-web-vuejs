@@ -1,17 +1,19 @@
 <script setup lang="ts" generic="T extends PersistedModel">
+  import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
   import { AgGridVue } from 'ag-grid-vue3'
-  import type { SortChangedEvent } from 'ag-grid-community'
-  import type { ColDef } from 'ag-grid-community'
-  import type { RowSelectionOptions } from 'ag-grid-community'
-  import { RowNode } from 'ag-grid-community'
+  import {
+    RowNode,
+    type ColDef,
+    type SortChangedEvent,
+    type GridReadyEvent,
+    type RowSelectionOptions
+  } from 'ag-grid-community'
   import '../../../node_modules/ag-grid-community/styles/ag-grid.css'
   import '../../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
-  import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
 
   import type { PersistedModel } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
-  import { debounce } from '@/util/timer-utils'
 
   import type { KeyIndexable } from '@/util/ts/key-accessor'
 
@@ -29,7 +31,7 @@
   })
   const emit = defineEmits(['selected', 'deselected', 'sortChanged'])
 
-  const columns = Object.freeze(Object.assign([] as ColDef[], props.columnDefs))
+  const columns = Object.assign([] as ColDef[], props.columnDefs as ColumnDefinition[])
 
   const rowSelection = {
     mode: 'singleRow',
@@ -38,10 +40,6 @@
   } as RowSelectionOptions
 
   const allowSelectionEvent = ref(true)
-
-  const setSelectedDebounced = debounce((selected: Array<T>) => {
-    setSelected(selected)
-  }, 250)
 
   watch(
     () => [[props.columnVisibility]],
@@ -63,15 +61,21 @@
     { deep: true }
   )
 
+  let timer: NodeJS.Timeout
+
   watch(
     () => props.rowData,
     async () => {
       if (!isNil(gridApi.value)) {
+        clearTimeout(timer)
         // we require to set this to false with rowData being set
         allowSelectionEvent.value = false
+        // TODO: check whether we should be using setRowData or not
         gridApi.value.setGridOption('rowData', props.rowData)
         dataLoadTime.value = new Date().getTime()
-        setSelectedDebounced(props.selectedData ?? new Array<T>())
+        timer = setTimeout(() => {
+          setSelected(props.selectedData ?? new Array<T>())
+        }, 250)
       }
     },
     { deep: true }
@@ -81,7 +85,10 @@
     () => [[props.selectedData]],
     async () => {
       if (!isNil(gridApi.value)) {
-        setSelectedDebounced(props.selectedData ?? new Array<T>())
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          setSelected(props.selectedData ?? new Array<T>())
+        }, 250)
       }
     },
     { deep: true }
@@ -136,24 +143,29 @@
     resizeColumns()
   })
 
-  const onGridReady = (params: any) => {
+  const onGridReady = (params: GridReadyEvent) => {
     gridApi.value = params.api
     if (loading.value) {
       gridApi.value.setGridOption('loading', false)
     }
     resizeColumns()
-    setSelectedDebounced(props.selectedData ?? new Array<T>())
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      setSelected(props.selectedData ?? new Array<T>())
+    }, 250)
   }
 
-  const onSelected = (event: any) => {
+  const onSelected = (event: object) => {
+    // @ts-expect-error - grid event
     const selected = event.node?.data
+    // @ts-expect-error - grid event
     const isSelected = event.node?.isSelected()
     if (selected && allowSelectionEvent.value) {
       emit(isSelected ? 'selected' : 'deselected', selected)
     }
   }
 
-  const onSortChanged = (event: SortChangedEvent<any>) => {
+  const onSortChanged = (event: SortChangedEvent<unknown>) => {
     emit(
       'sortChanged',
       event.api.getColumnState().find((col) => col.sort)
@@ -177,7 +189,7 @@
   onMounted(async () => {
     rowSelection.mode = props.multiSelect ? 'multiRow' : 'singleRow'
     if (props.multiSelect) {
-      // @ts-ignore
+      // @ts-expect-error: row selection may not have a checkbox depending on grid
       rowSelection.headerCheckbox = false
     }
     if (gridEl.value.$el) {

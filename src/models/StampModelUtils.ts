@@ -13,7 +13,7 @@ export class StampModelUtils {
 
   bulkEditStamps = (
     selectedStamps: Stamp[],
-    values: Record<string, any>
+    values: Record<string, unknown>
   ): Array<Promise<Stamp>> => {
     return selectedStamps.map(async (s: Stamp) => {
       this.assignProperties(s, values)
@@ -32,7 +32,7 @@ export class StampModelUtils {
     })
   }
 
-  assignProperties = (stamp: Stamp, properties: Record<string, any>) => {
+  assignProperties = (stamp: Stamp, properties: Record<string, unknown>) => {
     for (const prop in properties) {
       switch (prop) {
         case 'countryRef':

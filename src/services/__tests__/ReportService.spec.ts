@@ -6,6 +6,7 @@ import type { Country } from '@/models/entityModels'
 import { createInstance } from '@/models/entityModels'
 import { CurrencyCode } from '@/models/CurrencyCode'
 import { Condition } from '@/models/Condition'
+import type { CatalogueNumber } from '@/models/CatalogueNumber.ts'
 
 describe('ReportingService', () => {
   describe('buildReport', () => {
@@ -14,7 +15,7 @@ describe('ReportingService', () => {
       for (let i = 0; i < 5; i++) {
         const s = StampModelHelper.newInstance()
         Object.assign(s, { rate: `${i + 1}d`, description: 'red' })
-        const cn = s.activeCatalogueNumber ?? ({} as any)
+        const cn = s.activeCatalogueNumber ?? ({} as CatalogueNumber)
         cn.number = `test-${i}`
         cn.catalogueRef = 23
         cn.condition = 0
@@ -80,63 +81,64 @@ describe('ReportingService', () => {
     })
 
     it('catalogue number', () => {
-      const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
-      s.activeCatalogueNumber.number = '23a'
-      const obj = ReportService.generateTableCellValue(
-        s,
-        {
-          name: 'Number',
-          type: 'catalogueNumber',
-          value: 'activeCatalogueNumber.number'
-        },
-        new Array<Country>(),
-        new Array<Catalogue>()
-      )
-      expect(obj).toBe('23a')
+      const stamp = StampModelHelper.newInstance(false)
+      if (stamp.activeCatalogueNumber) {
+        stamp.activeCatalogueNumber.number = '23a'
+        const obj = ReportService.generateTableCellValue(
+          stamp,
+          {
+            name: 'Number',
+            type: 'catalogueNumber',
+            value: 'activeCatalogueNumber.number'
+          },
+          new Array<Country>(),
+          new Array<Catalogue>()
+        )
+        expect(obj).toBe('23a')
+      }
     })
 
     it('catalogue condition', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
-      s.activeCatalogueNumber.condition = Condition.MINT
-      const obj = ReportService.generateTableCellValue(
-        s,
-        {
-          name: 'Condition',
-          type: 'condition',
-          value: 'activeCatalogueNumber.condition'
-        },
-        new Array<Country>(),
-        new Array<Catalogue>()
-      )
-      expect(obj).toBe('Mint')
+      if (s.activeCatalogueNumber) {
+        s.activeCatalogueNumber.condition = Condition.MINT
+        const obj = ReportService.generateTableCellValue(
+          s,
+          {
+            name: 'Condition',
+            type: 'condition',
+            value: 'activeCatalogueNumber.condition'
+          },
+          new Array<Country>(),
+          new Array<Catalogue>()
+        )
+        expect(obj).toBe('Mint')
+      }
     })
 
     it('catalogue value', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
-      s.activeCatalogueNumber.value = 500.25
-      // @ts-ignore
-      s.activeCatalogueNumber.catalogueRef = 23
+      if (s.activeCatalogueNumber) {
+        s.activeCatalogueNumber.value = 500.25
+        s.activeCatalogueNumber.catalogueRef = 23
 
-      const obj = ReportService.generateTableCellValue(
-        s,
-        {
-          name: 'Value',
-          type: 'currencyValue',
-          value: 'activeCatalogueNumber.value',
-          additional: ['activeCatalogueNumber.catalogueRef']
-        },
-        new Array<Country>(),
-        [createInstance({ id: 23, name: 'some catalogue', code: CurrencyCode.EUR }) as Catalogue]
-      )
-      expect(obj).toBe('€500.25')
+        const obj = ReportService.generateTableCellValue(
+          s,
+          {
+            name: 'Value',
+            type: 'currencyValue',
+            value: 'activeCatalogueNumber.value',
+            additional: ['activeCatalogueNumber.catalogueRef']
+          },
+          new Array<Country>(),
+          [createInstance({ id: 23, name: 'some catalogue', code: CurrencyCode.EUR }) as Catalogue]
+        )
+        expect(obj).toBe('€500.25')
+      }
     })
 
     it('country name', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.countryRef = 123
       const obj = ReportService.generateTableCellValue(
         s,
@@ -153,11 +155,11 @@ describe('ReportingService', () => {
 
     it('contains deception', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].deception = 15
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'issues',
           type: 'issues',
           value: 'stampOwnerships[0]',
           additional: []
@@ -170,11 +172,11 @@ describe('ReportingService', () => {
 
     it('contains defects', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].defects = 1
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'issues',
           type: 'issues',
           value: 'stampOwnerships[0]',
           additional: []
@@ -187,11 +189,11 @@ describe('ReportingService', () => {
 
     it('contains notes', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].notes = 'these are the notes'
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'notes',
           type: 'notes',
           value: 'stampOwnerships[0]',
           additional: []
@@ -204,11 +206,11 @@ describe('ReportingService', () => {
 
     it('no notes', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].notes = undefined
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'notes',
           type: 'notes',
           value: 'stampOwnerships[0]',
           additional: []

@@ -17,8 +17,8 @@
 export class PdfGenerator {
   constructor() {}
 
-  pdfMaker: any
-  vfsFonts: any
+  pdfMaker: unknown
+  vfsFonts: unknown
 
   initialize(): Promise<void> {
     if (!this.pdfMaker) {
@@ -33,7 +33,7 @@ export class PdfGenerator {
     }
   }
 
-  printReport(opts: any) {
+  printReport(opts: object) {
     this.initialize()
       .then(() => {
         const docDefinition = opts

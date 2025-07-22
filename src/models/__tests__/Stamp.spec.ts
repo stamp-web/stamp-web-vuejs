@@ -44,7 +44,7 @@ describe('StampModelHelper tests', () => {
       expect(stamp.stampOwnerships).toBeDefined()
     })
   })
-  describe('calculateImagePath ', () => {
+  describe('calculateImagePath', () => {
     it('verify wantlist does not generate', () => {
       const stamp = StampModelHelper.newInstance(true)
       expect(
