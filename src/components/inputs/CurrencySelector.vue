@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { CurrencyCode } from '@/models/CurrencyCode'
+  import type { ValueRecord } from '@/components/inputs/types/valueRecord'
 
   const $props = defineProps({
     value: String,
@@ -11,7 +12,7 @@
   })
 
   const getCurrencies = async () => {
-    const codes = new Array<any>()
+    const codes = new Array<ValueRecord<string>>()
     // @ts-ignore
     Object.keys(CurrencyCode).forEach((key) => {
       codes.push({ value: key, name: key })

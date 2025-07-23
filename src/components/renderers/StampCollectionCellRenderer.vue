@@ -23,7 +23,7 @@
   const findCollectionName = (value: number) => {
     let found
     if (collections.value) {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+       
       found = collections.value.find((collection: StampCollection) => {
         return collection.id === value
       })

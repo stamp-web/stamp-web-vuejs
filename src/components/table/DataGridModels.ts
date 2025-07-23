@@ -1,5 +1,5 @@
 export class ColumnDefinition {
-  cellClass?: Array<String>
+  cellClass?: Array<string>
   cellRenderer?: string
   colId?: string
   comparator?: object
@@ -14,7 +14,7 @@ export class ColumnDefinition {
   sortable?: boolean = true
   sort?: string
   tooltipField?: string
-  tooltipValueGetter?: Function
+  tooltipValueGetter?: (params: any) => string
   suppressMovable?: boolean = true
   suppressSizeToFit?: boolean = false
   width?: number

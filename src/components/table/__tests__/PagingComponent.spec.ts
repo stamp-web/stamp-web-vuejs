@@ -20,7 +20,7 @@ describe('PagingComponent', () => {
   })
 
   describe('Component Actions', () => {
-    let wrapper: VueWrapper<any, ComponentPublicInstance<{}, any>>
+    let wrapper: VueWrapper<any, ComponentPublicInstance<object, any>>
 
     beforeEach(() => {
       wrapper = shallowMount(PagingComponent, {

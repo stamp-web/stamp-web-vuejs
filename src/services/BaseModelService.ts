@@ -6,8 +6,7 @@ import type { AxiosRequestConfig } from 'axios'
 import requiredId from '@/util/decorators/requiredId'
 
 export default abstract class BaseModelService<T extends PersistedModel> extends BaseService<T> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async find(options: {} = {}): Promise<EntityList<T>> {
+  async find(options = {}): Promise<EntityList<T>> {
     const response = await axios.get(this.createURI(options))
     const list: EntityList<T> = new EntityList<T>()
     list.items = response.data[this.getCollectionName()]
@@ -15,17 +14,16 @@ export default abstract class BaseModelService<T extends PersistedModel> extends
     return list
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async create(model: T, options: {} = {}): Promise<T> {
+  async create(model: T, options = {}): Promise<T> {
     return this.save(model, options)
   }
 
   @requiredId
-  async update(model: T, options: {} = {}): Promise<T> {
+  async update(model: T, options = {}): Promise<T> {
     return this.save(model, options)
   }
 
-  protected async save(model: T, options: {} = {}): Promise<T> {
+  protected async save(model: T, options = {}): Promise<T> {
     const isUpdate = model.id && model.id > 0
     const config: AxiosRequestConfig = {
       method: isUpdate ? HttpMethod.PUT : HttpMethod.POST,

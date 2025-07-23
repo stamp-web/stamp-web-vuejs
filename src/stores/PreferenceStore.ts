@@ -8,8 +8,8 @@ import type { Preference } from '@/models/Preference'
 
 type PreferenceStoreType = PiniaStore<
   'preferenceStore',
-  {},
-  {},
+  object,
+  object,
   {
     findByNameAndCategory(name: string, category: string): Promise<Preference>
     findByCategory(category: string): Promise<Array<Preference>>

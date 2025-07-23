@@ -1,9 +1,11 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/**/*.ts", "vueform.config.ts", "src/locales/*.json"],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/**/*.json","src/**/*.ts", "vueform.config.ts"],
   "exclude": ["src/**/__tests__/*", "src/vitest-setup.ts", "src/@custom_types/*"],
   "compilerOptions": {
     "composite": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "experimentalDecorators": true,

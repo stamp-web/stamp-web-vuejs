@@ -8,7 +8,7 @@
     DialogTitle
   } from '@headlessui/vue'
   import { useI18n } from 'vue-i18n'
-  // eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
+   
   import _cloneDeep from 'lodash-es/cloneDeep'
 
   import type { Stamp } from '@/models/Stamp'

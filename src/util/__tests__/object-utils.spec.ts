@@ -41,7 +41,7 @@ describe('object-utils', () => {
   })
 
   describe('augmentModel', () => {
-    let model: Object
+    let model: object
 
     beforeEach(() => {
       model = {
@@ -202,8 +202,8 @@ describe('object-utils', () => {
       try {
         // @ts-ignore
         foo.substring(1)
-      } catch (err: any) {
-        const msg = extractErrorMessage(err)
+      } catch (err) {
+        const msg = extractErrorMessage(err as Error)
         expect(msg).toBe('foo is not defined')
       }
     })

@@ -10,6 +10,7 @@ describe('NotesCellRenderer', () => {
       expect(wrapper.vm.tooltip).toBe('')
     }
 
+    // eslint-disable-next-line vitest/expect-expect
     it('no stamp in row', () => {
       const wrapper = shallowMount(NotesCellRenderer, {
         propsData: {
@@ -21,6 +22,7 @@ describe('NotesCellRenderer', () => {
       expectNoNotes(wrapper)
     })
 
+    // eslint-disable-next-line vitest/expect-expect
     it('wantList stamp in row', () => {
       const wrapper = shallowMount(NotesCellRenderer, {
         propsData: {
@@ -37,6 +39,7 @@ describe('NotesCellRenderer', () => {
       expectNoNotes(wrapper)
     })
 
+    // eslint-disable-next-line vitest/expect-expect
     it('has no notes, defects or deceptions', () => {
       const stamp = {
         id: 456,

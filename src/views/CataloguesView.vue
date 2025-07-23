@@ -32,7 +32,7 @@
   const store = catalogueStore()
 
   const findStamps = (model: Catalogue) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'catalogueRef',
       operator: Operators.EQUALS,
       value: model.id

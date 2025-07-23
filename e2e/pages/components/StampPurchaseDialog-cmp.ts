@@ -9,12 +9,12 @@ export class StampPurchaseDialogCmp {
     this.page = page
   }
 
-  private getLocator(): Locator {
+  getLocator(): Locator {
     return this.page.locator('#stamp-purchase-dialog')
   }
 
-  isVisible(): Promise<boolean> {
-    return this.getLocator().isVisible()
+  isVisible(shown = true): Promise<boolean> {
+    return shown ? this.getLocator().isVisible() : this.getLocator().isHidden()
   }
 
   getTitle(): Locator {

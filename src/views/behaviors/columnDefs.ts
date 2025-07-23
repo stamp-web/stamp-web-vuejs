@@ -10,10 +10,11 @@ import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
 import ConditionCellRenderer from '@/components/renderers/ConditionCellRenderer.vue'
 import GradeCellRenderer from '@/components/renderers/GradeCellRenderer.vue'
 import type { PreferencePaths } from '@/views/types/preferencePaths'
+import type { Stamp } from '@/models/Stamp'
 
 export function createStampColumnDefs(
   prefPaths: PreferencePaths,
-  transformationCallback: Function
+  transformationCallback: (data: Stamp, rowIndex: number) => unknown
 ): ColumnDefinition[] {
   const { t } = useI18n()
   return [

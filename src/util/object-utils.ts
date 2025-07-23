@@ -1,4 +1,3 @@
-import type { KeyIndexable } from '@/util/ts/key-accessor'
 import _isObject from 'lodash-es/isObject'
 import _isArrayLikeObject from 'lodash-es/isArrayLikeObject'
 import _has from 'lodash-es/has'
@@ -34,18 +33,20 @@ export function resolvePath(object: any, path: string, defaultValue?: any): any 
  * @param model
  * @param m
  */
-export function augmentModel(model: Object, m: Object): void {
+export function augmentModel(model: Record<string, any>, m: Record<string, any>): void {
   Object.keys(m).forEach((k) => {
-    const value: any = (m as KeyIndexable)[k]
+    const value: any = m[k]
     const obj = _isObject(value)
     const arr = _isArrayLikeObject(value)
     if (!_has(model, k)) {
       const num = _isNumber(value)
       const v = arr ? [] : obj ? {} : num ? 0 : null
       _set(model, k, v)
-    } else if (arr) {
+    } else if (arr && Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
-        augmentModel((model as KeyIndexable)[k][i] as Object, (value as KeyIndexable)[i] as Object)
+        if (_isObject(value[i]) && _isObject([model[k][i]])) {
+          augmentModel(model[k][i], value[i])
+        }
       }
     }
   })
@@ -88,7 +89,7 @@ export function extractErrorMessage(err: Error) {
   return message
 }
 
-export function fixFraction(num: string, digits: number = 2): Number {
+export function fixFraction(num: string, digits: number = 2): number {
   const n = parseFloat(num)
   if (Number.isNaN(n)) {
     return 0

@@ -36,7 +36,7 @@
     })
   }
 
-  const getOptions = (): {} => {
+  const getOptions = (): object => {
     const options = {} as KeyIndexable
     if (props.maxWidth) {
       options.maxWidth = parseInt(props.maxWidth)
@@ -70,7 +70,7 @@
    * Attempts to setup the options for the full size image by setting the maximum width and height
    * to the containers dimensions at 95%.
    */
-  const getFullImageOptions = (): {} => {
+  const getFullImageOptions = (): object => {
     const options = {} as KeyIndexable
     const nodes: NodeList = document.querySelectorAll(props.containerSelector ?? 'body')
     if (nodes.length > 0) {

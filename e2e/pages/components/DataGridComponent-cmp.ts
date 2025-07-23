@@ -34,7 +34,7 @@ export class DataGridComponentCmp {
     return this.page.waitForTimeout(500)
   }
 
-  getRowCount(): Promise<Number> {
+  getRowCount(): Promise<number> {
     return this.getTableLocator().locator('div.ag-body-viewport ').getByRole('row').count()
   }
 

@@ -5,8 +5,11 @@
     <scripts>
       <script value="lint" />
     </scripts>
+    <arguments value="--quiet" />
     <node-interpreter value="project" />
-    <envs />
+    <envs>
+      <env name="NODE_OPTIONS" value="--max-old-space-size=4096" />
+    </envs>
     <method v="2" />
   </configuration>
 </component>

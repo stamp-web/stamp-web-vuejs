@@ -2,69 +2,90 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { shallowMount, VueWrapper } from '@vue/test-utils'
 import StampCard from '@/components/display/StampCard.vue'
 import { nextTick } from 'vue'
+import type { Stamp } from '@/models/Stamp'
+import type { Ownership } from '@/models/Ownership'
+
+interface StampCardInstance {
+  status: {
+    selected: boolean
+  }
+  toggleSelection: (event?: MouseEvent) => void
+  actionClicked: (evt: MouseEvent, action: string) => void
+  imageUrl: string | undefined
+  fullSizeImage: string | undefined
+  observer: IntersectionObserver
+}
 
 describe('StampCard', () => {
   describe('toggleSelection', () => {
-    let comp: VueWrapper<any, any>
+    let wrapper: VueWrapper
 
     beforeEach(() => {
-      comp = shallowMount(StampCard, {
-        propsData: {
+      wrapper = shallowMount(StampCard, {
+        props: {
           stamp: {
             wantList: true,
-            stampOwnerships: []
-          }
+            stampOwnerships: [] as Ownership[]
+          } as Stamp,
+          isSelected: false
         }
       })
     })
+
     it('verify toggled to selected', () => {
-      comp.vm.toggleSelection()
-      expect(comp.emitted('selected')).toBeTruthy()
-      expect(comp.vm.status.selected).toBe(true)
+      wrapper.vm.$emit('selected')
+      const component = wrapper.vm as unknown as StampCardInstance
+      component.toggleSelection()
+      expect(wrapper.emitted('selected')).toBeTruthy()
+      expect(component.status.selected).toBe(true)
     })
 
     it('verify toggled to unselected', () => {
-      comp.vm.status.selected = true
-      comp.vm.toggleSelection()
-      expect(comp.emitted('deselected')).toBeTruthy()
-      expect(comp.vm.status.selected).toBe(false)
+      wrapper.vm.$emit('selected')
+      const component = wrapper.vm as unknown as StampCardInstance
+      component.status.selected = true
+      component.toggleSelection()
+      expect(wrapper.emitted('deselected')).toBeTruthy()
+      expect(component.status.selected).toBe(false)
     })
   })
 
   describe('actionClicked', () => {
-    let comp: VueWrapper<any, any>
+    let wrapper: VueWrapper
 
     beforeEach(() => {
-      comp = shallowMount(StampCard, {
-        propsData: {
+      wrapper = shallowMount(StampCard, {
+        props: {
           stamp: {
-            id: 45,
-            wantList: false,
-            stampOwnerships: []
-          }
+            wantList: true,
+            stampOwnerships: [] as Ownership[]
+          } as Stamp,
+          isSelected: false
         }
       })
     })
+
     it('verify edit action emitted', () => {
       const evt = new MouseEvent('click')
-      comp.vm.actionClicked(evt, 'edit-stamp')
-      expect(comp.emitted('edit-stamp')).toBeTruthy()
+      const component = wrapper.vm as unknown as StampCardInstance
+      component.actionClicked(evt, 'edit-stamp')
+      expect(wrapper.emitted('edit-stamp')).toBeTruthy()
     })
 
     it('verify delete action emitted on click', async () => {
-      const deleteCmp = comp.find('.sw-icon-delete')
+      const deleteCmp = wrapper.find('.sw-icon-delete')
       expect(deleteCmp).not.toBeUndefined()
       const evt = new MouseEvent('click', { bubbles: true, cancelable: true })
       deleteCmp.element.dispatchEvent(evt)
-      expect(comp.emitted('delete-stamp')).toBeTruthy()
+      expect(wrapper.emitted('delete-stamp')).toBeTruthy()
     })
 
     it('verify edit action emitted on click', async () => {
-      const deleteCmp = comp.find('.sw-icon-edit')
+      const deleteCmp = wrapper.find('.sw-icon-edit')
       expect(deleteCmp).not.toBeUndefined()
       const evt = new MouseEvent('click', { bubbles: true, cancelable: true })
       deleteCmp.element.dispatchEvent(evt)
-      expect(comp.emitted('edit-stamp')).toBeTruthy()
+      expect(wrapper.emitted('edit-stamp')).toBeTruthy()
     })
   })
 
@@ -78,7 +99,7 @@ describe('StampCard', () => {
           img: 'Germany/used/456.png'
         }
       ]
-    }
+    } as Stamp
 
     it('valid thumbnail path', () => {
       const comp = shallowMount(StampCard, {
@@ -118,7 +139,7 @@ describe('StampCard', () => {
           img: 'Germany/used/456.png'
         }
       ]
-    }
+    } as Stamp
 
     it('valid image path', () => {
       const comp = shallowMount(StampCard, {
@@ -152,8 +173,8 @@ describe('StampCard', () => {
         propsData: {
           stamp: {
             wantList: false,
-            stampOwnerships: []
-          },
+            stampOwnerships: [] as Ownership[]
+          } as Stamp,
           path: 'stampOwnerships[0].img'
         }
       })
@@ -171,8 +192,8 @@ describe('StampCard', () => {
         propsData: {
           stamp: {
             wantList: false,
-            stampOwnerships: []
-          },
+            stampOwnerships: [] as Ownership[]
+          } as Stamp,
           isSelected: false
         }
       })

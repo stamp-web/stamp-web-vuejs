@@ -12,8 +12,7 @@
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
   import { debounce } from '@/util/timer-utils'
-
-  import type { KeyIndexable } from '@/util/ts/key-accessor'
+  import type { ColumnVisibilitySet } from '@/components/table/types/columnVisibilitySet'
 
   const gridApi = ref()
   const gridEl = ref()
@@ -24,7 +23,7 @@
     rowData: Array<T>,
     columnDefs: Array<ColumnDefinition>,
     multiSelect: Boolean,
-    columnVisibility: {},
+    columnVisibility: {} as ColumnVisibilitySet,
     selectedData: Array<T>
   })
   const emit = defineEmits(['selected', 'deselected', 'sortChanged'])
@@ -39,23 +38,28 @@
 
   const allowSelectionEvent = ref(true)
 
-  const setSelectedDebounced = debounce((selected: Array<T>) => {
-    setSelected(selected)
+  const setSelectedDebounced = debounce((selected) => {
+    return setSelected(selected as T[])
   }, 250)
 
   watch(
     () => [[props.columnVisibility]],
     async () => {
       if (!isNil(gridApi.value)) {
-        const obj = props.columnVisibility as KeyIndexable
-        gridApi.value.setColumnsVisible(
-          Object.keys(obj).filter((key) => obj[key] === true),
-          true
-        )
-        gridApi.value.setColumnsVisible(
-          Object.keys(obj).filter((key) => obj[key] === false),
-          false
-        )
+        const obj = props.columnVisibility as ColumnVisibilitySet
+        const visibleColumns = Object.entries(obj)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .filter(([o, visible]) => visible)
+          .map(([key]) => key)
+
+        const hiddenColumns = Object.entries(obj)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .filter(([o, visible]) => !visible)
+          .map(([key]) => key)
+
+        gridApi.value.setColumnsVisible(visibleColumns, true)
+        gridApi.value.setColumnsVisible(hiddenColumns, false)
+
         await nextTick()
         resizeColumns()
       }

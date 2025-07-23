@@ -13,16 +13,16 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   {
     items: { list: Array<T>; total: number; loading: boolean }
     inflightPromise: any
-    lastOptions: {}
+    lastOptions: object
   },
   {
     service(): BaseModelService<T>
-    baseSearchOptions(): {}
+    baseSearchOptions(): object
   },
   {
     remove(model: T): Promise<void>
     find(options?: any): Promise<T[]>
-    findById(id: Number): Promise<T>
+    findById(id: number): Promise<T>
     findRandom(): Promise<T | undefined>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
@@ -62,7 +62,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
       },
 
       // @ts-ignore
-      async find(options: {} = this.baseSearchOptions): Promise<T[]> {
+      async find(options = this.baseSearchOptions): Promise<T[]> {
         // attempt caching for inflight promises.  This will have to be cancelled
         // for finds that have options
         if (

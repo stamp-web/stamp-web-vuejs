@@ -10,7 +10,6 @@
   import SellerSelector from '@/components/inputs/SellerSelector.vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
-  import type { KeyIndexable } from '@/util/ts/key-accessor'
   import { PredicateUtilities } from '@/util/predicate-util'
   import DateRangePicker from '@/components/inputs/DateRangePicker.vue'
   import { parseDateString, toISOString } from '@/util/date-utils'
@@ -19,14 +18,30 @@
 
   const form$ = ref()
 
-  const $props = defineProps({
-    criteria: Predicate,
-    close: Function
-  })
+  type Props = {
+    criteria?: Predicate
+    close?: () => void
+  }
 
-  const $emit = defineEmits(['search-options'])
+  type SearchFormModel = {
+    purchased?: string[]
+    createTimestamp?: string[]
+    updateTimestamp?: string[]
+    countryRef?: number
+    stampCollectionRef?: number
+    albumRef?: number
+    catalogueRef?: number
+    sellerRef?: number
+    [key: string]: unknown
+  }
 
-  const model = ref({})
+  const props = defineProps<Props>()
+
+  const emit = defineEmits<{
+    'search-options': [searchParam: Predicate]
+  }>()
+
+  const model = ref<SearchFormModel>({})
 
   const dateKeys = ['purchased', 'updateTimestamp', 'createTimestamp']
 
@@ -52,18 +67,18 @@
   function buildPredicates() {
     const predicates = new Array<Predicate>()
     const keys = Object.keys(model.value)
+    const m = model.value as SearchFormModel
     keys.forEach((key) => {
-      const entry = model.value as KeyIndexable
-      if (entry[key]) {
-        const value = entry[key]
+      const value = m[key]
+      if (value) {
         if (typeof value === 'object' && dateKeys.includes(key)) {
-          processDatePredicates(predicates, value as Array<string>, key)
+          processDatePredicates(predicates, value as string[], key)
         } else {
           predicates.push(
             new Predicate({
               subject: key,
               operator: Operators.EQUALS,
-              value: entry[key]
+              value: value
             })
           )
         }
@@ -75,46 +90,59 @@
   const goSearch = () => {
     const predicates = buildPredicates()
     const searchParam = PredicateUtilities.concat(Operators.AND, predicates)
-    $emit('search-options', searchParam)
+    emit('search-options', searchParam)
     close()
   }
   const close = () => {
-    if ($props.close) {
+    if (props.close) {
       // @ts-ignore
-      $props.close()
+      props.close()
     }
   }
 
   const hasContent = () => {
     const keys = Object.keys(model.value)
-    let result = false
-    keys.forEach((key) => {
-      const val = (model.value as KeyIndexable)[key]
-      if (typeof val === 'object' && val) {
-        result = result || val.length > 0
-      } else {
-        result = result || val > 0
+    const m = model.value as SearchFormModel
+
+    return !keys.some((key) => {
+      const val = m[key]
+      if (!val) return false
+
+      if (Array.isArray(val)) {
+        // Check if array has any non-empty values
+        return val.length > 0
       }
+
+      if (typeof val === 'number') {
+        return val > 0
+      }
+
+      return false
     })
-    return !result
   }
 
   function processParameters() {
-    // @ts-ignore
-    const predicates = $props.criteria.flatten()
+    if (!props.criteria) return
+
+    const predicates = (props.criteria as unknown as { flatten(): Predicate[] }).flatten()
+
     const modelKeys = Object.keys(model.value)
     predicates.forEach((p: Predicate) => {
       const key = p.subject
       if (modelKeys.includes(key)) {
         if (dateKeys.includes(key)) {
-          const d = parseDateString(p.value)
-          const m = model.value as KeyIndexable
-          if (m[key].length === 0) {
-            m[key] = new Array<Date>(2)
+          const value = typeof p.value === 'string' ? p.value : String(p.value)
+          const d = parseDateString(value)
+          if (!Array.isArray(model.value[key])) {
+            model.value[key] = new Array<Date>(2)
           }
-          m[key][p.operator === Operators.GREATER_THAN_EQUAL ? 0 : 1] = d
+          const index = p.operator === Operators.GREATER_THAN_EQUAL ? 0 : 1
+          if (d) {
+            const dates = model.value[key] as Date[]
+            dates[index] = d
+          }
         } else {
-          ;(model.value as KeyIndexable)[key] = p.value
+          model.value[key] = p.value
         }
       }
     })

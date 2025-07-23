@@ -5,8 +5,8 @@
 
   const { t } = useI18n()
 
-  let url = ref('')
-  let validUrl = computed(() => {
+  const url = ref('')
+  const validUrl = computed(() => {
     return url.value !== ''
   })
   onBeforeMount(async () => {

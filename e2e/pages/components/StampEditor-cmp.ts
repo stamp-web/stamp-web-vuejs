@@ -109,7 +109,7 @@ export class StampEditorCmp {
     return this.getLocator().locator('button span:text("Cancel")')
   }
 
-  async hasConflict(): Promise<Boolean> {
+  async hasConflict(): Promise<boolean> {
     // need to wait for the conflict to fire after entry
     await this.page.waitForTimeout(1750)
     return this.getLocator().locator('i[id="conflict-icon"]').isVisible()

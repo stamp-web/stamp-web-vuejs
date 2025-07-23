@@ -114,8 +114,9 @@ describe('ProgressBar', () => {
           }
         })
         fail('Should have failed with max ! > min')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
-        // do nothing
+        expect(ProgressBar).toBeDefined()
       }
     })
   })

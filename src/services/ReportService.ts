@@ -6,11 +6,17 @@ import { EnumHelper, resolvePath } from '@/util/object-utils'
 import localeUtil from '@/util/locale-utils'
 import * as reportStyles from '@/util/reports/report-styles.json'
 import type { Stamp } from '@/models/Stamp'
+import type { Ownership } from '@/models/Ownership'
 import type { Country } from '@/models/entityModels'
 import type { Catalogue } from '@/models/Catalogue'
 import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
 import { ConditionHelper } from '@/models/Condition'
-import type { KeyIndexable } from '@/util/ts/key-accessor'
+
+import {
+  type ReportColumn,
+  type TableConfig,
+  type ReportOptions
+} from '@/services/types/reportTypes'
 
 class ReportService extends BaseService<void> {
   constructor() {
@@ -20,8 +26,9 @@ class ReportService extends BaseService<void> {
     return 'reports'
   }
 
-  async executeReport(reportType: ReportType, options: any = {}): Promise<ReportResult> {
+  async executeReport(reportType: ReportType, options: object = {}): Promise<ReportResult> {
     const opts = { ...options }
+    // @ts-expect-error: need to create a proper type for options
     opts.$reportType = EnumHelper.enumToString(ReportType, reportType)
     const response = await axios.get(this.createURI(opts))
     const result = new ReportResult()
@@ -35,20 +42,14 @@ class ReportService extends BaseService<void> {
     countries: Array<Country>,
     catalogues: Array<Catalogue>,
     reportValue: string,
-    options: {
-      model: {
-        title: string
-        includeNotes: boolean
-        includeCountries: boolean
-      }
-    }
+    options: ReportOptions
   ) {
     const reportModel = options?.model || {}
     const title = reportModel?.title || localeUtil.t('reports.defaultTitle')
     const includeCountries = reportModel?.includeCountries && true
     const includeNotes = reportModel?.includeNotes && true
 
-    const columns = [
+    const columns: ReportColumn[] = [
       { name: ' ', type: 'issues', value: 'stampOwnerships[0]' },
       {
         name: localeUtil.t('reports.number'),
@@ -97,7 +98,7 @@ class ReportService extends BaseService<void> {
     })
     const styles = this.getStandardStyleDefinition()
     const opts = {
-      content: [] as Array<any>,
+      content: [] as Array<unknown>,
       styles: {}
     }
 
@@ -133,27 +134,24 @@ class ReportService extends BaseService<void> {
     stamps: Array<Stamp>,
     countries: Array<Country>,
     catalogues: Array<Catalogue>,
-    config: {}
+    config: TableConfig
   ) {
     const model = {
-      body: [] as Array<any>,
+      body: [] as unknown[],
       headerRows: 1,
-      widths: [] as Array<string>
+      widths: [] as string[]
     }
-    // @ts-ignore
     if (config?.cols) {
-      const tr = [] as Array<any>
-      // @ts-ignore
-      config.cols.forEach((col: any) => {
+      const tr = [] as Array<object>
+      config.cols.forEach((col: ReportColumn) => {
         tr.push({ text: col.name || col.type, style: 'tableHeader' })
         model.widths.push(col.width || 'auto')
       })
       model.body.push(tr)
 
       stamps.forEach((stamp) => {
-        const row = [] as Array<any>
-        // @ts-ignore
-        config.cols.forEach((col: any) => {
+        const row = [] as Array<unknown>
+        config.cols.forEach((col: ReportColumn) => {
           row.push(this.generateTableCellValue(stamp, col, countries, catalogues))
         })
         model.body.push(row)
@@ -164,52 +162,61 @@ class ReportService extends BaseService<void> {
 
   generateTableCellValue(
     stamp: Stamp,
-    col: any,
+    col: ReportColumn,
     countries: Array<Country>,
     catalogues: Array<Catalogue>
   ) {
-    let val = resolvePath(stamp, col.value, '')
-    let result = ''
+    const val = resolvePath(stamp, col.value, '') as unknown
+    let ownership: Ownership
+    let result = '' as unknown
     switch (col.type) {
       case 'catalogueNumber':
         result = val
         break
       case 'condition':
-        result = ConditionHelper.toString(val)
+        result = ConditionHelper.toString(val as number)
         break
       case 'currencyValue':
-        // eslint-disable-next-line no-case-declarations
-        const catalogueId = +resolvePath(stamp, col.additional[0], -1)
-        // eslint-disable-next-line no-case-declarations
+        if (!col.additional?.length) {
+          return ''
+        }
+        const catalogueId = +(resolvePath(stamp, col.additional[0], -1) as string | number)
+
         const catalogue = catalogues.find((c) => {
           return c.id === catalogueId
         })
-        // eslint-disable-next-line no-case-declarations
+
         const currencyCode = catalogue?.code || CurrencyCode.USD
-        result = CurrencyTools.asCurrencyString(val, currencyCode)
+        result = CurrencyTools.asCurrencyString(val as number, currencyCode)
         break
       case 'country':
-        // eslint-disable-next-line no-case-declarations
         const c = countries.find((c) => {
           return c.id === val
         })
         result = c ? c.name : ''
         break
       case 'issues':
-        if (val && val.deception > 0) {
+        ownership = val as Ownership
+        if (ownership && ownership.deception > 0) {
           result = '\u0394'
-        } else if (val && val.defects > 0) {
+        } else if (ownership && ownership.defects > 0) {
           result = '\u00D7'
         }
         break
       case 'notes':
-        result = val?.notes || ''
+        ownership = val as Ownership
+        result = ownership?.notes || ''
         break
       case 'text':
-        col.additional.forEach((a: string) => {
-          val += ' ' + (stamp as KeyIndexable)[a] || ''
+        if (!col.additional?.length) {
+          return ''
+        }
+        let textResult = String(val || '')
+        col.additional.forEach((key: string) => {
+          const additionalValue = resolvePath(stamp, key, '')
+          textResult += ` ${additionalValue || ''}`
         })
-        result = val
+        result = textResult
         break
     }
     return result

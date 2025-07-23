@@ -8,8 +8,8 @@ import { baseModelStore } from '@/stores/baseModelStore'
 
 export type BaseNamedModelStore<T extends PersistedNamedModel> = PiniaStore<
   'entityNamedModelStore',
-  {},
-  { baseSearchOptions(): {} },
+  object,
+  { baseSearchOptions(): object },
   {
     getStampCount(): Promise<CountModel[]>
   },
@@ -20,7 +20,7 @@ export function baseNamedModelStore<T extends PersistedNamedModel>(): any {
   return defineGenericStore<BaseNamedModelStore<T>, BaseModelStore<T>>(
     {
       getters: {
-        baseSearchOptions(): {} {
+        baseSearchOptions(): object {
           return {
             $orderby: 'name asc'
           }

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-export function toISOString(date: Date): String {
+export function toISOString(date: Date): string {
   return new Date(date.getTime() + date.getTimezoneOffset() * 60000).toISOString()
 }
 

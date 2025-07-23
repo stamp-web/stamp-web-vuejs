@@ -3,7 +3,7 @@
   import { albumStore } from '@/stores/albumStore'
   import type { Album } from '@/models/entityModels'
   import type { SelectElement } from '@vueform/vueform'
-  import { scrollOnOpen } from '@/components/inputs/select-helper'
+  import { scrollOnOpen, type SelectElementInstance } from '@/components/inputs/select-helper'
 
   const albumsStore = albumStore()
   const items = ref(new Array<Album>())
@@ -18,7 +18,7 @@
     return $props.name || 'albumRef'
   })
 
-  const onOpen = async (instance: SelectElement) => {
+  const onOpen = async (instance: SelectElementInstance) => {
     scrollOnOpen(instance, propName.value)
   }
 

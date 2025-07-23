@@ -55,7 +55,7 @@ export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
     await this.getGrid().waitForLoadingComplete()
   }
 
-  getCount(): Promise<Number> {
+  getCount(): Promise<number> {
     return this.getGrid().getRowCount()
   }
 }

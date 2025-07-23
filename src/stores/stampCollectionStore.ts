@@ -8,9 +8,9 @@ import BaseModelService from '@/services/BaseModelService'
 
 type StampCollectionStoreType = PiniaStore<
   'stampCollectionStore',
-  {},
-  {},
-  {},
+  object,
+  object,
+  object,
   BaseNamedModelStore<StampCollection>
 >
 

@@ -7,7 +7,7 @@ import type { BaseModelStore } from '@/stores/baseModelStore'
 import { baseModelStore } from '@/stores/baseModelStore'
 import type { EntityList } from '@/models/entityList'
 import BaseModelService from '@/services/BaseModelService'
-// eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
+
 import _cloneDeep from 'lodash-es/cloneDeep'
 import { Operators, Predicate } from 'odata-filter-parser'
 import { PredicateUtilities } from '@/util/predicate-util'
@@ -16,8 +16,8 @@ import { catalogueStore } from '@/stores/catalogueStore'
 
 type StampStoreType = PiniaStore<
   'stampStore',
-  {},
-  {},
+  object,
+  object,
   { checkIfExists(stamp: Stamp, cn: CatalogueNumber): Promise<boolean> },
   BaseModelStore<Stamp>
 >
@@ -30,7 +30,7 @@ export const setActiveCatalogueNumber = (s: Stamp): Stamp => {
   return s
 }
 
-const createFilter = (stamp: Stamp, cn: CatalogueNumber): {} => {
+const createFilter = (stamp: Stamp, cn: CatalogueNumber): object => {
   const searchCriteria = [
     new Predicate({
       subject: 'countryRef',
@@ -65,7 +65,7 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
        * @override
        * @param options
        */
-      async find(options?: {}): Promise<Array<Stamp>> {
+      async find(options?: object): Promise<Array<Stamp>> {
         this.items.list.splice(0, this.items.list.length)
         this.items.loading = true
         const data: EntityList<Stamp> = await this.service.find(options)

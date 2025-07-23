@@ -32,7 +32,7 @@ export class StampViewPage {
     return this.editor
   }
 
-  getCount(): Promise<Number> {
+  getCount(): Promise<number> {
     return this.getGrid().getRowCount()
   }
 

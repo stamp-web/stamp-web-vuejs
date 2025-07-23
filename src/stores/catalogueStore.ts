@@ -6,7 +6,13 @@ import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type BaseManagedService from '@/services/BasedManagedService'
 import CatalogueService from '@/services/CatalogueService'
 
-type CatalogueStoreType = PiniaStore<'catalogueStore', {}, {}, {}, BaseNamedModelStore<Catalogue>>
+type CatalogueStoreType = PiniaStore<
+  'catalogueStore',
+  object,
+  object,
+  object,
+  BaseNamedModelStore<Catalogue>
+>
 
 export const catalogueStore = useStore<CatalogueStoreType, BaseNamedModelStore<Catalogue>>(
   'catalogueStore',

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { GradeHelper, Grade } from '@/models/Grade'
+  import type { ValueRecord } from '@/components/inputs/types/valueRecord'
 
   const $props = defineProps({
     label: String,
@@ -9,7 +10,7 @@
   })
 
   const getGrades = async () => {
-    const grades = new Array<any>()
+    const grades = new Array<ValueRecord<number>>()
     // @ts-ignore
     Object.keys(Grade).forEach((key) => {
       const val = parseInt(key)
