@@ -9,7 +9,7 @@
   import { useI18n } from 'vue-i18n'
   import { computed, nextTick, ref, watch } from 'vue'
 
-  import { type Stamp } from '@/models/Stamp'
+  import type { Stamp } from '@/models/Stamp'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import CountrySelector from '@/components/inputs/CountrySelector.vue'
@@ -31,7 +31,7 @@
   })
 
   const model = defineModel<{
-    properties: Array<String>
+    properties: Array<string>
     albumRef: number
     catalogueRef: number
     countryRef: number
@@ -39,7 +39,7 @@
     updateImagePath: boolean
   }>()
   model.value = {
-    properties: new Array<String>(),
+    properties: [] as string[],
     albumRef: -1,
     catalogueRef: -1,
     countryRef: -1,

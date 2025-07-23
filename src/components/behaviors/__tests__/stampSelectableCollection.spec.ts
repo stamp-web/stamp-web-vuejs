@@ -6,8 +6,8 @@ describe('stampSelectableCollection', () => {
     it('not selected', () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({
-        list: new Array<Stamp>(),
-        selected: new Array<Stamp>()
+        list: [] as Stamp[],
+        selected: [] as Stamp[]
       })
       const stamp = { description: 'test', id: 124 } as Stamp
       expect(sc.isSelected(stamp)).toBe(false)
@@ -52,7 +52,7 @@ describe('stampSelectableCollection', () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({
         list: list,
-        selected: new Array<Stamp>()
+        selected: [] as Stamp[]
       })
       expect(sc.areAllSelected()).toBe(false)
     })
@@ -86,7 +86,7 @@ describe('stampSelectableCollection', () => {
       const sc = stampSelectableCollection()
       sc.initializeCollection({
         list: list,
-        selected: new Array<Stamp>()
+        selected: [] as Stamp[]
       })
       expect(sc.areNoneSelected()).toBe(true)
     })
@@ -152,14 +152,14 @@ describe('stampSelectableCollection', () => {
 
     it('stamp not in collection', async () => {
       const sc = stampSelectableCollection()
-      sc.initializeCollection({ list: list, selected: new Array<Stamp>() })
+      sc.initializeCollection({ list: list, selected: [] as Stamp[] })
       await sc.removeCollectionEntries([{ id: 555, description: 'red' } as Stamp])
       expect(sc.getCollection().length).toBe(2)
     })
 
     it('stamp in collection but not selected', async () => {
       const sc = stampSelectableCollection()
-      sc.initializeCollection({ list: list, selected: new Array<Stamp>() })
+      sc.initializeCollection({ list: list, selected: [] as Stamp[] })
       await sc.removeCollectionEntries([{ id: 125, description: 'test' } as Stamp])
       expect(sc.getCollection().length).toBe(1)
     })
@@ -190,14 +190,14 @@ describe('stampSelectableCollection', () => {
 
     it('stamp not in collection', async () => {
       const sc = stampSelectableCollection()
-      sc.initializeCollection({ list: list, selected: new Array<Stamp>() })
+      sc.initializeCollection({ list: list, selected: [] as Stamp[] })
       await sc.updateCollectionEntry({ id: 555, description: 'red' } as Stamp)
       expect(sc.getCollection().length).toBe(3)
     })
 
     it('stamp updated in collection', async () => {
       const sc = stampSelectableCollection()
-      sc.initializeCollection({ list: list, selected: new Array<Stamp>() })
+      sc.initializeCollection({ list: list, selected: [] as Stamp[] })
       await sc.updateCollectionEntry({ id: 456, description: 'red' } as Stamp)
       expect(sc.getCollection().length).toBe(2)
       expect(sc.getCollection()[1].description).toBe('red')
@@ -238,7 +238,7 @@ describe('stampSelectableCollection', () => {
     ]
 
     it('selected item', () => {
-      const selected = new Array<Stamp>()
+      const selected: Stamp[] = []
       const sc = stampSelectableCollection()
       sc.initializeCollection({
         list: list,
@@ -295,7 +295,7 @@ describe('stampSelectableCollection', () => {
         { id: 125, description: 'test' } as Stamp,
         { id: 456, description: 'foo' } as Stamp
       ]
-      const selected = new Array<Stamp>()
+      const selected: Stamp[] = []
       const sc = stampSelectableCollection()
       sc.initializeCollection({
         list,

@@ -6,7 +6,7 @@
   import { scrollOnOpen } from '@/components/inputs/select-helper'
 
   const albumsStore = albumStore()
-  const items = ref(new Array<Album>())
+  const items = ref([] as Album[])
   const $props = defineProps({
     label: String,
     search: Boolean,

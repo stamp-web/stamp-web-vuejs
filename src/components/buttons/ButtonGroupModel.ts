@@ -1,18 +1,18 @@
 export class ButtonGroupModel {
-  icon: String = ''
-  isToggled: Boolean = false
-  label: String = ''
-  tooltip: String = ''
+  icon: string = ''
+  isToggled: boolean = false
+  label: string = ''
+  tooltip: string = ''
   value: any
 
   constructor() {}
 
   static newInstance(
     value: any,
-    icon: String,
-    isToggled: Boolean,
-    tooltip: String,
-    label: String = ''
+    icon: string,
+    isToggled: boolean,
+    tooltip: string,
+    label: string = ''
   ): ButtonGroupModel {
     const obj = new ButtonGroupModel()
     obj.icon = icon

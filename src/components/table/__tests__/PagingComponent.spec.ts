@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { shallowMount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import PagingComponent from '@/components/table/PagingComponent.vue'
 import type { ComponentPublicInstance } from 'vue'
 

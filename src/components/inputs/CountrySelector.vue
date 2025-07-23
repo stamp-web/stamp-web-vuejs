@@ -8,7 +8,7 @@
   const countriesStore = countryStore()
 
   const model = defineModel()
-  const items = ref(new Array<Country>())
+  const items = ref([] as Country[])
 
   const $props = defineProps({
     label: String,

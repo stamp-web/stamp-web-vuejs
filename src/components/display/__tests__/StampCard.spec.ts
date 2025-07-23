@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { shallowMount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import StampCard from '@/components/display/StampCard.vue'
 import { nextTick } from 'vue'
 

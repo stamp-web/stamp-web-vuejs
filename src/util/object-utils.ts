@@ -56,7 +56,7 @@ export function determineShiftedValues(total: number, highestCount: number) {
   let runningTotal = total
   for (let i = highestCount; i >= 0; i--) {
     if (runningTotal >> i === 1) {
-      const binValue = Math.pow(2, i)
+      const binValue = 2 ** i
       runningTotal = runningTotal - binValue
       values.push(binValue)
     }
@@ -88,12 +88,12 @@ export function extractErrorMessage(err: Error) {
   return message
 }
 
-export function fixFraction(num: string, digits: number = 2): Number {
+export function fixFraction(num: string, digits: number = 2): number {
   const n = parseFloat(num)
   if (Number.isNaN(n)) {
     return 0
   }
-  return Math.floor(n * Math.pow(10, digits)) / Math.pow(10, digits)
+  return Math.floor(n * 10 ** digits) / 10 ** digits
 }
 
 export class EnumHelper {

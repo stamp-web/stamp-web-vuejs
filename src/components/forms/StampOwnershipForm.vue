@@ -11,7 +11,7 @@
   import SellerSelector from '@/components/inputs/SellerSelector.vue'
   import DatePicker from '@/components/inputs/DatePicker.vue'
   import EnumTotallingSelector from '@/components/inputs/EnumTotallingSelector.vue'
-  import { type Ownership } from '@/models/Ownership'
+  import type { Ownership } from '@/models/Ownership'
   import { CurrencyCode, CurrencyTools } from '@/models/CurrencyCode'
   import { Defects } from '@/models/Defects'
   import { Deception } from '@/models/Deception'

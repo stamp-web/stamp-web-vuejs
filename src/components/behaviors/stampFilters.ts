@@ -1,6 +1,6 @@
 import { Operators, Parser, Predicate } from 'odata-filter-parser'
 import { PredicateUtilities } from '@/util/predicate-util'
-import { Condition, ConditionHelper } from '@/models/Condition'
+import { type Condition, ConditionHelper } from '@/models/Condition'
 import type { LocationQuery } from 'vue-router'
 const stampFilters = () => {
   const pushCondition = (conditions: Array<Predicate>, list: Array<Condition>) => {
@@ -23,7 +23,7 @@ const stampFilters = () => {
    */
   const conditionChanged = (predicates: Array<Predicate>, conditionFilter: string) => {
     PredicateUtilities.removeMatchFromArray('condition', predicates)
-    const conditions = new Array<Predicate>()
+    const conditions: Predicate[] = []
 
     switch (conditionFilter) {
       case 'Used':

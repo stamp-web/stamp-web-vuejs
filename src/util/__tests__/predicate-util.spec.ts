@@ -140,7 +140,7 @@ describe('PredicateUtilities', () => {
 
   describe('removeMatchFromArray', () => {
     it('no content', () => {
-      const list = new Array<Predicate>()
+      const list: Predicate[] = []
       PredicateUtilities.removeMatchFromArray('test', list)
       expect(list.length).toBe(0)
     })

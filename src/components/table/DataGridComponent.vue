@@ -3,13 +3,13 @@
   import type { SortChangedEvent } from 'ag-grid-community'
   import type { ColDef } from 'ag-grid-community'
   import type { RowSelectionOptions } from 'ag-grid-community'
-  import { RowNode } from 'ag-grid-community'
+  import type { RowNode } from 'ag-grid-community'
   import '../../../node_modules/ag-grid-community/styles/ag-grid.css'
   import '../../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
   import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
 
   import type { PersistedModel } from '@/models/entityModels'
-  import { ColumnDefinition } from '@/components/table/DataGridModels'
+  import type { ColumnDefinition } from '@/components/table/DataGridModels'
   import { isNil } from '@/util/object-utils'
   import { debounce } from '@/util/timer-utils'
 
@@ -71,7 +71,7 @@
         allowSelectionEvent.value = false
         gridApi.value.setGridOption('rowData', props.rowData)
         dataLoadTime.value = new Date().getTime()
-        setSelectedDebounced(props.selectedData ?? new Array<T>())
+        setSelectedDebounced(props.selectedData ?? [] as T[])
       }
     },
     { deep: true }
@@ -81,7 +81,7 @@
     () => [[props.selectedData]],
     async () => {
       if (!isNil(gridApi.value)) {
-        setSelectedDebounced(props.selectedData ?? new Array<T>())
+        setSelectedDebounced(props.selectedData ?? [] as T[])
       }
     },
     { deep: true }
@@ -104,7 +104,7 @@
   const setSelected = async (selected: Array<T>) => {
     if (selected) {
       let leastIndex = -1
-      const selectedNodes = new Array<RowNode<T>>()
+      const selectedNodes: RowNode<T>[] = []
       allowSelectionEvent.value = false
       // Since this could be debounced called, the grid may be in the process of being destroyed
       if (!gridApi.value.isDestroyed()) {
@@ -142,7 +142,7 @@
       gridApi.value.setGridOption('loading', false)
     }
     resizeColumns()
-    setSelectedDebounced(props.selectedData ?? new Array<T>())
+    setSelectedDebounced(props.selectedData ?? [] as T[])
   }
 
   const onSelected = (event: any) => {

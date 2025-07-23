@@ -3,7 +3,7 @@ import { defineGenericStore } from 'pinia-generic'
 import type { PersistedModel } from '@/models/entityModels'
 import type BaseModelService from '@/services/BaseModelService'
 import { reactive } from 'vue'
-import { EntityList } from '@/models/entityList'
+import type { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
 import _isEmpty from 'lodash-es/isEmpty'
 import _isEqual from 'lodash-es/isEqual'
@@ -22,7 +22,7 @@ export type BaseModelStore<T extends PersistedModel> = PiniaStore<
   {
     remove(model: T): Promise<void>
     find(options?: any): Promise<T[]>
-    findById(id: Number): Promise<T>
+    findById(id: number): Promise<T>
     findRandom(): Promise<T | undefined>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
@@ -78,7 +78,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
           this.inflightPromise = this.service.find(options)
           const data: EntityList<T> = await this.inflightPromise
           this.items.list.splice(0, this.items.list.length)
-          const list = new Array<T>()
+          const list: T[] = []
           data.items.forEach((e) => {
             list.push(createInstance(<T>e))
             this.items.total = data.total

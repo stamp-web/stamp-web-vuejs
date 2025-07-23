@@ -50,7 +50,7 @@
   }
 
   function buildPredicates() {
-    const predicates = new Array<Predicate>()
+    const predicates: Predicate[] = []
     const keys = Object.keys(model.value)
     keys.forEach((key) => {
       const entry = model.value as KeyIndexable

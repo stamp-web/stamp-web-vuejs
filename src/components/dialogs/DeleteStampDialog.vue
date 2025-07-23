@@ -25,7 +25,7 @@
     prefPaths: {} as any
   })
 
-  const selectedStamps = ref(new Array<Stamp>())
+  const selectedStamps = ref([] as Stamp[])
 
   const $emit = defineEmits(['close'])
 
@@ -67,7 +67,7 @@
   }
 
   const imageUrl = (stamp: Stamp) => {
-    let img = undefined
+    let img 
     const value = resolvePath(stamp, 'stampOwnerships[0].img') as string
     if (value) {
       const indx = value.lastIndexOf('/')

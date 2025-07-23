@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { nextTick } from 'vue'
-import { shallowMount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import StampEditor from '@/components/editors/StampEditor.vue'
 import { StampModelHelper } from '@/models/Stamp'
 import { Condition } from '@/models/Condition'

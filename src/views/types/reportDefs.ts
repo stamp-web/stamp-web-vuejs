@@ -1,4 +1,4 @@
-import { type ReportType } from '@/models/ReportType'
+import type { ReportType } from '@/models/ReportType'
 
 export type ReportData = {
   reportType: ReportType

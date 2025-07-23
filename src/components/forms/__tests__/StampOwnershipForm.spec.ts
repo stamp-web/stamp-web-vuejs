@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { shallowMount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import { OwnershipHelper } from '@/models/Ownership'
 import { nextTick } from 'vue'
 import StampOwnershipForm from '@/components/forms/StampOwnershipForm.vue'

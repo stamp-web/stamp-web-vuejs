@@ -9,13 +9,13 @@
   import StampOwnershipForm from '@/components/forms/StampOwnershipForm.vue'
 
   import type { Stamp } from '@/models/Stamp'
-  import { type Ownership } from '@/models/Ownership'
+  import type { Ownership } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { debounce } from '@/util/timer-utils'
   import { fixFraction } from '@/util/object-utils'
   import { StampModelHelper } from '@/models/Stamp'
   import { stampStore } from '@/stores/stampStore'
-  import { type Log } from 'vuejs3-logger'
+  import type { Log } from 'vuejs3-logger'
 
   const { t } = useI18n()
 

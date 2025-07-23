@@ -73,8 +73,8 @@ describe('ReportingService', () => {
           value: 'rate',
           additional: ['description']
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('1d red')
     })
@@ -90,8 +90,8 @@ describe('ReportingService', () => {
           type: 'catalogueNumber',
           value: 'activeCatalogueNumber.number'
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('23a')
     })
@@ -107,8 +107,8 @@ describe('ReportingService', () => {
           type: 'condition',
           value: 'activeCatalogueNumber.condition'
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('Mint')
     })
@@ -128,7 +128,7 @@ describe('ReportingService', () => {
           value: 'activeCatalogueNumber.value',
           additional: ['activeCatalogueNumber.catalogueRef']
         },
-        new Array<Country>(),
+        [] as Country[],
         [createInstance({ id: 23, name: 'some catalogue', code: CurrencyCode.EUR }) as Catalogue]
       )
       expect(obj).toBe('€500.25')
@@ -146,7 +146,7 @@ describe('ReportingService', () => {
           value: 'countryRef'
         },
         [createInstance({ id: 123, name: 'Test Country' })],
-        new Array<Catalogue>()
+        [] as Catalogue[]
       )
       expect(obj).toBe('Test Country')
     })
@@ -162,8 +162,8 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('Δ')
     })
@@ -179,8 +179,8 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('×')
     })
@@ -196,8 +196,8 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('these are the notes')
     })
@@ -213,8 +213,8 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [] as Country[],
+        [] as Catalogue[]
       )
       expect(obj).toBe('')
     })

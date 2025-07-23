@@ -4,7 +4,7 @@
   import type { StampCollection } from '@/models/entityModels'
 
   const store = stampCollectionStore()
-  const items = ref(new Array<StampCollection>())
+  const items = ref([] as StampCollection[])
   const $props = defineProps({
     label: String,
     search: { type: Boolean, default: true },

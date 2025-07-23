@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
 import { setActiveCatalogueNumber } from '@/stores/stampStore'
-import { type Stamp } from '@/models/Stamp'
-import { type CatalogueNumber } from '@/models/CatalogueNumber'
+import type { Stamp } from '@/models/Stamp'
+import type { CatalogueNumber } from '@/models/CatalogueNumber'
 
 describe('stampStore', () => {
   describe('setActiveCatalogueNumber', () => {

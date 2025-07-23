@@ -6,7 +6,7 @@ import type { PiniaStore } from 'pinia-generic'
 import type { BaseModelStore } from '@/stores/baseModelStore'
 import { baseModelStore } from '@/stores/baseModelStore'
 import type { EntityList } from '@/models/entityList'
-import BaseModelService from '@/services/BaseModelService'
+import type BaseModelService from '@/services/BaseModelService'
 // eslint-disable-next-line you-dont-need-lodash-underscore/clone-deep
 import _cloneDeep from 'lodash-es/cloneDeep'
 import { Operators, Predicate } from 'odata-filter-parser'
@@ -69,7 +69,7 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
         this.items.list.splice(0, this.items.list.length)
         this.items.loading = true
         const data: EntityList<Stamp> = await this.service.find(options)
-        const list = new Array<Stamp>()
+        const list: Stamp[] = []
         data.items.forEach((e) => {
           e = setActiveCatalogueNumber(e)
           list.push(e)

@@ -9,7 +9,7 @@
   })
 
   const getGrades = async () => {
-    const grades = new Array<any>()
+    const grades: (any)[] = []
     // @ts-ignore
     Object.keys(Grade).forEach((key) => {
       const val = parseInt(key)

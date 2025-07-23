@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { computed, onBeforeMount, ref } from 'vue'
   import { catalogueStore } from '@/stores/catalogueStore'
-  import { type Stamp } from '@/models/Stamp'
-  import { type CatalogueNumber } from '@/models/CatalogueNumber'
-  import { type Catalogue } from '@/models/Catalogue'
+  import type { Stamp } from '@/models/Stamp'
+  import type { CatalogueNumber } from '@/models/CatalogueNumber'
+  import type { Catalogue } from '@/models/Catalogue'
   import { CurrencyTools } from '@/models/CurrencyCode'
 
   const store = catalogueStore()

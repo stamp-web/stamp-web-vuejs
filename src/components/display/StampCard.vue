@@ -40,7 +40,7 @@
   }
 
   const imageUrl = computed(() => {
-    let img = undefined
+    let img 
     const value = resolvePath(props.stamp, props.path ?? '') as string
     if (value) {
       const indx = value.lastIndexOf('/')
@@ -51,8 +51,8 @@
   })
 
   const fullSizeImage = computed(() => {
-    let img = undefined
-    const value = resolvePath(props.stamp, props.path ?? '') as String
+    let img 
+    const value = resolvePath(props.stamp, props.path ?? '') as string
     if (value) {
       img = `${props.prefPaths?.imagePath ?? ''}/${value}`
     }
@@ -77,7 +77,7 @@
   })
 
   const observer = new IntersectionObserver(
-    function (entries) {
+    (entries) => {
       if (entries[0].isIntersecting === true) {
         imageVisible.value = true
       }

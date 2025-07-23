@@ -1,5 +1,5 @@
 export class ColumnDefinition {
-  cellClass?: Array<String>
+  cellClass?: Array<string>
   cellRenderer?: string
   colId?: string
   comparator?: object

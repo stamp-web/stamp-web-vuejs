@@ -8,7 +8,7 @@ const pageInfo = (filterKey?: string) => {
     active: 1, // current page
     total: 1, // total pages
     size: Number.parseInt(LocalCache.getItem(`${FILTER_KEY}.pageSize`) || '1000'),
-    list: new Array<Object>()
+    list: [] as Object[]
   })
 
   const setActivePage = (page: number): void => {

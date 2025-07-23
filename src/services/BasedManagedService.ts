@@ -1,5 +1,5 @@
 import type { PersistedNamedModel } from '@/models/entityModels'
-import { CountModel } from '@/models/countModel'
+import type { CountModel } from '@/models/countModel'
 import axios from 'axios'
 import BaseModelService from '@/services/BaseModelService'
 
@@ -10,7 +10,7 @@ export default abstract class BaseManagedService<
     const response = await axios.get(
       `/stamp-webservices/rest/${this.getResourceName()}/!countStamps`
     )
-    const list: CountModel[] = new Array<CountModel>()
+    const list: CountModel[] = [] as CountModel[]
     // @ts-ignore
     response.data.forEach((item) => {
       list.push(item as CountModel)

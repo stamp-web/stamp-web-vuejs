@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { shallowMount, VueWrapper } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import GradeSelector from '@/components/inputs/GradeSelector.vue'
 

@@ -11,7 +11,7 @@
   })
 
   const getCurrencies = async () => {
-    const codes = new Array<any>()
+    const codes: (any)[] = []
     // @ts-ignore
     Object.keys(CurrencyCode).forEach((key) => {
       codes.push({ value: key, name: key })

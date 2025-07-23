@@ -3,9 +3,9 @@ import { nextTick, ref } from 'vue'
 
 const stampSelectableCollection = () => {
   const data = ref({
-    list: new Array<Stamp>(),
+    list: [] as Stamp[],
     total: 0,
-    selected: new Array<Stamp>()
+    selected: [] as Stamp[]
   })
 
   const initializeCollection = (theRef: any) => {
@@ -15,7 +15,7 @@ const stampSelectableCollection = () => {
   const setCollection = async (list: Array<Stamp>, clearSelection: boolean = false) => {
     data.value.list = list
     if (clearSelection) {
-      await setCurrentSelected(new Array<Stamp>())
+      await setCurrentSelected([] as Stamp[])
     }
   }
 
@@ -26,8 +26,8 @@ const stampSelectableCollection = () => {
   async function updateCollectionEntry(savedStamp?: Stamp) {
     const currentList = getCollection()
     const currentSelected = getCurrentSelected()
-    const list = new Array<Stamp>()
-    const selected = new Array<Stamp>()
+    const list: Stamp[] = []
+    const selected: Stamp[] = []
     let found = false
     currentList.forEach((stamp: Stamp) => {
       let comparator = stamp
@@ -52,7 +52,7 @@ const stampSelectableCollection = () => {
   async function removeCollectionEntries(stamps: Array<Stamp>) {
     const col = getCollection()
     const sel = getCurrentSelected()
-    setCollection(new Array<Stamp>())
+    setCollection([] as Stamp[])
     await nextTick()
     const findAndRemove = (col: Array<Stamp>, stamp: Stamp) => {
       const selIndex = col

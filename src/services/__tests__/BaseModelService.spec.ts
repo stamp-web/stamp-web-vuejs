@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { Album } from '@/models/entityModels'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
-import { EntityList } from '../../models/entityList'
+import type { EntityList } from '../../models/entityList'
 import BaseModelService from '../BaseModelService'
 
 describe('BaseModelService', () => {

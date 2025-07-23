@@ -9,7 +9,7 @@
   })
 
   const items = async () => {
-    const types = new Array<any>()
+    const types: (any)[] = []
     // @ts-ignore
     Object.keys(CatalogueType).forEach((key) => {
       const val = parseInt(key)

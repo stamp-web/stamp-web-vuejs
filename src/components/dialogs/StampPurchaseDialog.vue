@@ -6,11 +6,11 @@
     TransitionChild,
     TransitionRoot
   } from '@headlessui/vue'
-  import { type Log } from 'vuejs3-logger'
+  import type { Log } from 'vuejs3-logger'
   import { useI18n } from 'vue-i18n'
   import { computed, inject, nextTick, ref, watch } from 'vue'
 
-  import { type Stamp } from '@/models/Stamp'
+  import type { Stamp } from '@/models/Stamp'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
@@ -91,7 +91,7 @@
   const stampCount = computed(() => {
     let count = 0
     if ($props.stamps) {
-      let includeExisting = model.value?.existing
+      const includeExisting = model.value?.existing
       count = $props.stamps.length
       $props.stamps.forEach((s) => {
         if (s.wantList || (!includeExisting && s.stampOwnerships[0].pricePaid > 0)) {
@@ -104,7 +104,7 @@
 
   const calculateValues = () => {
     if ($props.stamps) {
-      let total = calculateStampCatalogueTotal($props.stamps, model.value?.existing)
+      const total = calculateStampCatalogueTotal($props.stamps, model.value?.existing)
       state.value.count = stampCount.value
       $pricePaid.value.validate().then(() => {
         if (!$pricePaid.value.invalid && model.value?.pricePaid && total > 0.0) {

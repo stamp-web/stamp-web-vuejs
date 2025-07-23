@@ -4,7 +4,7 @@ import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type { StampCollection } from '@/models/entityModels'
 import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import StampCollectionService from '@/services/StampCollectionService'
-import BaseModelService from '@/services/BaseModelService'
+import type BaseModelService from '@/services/BaseModelService'
 
 type StampCollectionStoreType = PiniaStore<
   'stampCollectionStore',

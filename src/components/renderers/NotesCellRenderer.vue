@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue'
   import { EnumHelper, resolvePath } from '@/util/object-utils'
-  import { type Ownership } from '@/models/Ownership'
+  import type { Ownership } from '@/models/Ownership'
   import _isEmpty from 'lodash-es/isEmpty'
   import { Defects, DefectsHelper } from '@/models/Defects'
   import { Deception, DeceptionHelper } from '@/models/Deception'

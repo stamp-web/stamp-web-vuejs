@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
 import { countryStore } from '../../stores/countryStore'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, type VueWrapper } from '@vue/test-utils'
 import CountriesView from '@/views/CountriesView.vue'
 import ResizeObserver from 'resize-observer-polyfill'
 

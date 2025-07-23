@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, type VueWrapper } from '@vue/test-utils'
 import PagingSizeInput from '@/components/inputs/PagingSizeInput.vue'
 import { nextTick } from 'vue'
 

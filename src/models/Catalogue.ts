@@ -1,5 +1,5 @@
-import { CurrencyCode } from '@/models/CurrencyCode'
-import { type PersistedNamedModel } from '@/models/entityModels'
+import type { CurrencyCode } from '@/models/CurrencyCode'
+import type { PersistedNamedModel } from '@/models/entityModels'
 import { EnumHelper } from '@/util/object-utils'
 import localeUtil from '@/util/locale-utils'
 
@@ -9,7 +9,7 @@ export interface Catalogue extends PersistedNamedModel {
   code: CurrencyCode
 }
 
-export const enum CatalogueType {
+export enum CatalogueType {
   STANLEY_GIBBONS = 0,
   SCOTT = 1,
   MICHEL = 2,

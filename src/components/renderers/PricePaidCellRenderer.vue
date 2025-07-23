@@ -2,7 +2,7 @@
   import { computed } from 'vue'
   import { resolvePath } from '@/util/object-utils'
   import { CurrencyTools } from '@/models/CurrencyCode'
-  import { type Ownership } from '@/models/Ownership'
+  import type { Ownership } from '@/models/Ownership'
   import { CurrencyCode } from '@/models/CurrencyCode'
 
   const props = defineProps({

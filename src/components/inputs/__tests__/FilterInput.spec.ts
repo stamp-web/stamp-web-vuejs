@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, type VueWrapper } from '@vue/test-utils'
 import FilterInput from '@/components/inputs/FilterInput.vue'
 import { debounce } from '@/util/timer-utils'
 

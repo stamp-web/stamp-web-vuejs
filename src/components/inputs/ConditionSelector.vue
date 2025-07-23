@@ -9,7 +9,7 @@
   })
 
   const getConditions = async () => {
-    const conditions = new Array<any>()
+    const conditions: (any)[] = []
     // @ts-ignore
     Object.keys(Condition).forEach((key) => {
       const val = parseInt(key)

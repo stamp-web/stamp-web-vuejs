@@ -1,5 +1,5 @@
 import BaseManagedService from '@/services/BasedManagedService'
-import { type Catalogue } from '@/models/Catalogue'
+import type { Catalogue } from '@/models/Catalogue'
 
 class CatalogueService extends BaseManagedService<Catalogue> {
   constructor() {

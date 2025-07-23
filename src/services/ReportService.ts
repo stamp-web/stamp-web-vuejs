@@ -177,7 +177,7 @@ class ReportService extends BaseService<void> {
       case 'condition':
         result = ConditionHelper.toString(val)
         break
-      case 'currencyValue':
+      case 'currencyValue': {
         // eslint-disable-next-line no-case-declarations
         const catalogueId = +resolvePath(stamp, col.additional[0], -1)
         // eslint-disable-next-line no-case-declarations
@@ -188,13 +188,15 @@ class ReportService extends BaseService<void> {
         const currencyCode = catalogue?.code || CurrencyCode.USD
         result = CurrencyTools.asCurrencyString(val, currencyCode)
         break
-      case 'country':
+      }
+      case 'country': {
         // eslint-disable-next-line no-case-declarations
         const c = countries.find((c) => {
           return c.id === val
         })
         result = c ? c.name : ''
         break
+      }
       case 'issues':
         if (val && val.deception > 0) {
           result = '\u0394'

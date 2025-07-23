@@ -6,7 +6,7 @@ import CatalogueValueCellRenderer from '@/components/renderers/CatalogueValueCel
 import { catalogueStore } from '@/stores/catalogueStore'
 import { CurrencyCode } from '@/models/CurrencyCode'
 import { Condition } from '@/models/Condition'
-import { type Catalogue } from '@/models/Catalogue'
+import type { Catalogue } from '@/models/Catalogue'
 
 describe('StampCollectionCellRenderer', () => {
   let store = null

@@ -1,5 +1,5 @@
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
-import { type PersistedModel } from '@/models/entityModels'
+import type { PersistedModel } from '@/models/entityModels'
 import { createInstance } from '@/models/entityModels'
 import type { Preference } from '@/models/Preference'
 import { CatalogueNumberHelper } from '@/models/CatalogueNumber'

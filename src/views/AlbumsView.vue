@@ -31,7 +31,7 @@
   const store = albumStore()
 
   const findStamps = (model: Album) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'albumRef',
       operator: Operators.EQUALS,
       value: model.id

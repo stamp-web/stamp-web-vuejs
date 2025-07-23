@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, type VueWrapper } from '@vue/test-utils'
 import SettingsView from '@/views/SettingsView.vue'
 import { preferenceStore } from '@/stores/PreferenceStore'
 import type { Preference } from '@/models/Preference'
@@ -61,7 +61,7 @@ describe('SettingsView', () => {
     expect(spyfindByNameAndCategory).toHaveBeenCalled()
   })
   it('preprocessPreferences', () => {
-    const list: Array<Preference> = new Array<Preference>()
+    const list: Array<Preference> = [] as Preference[]
     list.push({ name: 'stampCollectionRef', category: 'stamps', value: '100' } as Preference)
     list.push({ name: 'countryRef', category: 'stamps', value: '101' } as Preference)
     list.push({ name: 'code', category: 'stamps', value: 'USD' } as Preference)

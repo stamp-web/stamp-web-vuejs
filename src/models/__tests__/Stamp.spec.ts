@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { StampModelHelper } from '@/models/Stamp'
 import { Condition } from '@/models/Condition'
-import { type Preference } from '@/models/Preference'
+import type { Preference } from '@/models/Preference'
 
 describe('StampModelHelper tests', () => {
   describe('newInstance', () => {

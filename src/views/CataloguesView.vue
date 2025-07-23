@@ -4,7 +4,7 @@
   import { Prompt } from '@/components/Prompt'
   import { TransitionRoot } from '@headlessui/vue'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
-  import { type Catalogue } from '@/models/Catalogue'
+  import type { Catalogue } from '@/models/Catalogue'
   import { catalogueStore } from '@/stores/catalogueStore'
   import { createInstance } from '@/models/entityModels'
   import { CurrencyCode } from '@/models/CurrencyCode'
@@ -32,7 +32,7 @@
   const store = catalogueStore()
 
   const findStamps = (model: Catalogue) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'catalogueRef',
       operator: Operators.EQUALS,
       value: model.id

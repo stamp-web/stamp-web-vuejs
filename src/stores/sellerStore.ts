@@ -4,7 +4,7 @@ import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type { Seller } from '@/models/entityModels'
 import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import SellerService from '@/services/SellerService'
-import BaseModelService from '@/services/BaseModelService'
+import type BaseModelService from '@/services/BaseModelService'
 
 type SellerStoreType = PiniaStore<'sellerStore', {}, {}, {}, BaseNamedModelStore<Seller>>
 

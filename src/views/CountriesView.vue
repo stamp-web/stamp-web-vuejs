@@ -31,7 +31,7 @@
   const store = countryStore()
 
   const findStamps = (model: Country) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'countryRef',
       operator: Operators.EQUALS,
       value: model.id

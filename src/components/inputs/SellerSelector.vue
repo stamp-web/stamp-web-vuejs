@@ -6,7 +6,7 @@
   import { scrollOnOpen } from '@/components/inputs/select-helper'
 
   const store = sellerStore()
-  const items = ref(new Array<Seller>())
+  const items = ref([] as Seller[])
 
   const $props = defineProps({
     label: String,

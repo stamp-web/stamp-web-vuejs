@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { mount, type VueWrapper } from '@vue/test-utils'
 import ToggleButton from '@/components/buttons/ToggleButton.vue'
 import { ButtonGroupModel } from '@/components/buttons/ButtonGroupModel'
 import { nextTick } from 'vue'

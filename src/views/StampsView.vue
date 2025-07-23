@@ -35,7 +35,7 @@
   import { OwnershipHelper } from '@/models/Ownership'
   import { ReportType } from '@/models/ReportType'
   import { StampModelUtils } from '@/models/StampModelUtils'
-  import { ReportResult } from '@/models/ReportResult'
+  import type { ReportResult } from '@/models/ReportResult'
   import { CurrencyTools } from '@/models/CurrencyCode'
 
   import reportService from '@/services/ReportService'
@@ -56,7 +56,7 @@
   import { createStampColumnDefs } from '@/views/behaviors/columnDefs'
   import type { ReportData } from '@/views/types/reportDefs'
   import type { ODataParams } from '@/services/types/odataParams'
-  import { ColumnDefinition } from '@/components/table/DataGridModels'
+  import type { ColumnDefinition } from '@/components/table/DataGridModels'
   import type { ColumnControl } from '@/views/types/columnControl'
 
   const { t } = useI18n()
@@ -80,8 +80,8 @@
   const query = ref<ODataParams>({ $skip: 1000, $top: 0, $filter: '', $orderby: '' })
 
   const state = ref({
-    predicates: new Array<Predicate>(),
-    filterPredicates: new Array<Predicate>(),
+    predicates: [] as Predicate[],
+    filterPredicates: [] as Predicate[],
     condition: 'All',
     filterText: '',
     wantList: 'All'
@@ -89,7 +89,7 @@
 
   const purchaseModel = ref({
     show: false,
-    stamps: new Array<Stamp>()
+    stamps: [] as Stamp[]
   })
 
   const reportPrintModel = ref({
@@ -98,13 +98,13 @@
 
   const deleteModel = ref({
     showDelete: false,
-    deletingStamps: new Array<Stamp>()
+    deletingStamps: [] as Stamp[]
   })
 
   const bulkEditModel = ref({
     show: false,
     progress: false,
-    stamps: new Array<Stamp>()
+    stamps: [] as Stamp[]
   })
 
   const stampView = ref()
@@ -259,7 +259,7 @@
   const processPrintReport = async (generate: boolean, options: any) => {
     reportPrintModel.value.show = false
     if (generate) {
-      let opts = reportService.buildReport(
+      const opts = reportService.buildReport(
         getCollection(),
         await countriesStore.find(),
         await cataloguesStore.find(),
@@ -297,8 +297,8 @@
 
   const processDelete = async (stamps: Array<Stamp>) => {
     if (stamps && stamps.length > 0) {
-      const toUpdate = new Array<Stamp>()
-      const promises = new Array<Promise<any>>()
+      const toUpdate: Stamp[] = []
+      const promises: Promise<any>[] = []
       stamps.forEach((s) => {
         toUpdate.push(s)
         promises.push(store.remove(s))

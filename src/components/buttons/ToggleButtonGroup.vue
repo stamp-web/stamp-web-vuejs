@@ -1,13 +1,13 @@
 <script lang="ts" setup>
   import ToggleButton from '@/components/buttons/ToggleButton.vue'
   import { onMounted, ref } from 'vue'
-  import { ButtonGroupModel } from '@/components/buttons/ButtonGroupModel'
+  import type { ButtonGroupModel } from '@/components/buttons/ButtonGroupModel'
 
   const $props = defineProps({
     models: Array<ButtonGroupModel>
   })
 
-  const buttonModels = ref(new Array<ButtonGroupModel>())
+  const buttonModels = ref([] as ButtonGroupModel[])
 
   const $emit = defineEmits(['toggle-changed'])
 
