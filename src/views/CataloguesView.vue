@@ -47,8 +47,16 @@
       headerName: t('table-columns.issue')
     }),
     new ColumnDefinition('name', { headerName: t('table-columns.name') }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
-    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, t('actions.find-stamps')),
+    ColumnDefinition.createActionIconColumn<Catalogue>(
+      'sw-icon-edit',
+      setEditModel,
+      t('actions.edit')
+    ),
+    ColumnDefinition.createActionIconColumn<Catalogue>(
+      'sw-icon-search',
+      findStamps,
+      t('actions.find-stamps')
+    ),
     new ColumnDefinition('count', {
       maxWidth: 120,
       valueFormatter: stampCount,

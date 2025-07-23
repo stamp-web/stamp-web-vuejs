@@ -1,3 +1,4 @@
+import type { KeyIndexable } from '@/util/ts/key-accessor'
 import _isObject from 'lodash-es/isObject'
 import _isArrayLikeObject from 'lodash-es/isArrayLikeObject'
 import _has from 'lodash-es/has'
@@ -6,7 +7,7 @@ import _set from 'lodash-es/set'
 import { AxiosError } from 'axios'
 import LocaleUtils from '@/util/locale-utils'
 
-export function isNil(obj: any): boolean {
+export function isNil(obj: unknown): boolean {
   return obj === null || obj === undefined
 }
 
@@ -14,15 +15,18 @@ export function isNil(obj: any): boolean {
  * Return and resolve the path of the object or return the default value
  * https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-and-arrays-by-string-path
  *
- * @param object
+ * @param obj
  * @param path
  * @param defaultValue
  */
-export function resolvePath(object: any, path: string, defaultValue?: any): any {
-  return path
-    .split(/[.[\]'"]/)
-    .filter((p) => p)
-    .reduce((o, p) => o?.[p] ?? defaultValue, object)
+export function resolvePath(obj: unknown, path: string, defaultValue?: unknown): unknown {
+  return (
+    path
+      .split(/[.[\]'"]/)
+      .filter((p) => p)
+      // @ts-expect-error: cannot resolve type of o
+      .reduce((o, p) => o?.[p] ?? defaultValue, obj)
+  )
 }
 /**
  * Augment the model by defining any missing keys as null, unless they are objects in which case an empty object
@@ -33,20 +37,19 @@ export function resolvePath(object: any, path: string, defaultValue?: any): any 
  * @param model
  * @param m
  */
-export function augmentModel(model: Record<string, any>, m: Record<string, any>): void {
+export function augmentModel(model: object, m: object): void {
   Object.keys(m).forEach((k) => {
-    const value: any = m[k]
+    const value: unknown = (m as KeyIndexable)[k] as unknown
     const obj = _isObject(value)
     const arr = _isArrayLikeObject(value)
     if (!_has(model, k)) {
       const num = _isNumber(value)
       const v = arr ? [] : obj ? {} : num ? 0 : null
       _set(model, k, v)
-    } else if (arr && Array.isArray(value)) {
+    } else if (arr) {
       for (let i = 0; i < value.length; i++) {
-        if (_isObject(value[i]) && _isObject([model[k][i]])) {
-          augmentModel(model[k][i], value[i])
-        }
+        // @ts-expect-error: multiple possible object types
+        augmentModel((model as KeyIndexable)[k][i] as object, (value as KeyIndexable)[i] as object)
       }
     }
   })
@@ -98,21 +101,24 @@ export function fixFraction(num: string, digits: number = 2): number {
 }
 
 export class EnumHelper {
-  public static asEnumArray(type: any, value: number) {
-    if (value <= 0 || isNil(value)) {
+  public static asEnumArray<T extends { [key: string | number]: string | number }>(
+    type: T,
+    value: number | undefined
+  ) {
+    if (isNil(value) || value === undefined || value <= 0) {
       return []
     }
     // valued enums contain twice the keys of a value key so we need to divide by 2
     const v = determineShiftedValues(value, Object.keys(type).length / 2)
-    const enums: any[] = []
+    const enums: unknown[] = []
     v.forEach((ordinal: number) => {
       enums.push(type[type[ordinal]])
     })
     return enums
   }
 
-  public static buildEnumListModel(enumeration: any, tokenName: string) {
-    const keys = Object.keys(enumeration)
+  public static buildEnumListModel(enumeration: object, tokenName: string) {
+    const keys = Object.keys(enumeration as object)
     const items = []
     if (keys) {
       const len = keys.length / 2
@@ -126,7 +132,8 @@ export class EnumHelper {
     return items
   }
 
-  public static enumToString(enumeration: any, value: any): string | undefined {
+  public static enumToString(enumeration: object, value: unknown): string | undefined {
+    // @ts-expect-error: unclear type for enumeration
     for (const k in enumeration) if (enumeration[k] == value) return <string>k
     return undefined
   }

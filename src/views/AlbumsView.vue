@@ -41,8 +41,12 @@
 
   const columnDefs = [
     new ColumnDefinition('name', { sort: 'asc', headerName: t('table-columns.name') }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
-    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, t('actions.find-stamps')),
+    ColumnDefinition.createActionIconColumn<Album>('sw-icon-edit', setEditModel, t('actions.edit')),
+    ColumnDefinition.createActionIconColumn<Album>(
+      'sw-icon-search',
+      findStamps,
+      t('actions.find-stamps')
+    ),
     new ColumnDefinition('count', {
       maxWidth: 120,
       valueFormatter: stampCount,

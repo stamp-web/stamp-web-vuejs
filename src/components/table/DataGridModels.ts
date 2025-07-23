@@ -14,12 +14,12 @@ export class ColumnDefinition {
   sortable?: boolean = true
   sort?: string
   tooltipField?: string
-  tooltipValueGetter?: (params: any) => string
+  tooltipValueGetter?: (params: unknown) => string
   suppressMovable?: boolean = true
   suppressSizeToFit?: boolean = false
   width?: number
 
-  constructor(field: string | null, props?: Partial<any>) {
+  constructor(field: string | null, props?: Partial<Record<string, unknown>>) {
     this.field = field
     Object.assign(this, props)
   }
@@ -35,11 +35,11 @@ export class ColumnDefinition {
       suppressSizeToFit: true
     }
   }
-  static createActionIconColumn(
+  static createActionIconColumn<T = unknown>(
     icon: string,
-    fn?: any,
+    fn?: (model: T, rowIndex?: number) => unknown,
     tooltip?: string,
-    params?: Partial<any>
+    params?: Partial<Record<string, unknown>>
   ): ColumnDefinition {
     const col = new ColumnDefinition(null, params)
     Object.assign(col, ColumnDefinition.getActionIconProperties())

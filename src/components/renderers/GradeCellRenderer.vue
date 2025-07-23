@@ -8,8 +8,9 @@
   })
 
   const grade = computed(() => {
-    const value = +resolvePath(props.params?.data, props.params?.path, -1)
-    return GradeHelper.toString(value)
+    const rawValue = resolvePath(props.params?.data, props.params?.path, -1)
+    const value = Number(rawValue)
+    return Number.isFinite(value) ? GradeHelper.toString(value) : ''
   })
 </script>
 

@@ -8,8 +8,9 @@
   })
 
   const condition = computed(() => {
-    const value = +resolvePath(props.params?.data, props.params?.path, -1)
-    return ConditionHelper.toString(value)
+    const rawValue = resolvePath(props.params?.data, props.params?.path, -1)
+    const value = Number(rawValue)
+    return Number.isFinite(value) ? ConditionHelper.toString(value) : ''
   })
 </script>
 

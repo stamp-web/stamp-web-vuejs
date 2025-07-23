@@ -3,7 +3,7 @@ import type { Condition } from '@/models/Condition'
 import type { Preference } from '@/models/Preference'
 import { createInstance } from '@/models/entityModels'
 
-export interface CatalogueNumber extends PersistedModel {
+export type CatalogueNumber = PersistedModel & {
   value: number
   catalogueRef: number
   number: string

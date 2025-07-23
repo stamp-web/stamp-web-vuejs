@@ -6,7 +6,7 @@ import { CatalogueNumberHelper } from '@/models/CatalogueNumber'
 import { OwnershipHelper, type Ownership } from '@/models/Ownership'
 import { ConditionHelper } from '@/models/Condition'
 
-export interface Stamp extends PersistedModel {
+export type Stamp = PersistedModel & {
   description?: string
   rate?: string
   printing: number

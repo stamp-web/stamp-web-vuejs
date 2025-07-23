@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import stampCount from '@/components/renderers/formatters/StampCountValueFormatter'
 describe('StampCountValueFormatter', () => {
   it('no value object', () => {
-    expect(stampCount({})).toBe('0 Stamps')
+    expect(stampCount(undefined)).toBe('0 Stamps')
   })
 
   it('zero stamps', () => {

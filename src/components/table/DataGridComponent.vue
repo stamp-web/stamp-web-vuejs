@@ -1,11 +1,15 @@
 <script setup lang="ts" generic="T extends PersistedModel">
   import { AgGridVue } from 'ag-grid-vue3'
-  import type { SortChangedEvent } from 'ag-grid-community'
-  import type { ColDef } from 'ag-grid-community'
-  import type { RowSelectionOptions } from 'ag-grid-community'
-  import { RowNode } from 'ag-grid-community'
-  import '../../../node_modules/ag-grid-community/styles/ag-grid.css'
-  import '../../../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+  import {
+    RowNode,
+    type SortChangedEvent,
+    type ColDef,
+    type RowSelectionOptions,
+    type GridReadyEvent,
+    type RowSelectedEvent
+  } from 'ag-grid-community'
+  import '@/../node_modules/ag-grid-community/styles/ag-grid.css'
+  import '@/../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
   import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
 
   import type { PersistedModel } from '@/models/entityModels'
@@ -140,8 +144,8 @@
     resizeColumns()
   })
 
-  const onGridReady = (params: any) => {
-    gridApi.value = params.api
+  const onGridReady = (gridEvent: GridReadyEvent) => {
+    gridApi.value = gridEvent.api
     if (loading.value) {
       gridApi.value.setGridOption('loading', false)
     }
@@ -149,7 +153,7 @@
     setSelectedDebounced(props.selectedData ?? new Array<T>())
   }
 
-  const onSelected = (event: any) => {
+  const onSelected = (event: RowSelectedEvent) => {
     const selected = event.node?.data
     const isSelected = event.node?.isSelected()
     if (selected && allowSelectionEvent.value) {
@@ -157,7 +161,7 @@
     }
   }
 
-  const onSortChanged = (event: SortChangedEvent<any>) => {
+  const onSortChanged = (event: SortChangedEvent) => {
     emit(
       'sortChanged',
       event.api.getColumnState().find((col) => col.sort)
