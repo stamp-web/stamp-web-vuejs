@@ -4,7 +4,7 @@ import { ButtonGroupModel } from '@/components/buttons/ButtonGroupModel'
 import ToggleButtonGroup from '../ToggleButtonGroup.vue'
 describe('ToggleButton', () => {
   describe('toggle-changed emitted on click', () => {
-    let wrapper: VueWrapper<any, any>
+    let wrapper: VueWrapper<InstanceType<typeof ToggleButtonGroup>>
     let buttonModels: Array<ButtonGroupModel>
 
     beforeEach(() => {
@@ -14,7 +14,7 @@ describe('ToggleButton', () => {
         ButtonGroupModel.newInstance('sale', '', false, '')
       ]
       wrapper = mount(ToggleButtonGroup, {
-        propsData: { models: buttonModels }
+        props: { models: buttonModels }
       })
     })
 

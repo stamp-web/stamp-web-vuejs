@@ -1,7 +1,11 @@
 <script lang="ts" setup>
   import { CatalogueModelHelper, CatalogueType } from '@/models/Catalogue'
 
-  const $props = defineProps({
+  type CatType = {
+    value: number
+    name: string
+  }
+  const props = defineProps({
     label: String,
     search: { type: Boolean, default: true },
     name: { type: String, default: 'type' },
@@ -9,7 +13,7 @@
   })
 
   const items = async () => {
-    const types = new Array<any>()
+    const types = [] as CatType[]
     // @ts-ignore
     Object.keys(CatalogueType).forEach((key) => {
       const val = parseInt(key)
@@ -22,7 +26,7 @@
 </script>
 <template>
   <select-element
-    :name="$props.name || 'type'"
+    :name="props.name || 'type'"
     :native="false"
     :search="false"
     label-prop="name"
@@ -31,7 +35,7 @@
     :can-clear="false"
     :append-to-body="true"
     :items="items"
-    :label="$props.label || ''"
-    :rules="$props.rules || ''"
+    :label="props.label || ''"
+    :rules="props.rules || ''"
   ></select-element>
 </template>

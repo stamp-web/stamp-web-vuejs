@@ -8,7 +8,7 @@
     DialogTitle
   } from '@headlessui/vue'
   import { useI18n } from 'vue-i18n'
-   
+
   import _cloneDeep from 'lodash-es/cloneDeep'
 
   import type { Stamp } from '@/models/Stamp'
@@ -16,23 +16,24 @@
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import ImagePreview from '@/components/display/ImagePreview.vue'
   import { resolvePath } from '@/util/object-utils'
+  import type { PreferencePaths } from '@/models/Preference'
 
   const { t } = useI18n()
 
-  const $props = defineProps({
-    isOpen: Boolean,
-    stamps: Array<Stamp>,
-    prefPaths: {} as any
-  })
+  const props = defineProps<{
+    isOpen: boolean
+    stamps: Stamp[]
+    prefPaths: PreferencePaths
+  }>()
 
   const selectedStamps = ref(new Array<Stamp>())
 
   const $emit = defineEmits(['close'])
 
   watch(
-    () => [$props.isOpen],
+    () => [props.isOpen],
     async () => {
-      if ($props.isOpen) {
+      if (props.isOpen) {
         await nextTick()
         setInitialSelected()
       }
@@ -41,8 +42,8 @@
 
   const setInitialSelected = () => {
     selectedStamps.value = []
-    if ($props.stamps && $props.stamps.length > 0) {
-      selectedStamps.value = _cloneDeep($props.stamps)
+    if (props.stamps && props.stamps.length > 0) {
+      selectedStamps.value = _cloneDeep(props.stamps)
     }
   }
   const closeModal = (submit = false) => {
@@ -72,14 +73,14 @@
     if (value) {
       const indx = value.lastIndexOf('/')
       const path = value.substring(0, indx + 1) + 'thumb-' + value.substring(indx + 1)
-      img = `${$props.prefPaths?.thumbPath ?? ''}/${path}`
+      img = `${props.prefPaths?.thumbPath ?? ''}/${path}`
     }
     return img
   }
 </script>
 
 <template>
-  <TransitionRoot appear :show="$props.isOpen" as="template">
+  <TransitionRoot appear :show="props.isOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-1000">
       <TransitionChild
         as="template"
@@ -115,7 +116,7 @@
                 <div
                   class="overflow-y-auto flex flex-col max-h-48 w-full border border-gray-300 mt-2"
                 >
-                  <template v-for="stamp in $props.stamps" :key="stamp.id">
+                  <template v-for="stamp in props.stamps" :key="stamp.id">
                     <div
                       class="p-1 border-b border-gray-300 flex flex-row flex-grow align-middle items-center"
                     >
@@ -150,7 +151,7 @@
                 <span>{{
                   t('display.deleting-count', {
                     count: selectedStamps.length,
-                    total: $props.stamps?.length ?? 0
+                    total: props.stamps?.length ?? 0
                   })
                 }}</span>
                 <PrimaryButton

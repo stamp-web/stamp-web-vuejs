@@ -16,7 +16,7 @@ abstract class entityTestHelper<T extends PersistedModel> {
     return this.getResourceName()
   }
 
-  async create(request: APIRequestContext, payload: any) {
+  async create(request: APIRequestContext, payload: string) {
     const result = await request.post(`/stamp-webservices/rest/${this.getResourceName()}`, {
       data: payload
     })
