@@ -75,7 +75,6 @@
       }).then(async (confirmed) => {
         if (confirmed) {
           await store.remove(sel)
-          // @ts-ignore
           setSelected(undefined)
         }
       })

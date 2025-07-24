@@ -1,4 +1,4 @@
-import type { PiniaStore } from 'pinia-generic'
+import type { PiniaStore, StoreThis } from 'pinia-generic'
 import { defineGenericStore } from 'pinia-generic'
 import type { PersistedModel } from '@/models/entityModels'
 import type BaseModelService from '@/services/BaseModelService'
@@ -7,33 +7,36 @@ import { EntityList } from '@/models/entityList'
 import { createInstance } from '@/models/entityModels'
 import _isEmpty from 'lodash-es/isEmpty'
 import _isEqual from 'lodash-es/isEqual'
+import type { SearchOptions } from '@/stores/types/searchOptions'
 
-export type BaseModelStore<T extends PersistedModel> = PiniaStore<
-  'entityModelStore',
+export type BaseModelStore<T extends PersistedModel, Id extends string = string> = PiniaStore<
+  Id,
   {
     items: { list: Array<T>; total: number; loading: boolean }
-    inflightPromise: any
-    lastOptions: object
+    inflightPromise: Promise<EntityList<T>> | null
+    lastOptions: SearchOptions
   },
   {
     service(): BaseModelService<T>
-    baseSearchOptions(): object
+    baseSearchOptions(): SearchOptions
   },
   {
     remove(model: T): Promise<void>
-    find(options?: any): Promise<T[]>
+    find(options?: SearchOptions): Promise<T[]>
     findById(id: number): Promise<T>
     findRandom(): Promise<T | undefined>
     create(model: T): Promise<T>
     update(model: T): Promise<T>
     getCount(): number
-    postFind(models: T[], options?: any): T[]
+    postFind(models: T[], options?: SearchOptions): T[]
     postCreate(model: T): T
     postUpdate(model: T): T
   }
 >
 
-export function baseModelStore<T extends PersistedModel>(): any {
+export function baseModelStore<T extends PersistedModel, Id extends string = string>(): StoreThis<
+  BaseModelStore<T, Id>
+> {
   return defineGenericStore<BaseModelStore<T>>({
     state: {
       items: reactive({ list: [] as Array<T>, total: 0, loading: false }),
@@ -44,7 +47,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
       service(): BaseModelService<T> {
         throw new Error('Must be implemented')
       },
-      baseSearchOptions() {
+      baseSearchOptions(): SearchOptions {
         return {}
       }
     },
@@ -86,7 +89,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
           // @ts-ignore
           this.items.list = this.postFind(list, options)
           this.items.loading = false
-          this.inflightPromise = undefined
+          this.inflightPromise = null
         }
         return this.items.list as Array<T>
       },
@@ -131,7 +134,7 @@ export function baseModelStore<T extends PersistedModel>(): any {
       },
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      postFind(models: T[], options?: any): T[] {
+      postFind(models: T[], options?: SearchOptions): T[] {
         return models
       },
 

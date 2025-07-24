@@ -13,12 +13,21 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { inject } from 'vue'
+import type { Log } from 'vuejs3-logger'
+
+type vfsFontsPayload = {
+  vfs: { [p: string]: string }
+}
 
 export class PdfGenerator {
+  logger = inject('vuejs3-logger') as Log
+
   constructor() {}
 
-  pdfMaker: any
-  vfsFonts: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PdfMake does not expose types
+  private pdfMaker: any
+  private vfsFonts!: vfsFontsPayload
 
   initialize(): Promise<void> {
     if (!this.pdfMaker) {
@@ -26,21 +35,20 @@ export class PdfGenerator {
       const pdfMake = () => import('pdfmake/build/pdfmake')
       return Promise.all([pdfMake(), vfsFonts()]).then((result) => {
         this.pdfMaker = result[0]
-        this.vfsFonts = result[1]
+        this.vfsFonts = result[1] as vfsFontsPayload
       })
     } else {
       return Promise.resolve()
     }
   }
 
-  printReport(opts: any) {
+  printReport(opts: unknown) {
     this.initialize()
       .then(() => {
-        const docDefinition = opts
-        this.pdfMaker.createPdf(docDefinition, null, null, this.vfsFonts).print()
+        this.pdfMaker.createPdf(opts, null, null, this.vfsFonts).print()
       })
       .catch((e) => {
-        console.log(e)
+        this.logger.error('An error occured generating the report', e)
       })
   }
 }

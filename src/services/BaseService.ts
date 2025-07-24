@@ -29,14 +29,13 @@ export default abstract class BaseService<T> {
     }) as RawAxiosRequestHeaders
   }
 
-  toParameters(options: object): string {
+  toParameters(options: Record<string, string | number | boolean> = {}): string {
     let s = ''
     if (options) {
       Object.keys(options).forEach((k, idx) => {
         if (idx > 0) {
           s += '&'
         }
-        // @ts-ignore
         s += `${k}=${encodeURIComponent(options[k])}`
       })
     }

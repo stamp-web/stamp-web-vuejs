@@ -5,6 +5,7 @@ import { CountModel } from '@/models/countModel'
 import type { BaseModelStore } from '@/stores/baseModelStore'
 import BaseManagedService from '@/services/BasedManagedService'
 import { baseModelStore } from '@/stores/baseModelStore'
+import type { SearchOptions } from '@/stores/types/searchOptions'
 
 export type BaseNamedModelStore<T extends PersistedNamedModel> = PiniaStore<
   'entityNamedModelStore',
@@ -16,7 +17,7 @@ export type BaseNamedModelStore<T extends PersistedNamedModel> = PiniaStore<
   BaseModelStore<T>
 >
 
-export function baseNamedModelStore<T extends PersistedNamedModel>(): any {
+export function baseNamedModelStore<T extends PersistedNamedModel>() {
   return defineGenericStore<BaseNamedModelStore<T>, BaseModelStore<T>>(
     {
       getters: {
@@ -43,8 +44,8 @@ export function baseNamedModelStore<T extends PersistedNamedModel>(): any {
          * @override
          * @param models
          */
-        postFind(models: T[], options?: any): T[] {
-          if (!options || options.$orderby.startsWith('name')) {
+        postFind(models: T[], options?: SearchOptions): T[] {
+          if (!options || options.$orderby?.startsWith('name')) {
             const m = models.sort((a, b) =>
               a.name.toLowerCase().localeCompare(b.name.toLowerCase())
             )

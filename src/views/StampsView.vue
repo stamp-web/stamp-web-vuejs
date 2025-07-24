@@ -208,9 +208,8 @@
   const onSortChanged = (columnDef: ColumnState) => {
     if (columnDef?.sort) {
       query.value.$orderby = OdataUtil.createSort(columnDef.colId, columnDef.sort)
-    } else if (query.value.$orderby) {
-      // @ts-ignore
-      delete query.value.$orderby
+    } else {
+      query.value.$orderby = ''
     }
     gotoPage(1)
   }
@@ -403,10 +402,11 @@
       } else {
         hideEditor()
       }
-      // @ts-ignore
-    } catch (err: Error) {
+    } catch (err: unknown) {
       Prompt.alert({
-        message: t('messages.save-failure', { message: extractErrorMessage(err) }),
+        message: t('messages.save-failure', {
+          message: extractErrorMessage(err as Error)
+        }),
         title: t('titles.save-failure'),
         asHtml: true
       })
@@ -427,8 +427,8 @@
         ]
       }
     } else {
-      // @ts-ignore
       query.value = {
+        ...query.value,
         ...structuredClone(route.query)
       }
       if (query.value.$filter) {

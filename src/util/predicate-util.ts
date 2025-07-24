@@ -55,8 +55,7 @@ export const PredicateUtilities = {
     if (ret && ret.length > 1) {
       return Predicate.concat(op, ret)
     } else {
-      // @ts-ignore
-      if (ret && ret[0] instanceof Predicate) {
+      if (ret && (ret[0] as unknown) instanceof Predicate) {
         return ret[0]
       }
     }

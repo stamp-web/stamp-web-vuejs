@@ -1,8 +1,7 @@
 export function debounce(cb: (...args: unknown[]) => unknown, duration: number) {
-  let timer: number
+  let timer: NodeJS.Timeout
   return (...args: unknown[]) => {
     clearTimeout(timer)
-    // @ts-ignore
     timer = setTimeout(() => {
       cb(...args)
     }, duration)

@@ -24,14 +24,6 @@ describe('BaseService', () => {
       const s = service.toParameters({})
       expect(s).toEqual('')
     })
-    it('null params', () => {
-      const s = service.toParameters(null as unknown as object)
-      expect(s).toEqual('')
-    })
-    it('undefined params', () => {
-      const s = service.toParameters(undefined as unknown as object)
-      expect(s).toEqual('')
-    })
     it('single param', () => {
       const s = service.toParameters({ key: 'value' })
       expect(s).toEqual('key=value')

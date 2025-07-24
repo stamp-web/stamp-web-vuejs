@@ -13,7 +13,6 @@
 
   const toggled = async (model: ButtonGroupModel) => {
     buttonModels.value.forEach((m) => {
-      console.log('.....', model.value, ' ...', m.value)
       m.isToggled = m.value === model.value
     })
     $emit('toggle-changed', model.value)

@@ -1,9 +1,24 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { Album } from '@/models/entityModels'
+import { type Album, createInstance, type PersistedNamedModel } from '@/models/entityModels'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
-import { EntityList } from '../../models/entityList'
-import BaseModelService from '../BaseModelService'
+import { EntityList } from '@/models/entityList'
+import BaseModelService from '@/services/BaseModelService'
+
+vi.mock('axios', () => {
+  const defaultMock = vi.fn()
+  const mockObj = {
+    default: defaultMock,
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    create: vi.fn()
+  }
+  // Copy methods to the default mock function as well
+  Object.assign(defaultMock, mockObj)
+  return mockObj
+})
 
 describe('BaseModelService', () => {
   class MyService extends BaseModelService<Album> {
@@ -16,19 +31,10 @@ describe('BaseModelService', () => {
     }
   }
 
-  class MyAxiosResponse implements AxiosResponse<any> {
-    // @ts-ignore
-    config: InternalAxiosRequestConfig<any> = undefined
-    data: any
-    // @ts-ignore
-    headers: RawAxiosResponseHeaders | AxiosResponseHeaders
+  type MyAxiosResponse = AxiosResponse<PersistedNamedModel> & {
+    data: PersistedNamedModel
     status: number
-    statusText: string = ''
-
-    constructor(status: number, data: any) {
-      this.status = status
-      this.data = data
-    }
+    statusText: string
   }
 
   let service: BaseModelService<Album>
@@ -44,12 +50,10 @@ describe('BaseModelService', () => {
     ]
     beforeEach(() => {
       vi.clearAllMocks()
-      vi.mock('axios')
     })
 
     it('with empty options', async () => {
-      // @ts-ignore
-      axios.get.mockResolvedValue({
+      vi.mocked(axios.get).mockResolvedValue({
         data: {
           albums: albums,
           total: 2
@@ -62,8 +66,7 @@ describe('BaseModelService', () => {
     })
 
     it('with no options', async () => {
-      // @ts-ignore
-      axios.get.mockResolvedValue({
+      vi.mocked(axios.get).mockResolvedValue({
         data: {
           albums: [albums[0]],
           total: 1
@@ -79,7 +82,6 @@ describe('BaseModelService', () => {
   describe('create', () => {
     beforeEach(() => {
       vi.clearAllMocks()
-      vi.mock('axios')
     })
 
     it('simple payload no options', async () => {
@@ -90,8 +92,10 @@ describe('BaseModelService', () => {
         stampCollectionRef: 1,
         description: ''
       }
-      // @ts-ignore
-      axios.mockReturnValue(Promise.resolve(new MyAxiosResponse(201, returnModel)))
+      vi.mocked(axios).mockResolvedValue({
+        status: 201,
+        data: returnModel
+      } as unknown as MyAxiosResponse)
 
       const album: Album = await service.create(model)
       expect(album.id).toBe(42)
@@ -101,14 +105,16 @@ describe('BaseModelService', () => {
   describe('update', () => {
     beforeEach(() => {
       vi.clearAllMocks()
-      vi.mock('axios')
     })
 
     it('simple payload no options', async () => {
-      const model = { id: 42, name: 'test-1', stampCollectionRef: 1, description: '' }
-      // @ts-ignore
-      axios.mockReturnValue(Promise.resolve(new MyAxiosResponse(200, model)))
-
+      const model = createInstance<Album>({
+        id: 42,
+        name: 'test-1',
+        stampCollectionRef: 1,
+        description: ''
+      })
+      vi.mocked(axios).mockResolvedValue({ status: 200, data: model } as unknown as MyAxiosResponse)
       const album: Album = await service.update(model)
       expect(album.id).toBe(42)
     })
@@ -117,22 +123,21 @@ describe('BaseModelService', () => {
   describe('remove', () => {
     beforeEach(() => {
       vi.clearAllMocks()
-      vi.mock('axios')
-      // @ts-ignore
     })
 
     it('simple remove', async () => {
       const model = { id: 42, name: 'test-1', stampCollectionRef: 1, description: '' }
-      // @ts-ignore
-      axios.delete.mockReturnValue(Promise.resolve(new MyAxiosResponse(204)))
+      vi.mocked(axios.delete).mockResolvedValue({
+        status: 204,
+        data: undefined
+      } as unknown as MyAxiosResponse)
       await service.remove(model)
       expect(axios.delete).toHaveBeenCalledOnce()
     })
 
     it('non-persisted model', async () => {
       const model = { id: 0, name: 'test-1', stampCollectionRef: 1, description: '' }
-      // @ts-ignore
-      axios.delete.mockReturnValue(Promise.resolve(new MyAxiosResponse(500)))
+      vi.mocked(axios.delete).mockResolvedValue({ status: 500 } as unknown as MyAxiosResponse)
       try {
         await service.remove(model)
       } catch (e) {
