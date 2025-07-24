@@ -6,9 +6,12 @@
   const store = stampCollectionStore()
   const collections = ref<Array<StampCollection>>()
 
-  const props = defineProps({
-    params: Object as any
-  })
+  type CellParams = {
+    value?: number
+  }
+  const props = defineProps<{
+    params?: CellParams
+  }>()
 
   /**
    * Returns the computed collection name from the given id of the collection for the cell.
@@ -16,14 +19,13 @@
    * so small, it is not worth the effort to store and process the cache.
    */
   const collectionName = computed(() => {
-    const value = props.params ? props.params.value : -1
+    const value = props.params?.value ?? -1
     return findCollectionName(value)
   })
 
   const findCollectionName = (value: number) => {
     let found
     if (collections.value) {
-       
       found = collections.value.find((collection: StampCollection) => {
         return collection.id === value
       })

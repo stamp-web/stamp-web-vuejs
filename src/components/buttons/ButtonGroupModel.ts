@@ -3,12 +3,12 @@ export class ButtonGroupModel {
   isToggled: boolean = false
   label: string = ''
   tooltip: string = ''
-  value: any
+  value: number | string = ''
 
   constructor() {}
 
   static newInstance(
-    value: any,
+    value: number | string,
     icon: string,
     isToggled: boolean,
     tooltip: string,

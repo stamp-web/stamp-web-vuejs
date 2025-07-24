@@ -1,14 +1,15 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import type { Stamp } from '@/models/Stamp'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
 
-  const props = defineProps({
-    params: Object as any,
-    stamp: Object as any
-  })
+  const props = defineProps<{
+    params?: CellRendererParameters
+    stamp: Stamp
+  }>()
 
   const stampDescription = computed(() => {
-    return buildStampName(props.stamp ? props.stamp : props.params?.data)
+    return buildStampName(props.stamp ? props.stamp : (props.params?.data as Stamp))
   })
 
   const buildStampName = (stamp: Stamp) => {

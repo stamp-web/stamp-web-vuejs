@@ -19,14 +19,18 @@ export function isNil(obj: unknown): boolean {
  * @param path
  * @param defaultValue
  */
-export function resolvePath(obj: unknown, path: string, defaultValue?: unknown): unknown {
-  return (
-    path
-      .split(/[.[\]'"]/)
-      .filter((p) => p)
-      // @ts-expect-error: cannot resolve type of o
-      .reduce((o, p) => o?.[p] ?? defaultValue, obj)
-  )
+export function resolvePath(
+  obj: unknown,
+  path: string | undefined,
+  defaultValue?: unknown
+): unknown {
+  return path
+    ? path
+        .split(/[.[\]'"]/)
+        .filter((p) => p)
+        // @ts-expect-error: cannot resolve type of o
+        .reduce((o, p) => o?.[p] ?? defaultValue, obj)
+    : defaultValue
 }
 /**
  * Augment the model by defining any missing keys as null, unless they are objects in which case an empty object

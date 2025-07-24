@@ -2,10 +2,16 @@
   import { computed, ref } from 'vue'
   import { resolvePath } from '@/util/object-utils'
   import ImagePreview from '@/components/display/ImagePreview.vue'
+  import type { PreferencePaths } from '@/models/Preference'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
 
-  const props = defineProps({
-    params: Object as any
-  })
+  type CellParams = CellRendererParameters & {
+    prefs?: PreferencePaths
+  }
+
+  const props = defineProps<{
+    params?: CellParams
+  }>()
 
   const hasImage = ref(false)
 
@@ -19,7 +25,7 @@
     if (value) {
       const indx = value.lastIndexOf('/')
       const path = value.substring(0, indx + 1) + 'thumb-' + value.substring(indx + 1)
-      img = `${props.params.prefs?.thumbPath ?? '/'}/${path}`
+      img = `${props.params?.prefs?.thumbPath ?? '/'}/${path}`
       setHasImage(value)
     }
     return img
@@ -29,7 +35,7 @@
     let img = undefined
     const value = resolvePath(props.params?.data, props.params?.path) as string
     if (value) {
-      img = `${props.params.prefs?.imagePath ?? '/'}/${value}`
+      img = `${props.params?.prefs?.imagePath ?? '/'}/${value}`
     }
     return img
   })

@@ -3,12 +3,14 @@
   import { resolvePath } from '@/util/object-utils'
   import { type Ownership } from '@/models/Ownership'
   import LocaleUtils from '@/util/locale-utils'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
+  import type { Stamp } from '@/models/Stamp'
 
-  const props = defineProps({
-    params: Object as any,
-    stamp: Object as any,
-    path: String
-  })
+  const props = defineProps<{
+    params?: CellRendererParameters
+    stamp?: Stamp
+    path?: string
+  }>()
 
   const tooltip = ref(LocaleUtils.t('messages.cert-exists'))
 

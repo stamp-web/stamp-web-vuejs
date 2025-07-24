@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 import CatalogueValueCellRenderer from '@/components/renderers/CatalogueValueCellRenderer.vue'
@@ -7,6 +7,9 @@ import { catalogueStore } from '@/stores/catalogueStore'
 import { CurrencyCode } from '@/models/CurrencyCode'
 import { Condition } from '@/models/Condition'
 import { type Catalogue } from '@/models/Catalogue'
+import { type CatalogueNumber } from '@/models/CatalogueNumber'
+import { createInstance } from '@/models/entityModels'
+import type { Stamp } from '@/models/Stamp'
 
 describe('StampCollectionCellRenderer', () => {
   let store = null
@@ -30,34 +33,34 @@ describe('StampCollectionCellRenderer', () => {
    * the parameter handling for the cell renderer value
    */
   describe('catalogueValue', () => {
-    let comp: any
+    let comp: VueWrapper<InstanceType<typeof CatalogueValueCellRenderer>>
 
     beforeEach(() => {
-      const cn = {
+      const cn = createInstance<CatalogueNumber>({
         id: 45,
         active: true,
         catalogueRef: 1,
         value: 15.25,
         condition: Condition.MINT
-      }
+      })
+      const stamp = createInstance<Stamp>({
+        id: 15,
+        catalogueNumbers: [cn],
+        activeCatalogueNumber: cn
+      })
       comp = shallowMount(CatalogueValueCellRenderer, {
         propsData: {
           params: {
-            data: {
-              id: 15,
-              wantList: true,
-              catalogueNumbers: [cn],
-              activeCatalogueNumber: cn
-            }
+            data: stamp
           }
         }
       })
-      // @ts-ignore
-      comp.vm.collections = catalogueResult
+      const vm = comp.vm as unknown as { collections: typeof catalogueResult }
+      vm.collections = catalogueResult
     })
     it('test matching id', () => {
-      // @ts-ignore
-      expect(comp.vm.catalogueValue).toBe('$15.25')
+      const vm = comp.vm as unknown as { catalogueValue: string }
+      expect(vm.catalogueValue).toBe('$15.25')
     })
   })
 })

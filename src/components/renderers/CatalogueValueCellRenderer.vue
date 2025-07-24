@@ -5,16 +5,17 @@
   import { type CatalogueNumber } from '@/models/CatalogueNumber'
   import { type Catalogue } from '@/models/Catalogue'
   import { CurrencyTools } from '@/models/CurrencyCode'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
 
   const store = catalogueStore()
   const catalogues = ref<Array<Catalogue>>()
 
-  const props = defineProps({
-    params: Object as any
-  })
+  const props = defineProps<{
+    params?: CellRendererParameters
+  }>()
 
   const catalogueValue = computed(() => {
-    const cn = (props.params.data as Stamp).activeCatalogueNumber as CatalogueNumber
+    const cn = (props.params?.data as Stamp).activeCatalogueNumber as CatalogueNumber
     return buildCatalogueValue(cn)
   })
 

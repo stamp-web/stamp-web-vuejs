@@ -3,15 +3,20 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import ToggleButton from '@/components/buttons/ToggleButton.vue'
 import { ButtonGroupModel } from '@/components/buttons/ButtonGroupModel'
 import { nextTick } from 'vue'
+
+type ToggleButtonInstance = {
+  toggledClasses: string
+}
+
 describe('ToggleButton', () => {
   describe('toggledClasses', () => {
-    let wrapper: VueWrapper<any, any>
+    let wrapper: VueWrapper<InstanceType<typeof ToggleButton>>
     let buttonModel: ButtonGroupModel
 
     beforeEach(() => {
       buttonModel = new ButtonGroupModel()
       wrapper = mount(ToggleButton, {
-        propsData: { model: buttonModel }
+        props: { model: buttonModel }
       })
     })
 
@@ -21,7 +26,8 @@ describe('ToggleButton', () => {
         model: buttonModel
       })
       await nextTick()
-      expect(wrapper.vm.toggledClasses).toBe(' bg-gray-300 ')
+      const vm = wrapper.vm as unknown as ToggleButtonInstance
+      expect(vm.toggledClasses).toBe(' bg-gray-300 ')
     })
 
     it('not toggled', async () => {
@@ -30,12 +36,13 @@ describe('ToggleButton', () => {
         model: buttonModel
       })
       await nextTick()
-      expect(wrapper.vm.toggledClasses).toBe('')
+      const vm = wrapper.vm as unknown as ToggleButtonInstance
+      expect(vm.toggledClasses).toBe('')
     })
   })
 
   describe('clicked', () => {
-    let wrapper: VueWrapper<any, any>
+    let wrapper: VueWrapper<InstanceType<typeof ToggleButton>>
     let buttonModel: ButtonGroupModel
 
     beforeEach(() => {
