@@ -3,7 +3,7 @@
   import { countryStore } from '@/stores/countryStore'
   import type { Country } from '@/models/entityModels'
   import type { SelectElement } from '@vueform/vueform'
-  import { scrollOnOpen } from '@/components/inputs/select-helper'
+  import { scrollOnOpen, type SelectElementInstance } from '@/components/inputs/select-helper'
 
   const countriesStore = countryStore()
 
@@ -20,7 +20,7 @@
   const propName = computed((): string => {
     return $props.name || 'countryRef'
   })
-  const onOpen = async (instance: SelectElement) => {
+  const onOpen = async (instance: SelectElementInstance) => {
     scrollOnOpen(instance, propName.value)
   }
 

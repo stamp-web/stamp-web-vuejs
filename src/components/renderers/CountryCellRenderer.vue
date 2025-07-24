@@ -7,18 +7,22 @@
   const countries = ref<Array<Country>>()
   const isEmbedded = ref(false)
 
-  const props = defineProps({
-    params: Object as any,
-    countryRef: Number,
-    embedded: String
-  })
+  type CellParams = {
+    value?: number
+  }
+
+  const props = defineProps<{
+    params?: CellParams
+    countryRef?: number
+    embedded?: string
+  }>()
 
   /**
    * Returns the computed country name from the given id of the country for the cell.
    */
   const countryName = computed(() => {
     const value = props.params ? props.params.value : props.countryRef
-    return findCountryName(value)
+    return value ? findCountryName(value) : ''
   })
 
   const findCountryName = (value: number) => {

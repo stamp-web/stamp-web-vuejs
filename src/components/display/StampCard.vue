@@ -1,19 +1,22 @@
 <script setup lang="ts">
   import ImagePreview from '@/components/display/ImagePreview.vue'
-  import { watch, computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+  import { watch, computed, onMounted, onUnmounted, ref, useTemplateRef, type PropType } from 'vue'
+  import { useI18n } from 'vue-i18n'
+
   import { resolvePath } from '@/util/object-utils'
   import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
   import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
   import NotesCellRenderer from '@/components/renderers/NotesCellRenderer.vue'
   import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
-  import { useI18n } from 'vue-i18n'
+  import type { Stamp } from '@/models/Stamp'
+  import type { PreferencePaths } from '@/models/Preference'
 
   const { t } = useI18n()
 
   const props = defineProps({
-    stamp: Object as any,
+    stamp: { type: Object as PropType<Stamp>, required: true },
     path: String,
-    prefPaths: {} as any,
+    prefPaths: { type: Object as PropType<PreferencePaths>, default: () => ({}) },
     isSelected: Boolean
   })
 
@@ -52,7 +55,7 @@
 
   const fullSizeImage = computed(() => {
     let img = undefined
-    const value = resolvePath(props.stamp, props.path ?? '') as String
+    const value = resolvePath(props.stamp, props.path ?? '') as string
     if (value) {
       img = `${props.prefPaths?.imagePath ?? ''}/${value}`
     }

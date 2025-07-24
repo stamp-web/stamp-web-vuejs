@@ -19,7 +19,18 @@ export default defineConfig((configEnv) =>
         reporters: ['verbose', 'junit'],
         mockReset: true,
         coverage: {
-          reporter: ['text', 'html']
+          reporter: ['text', 'html'],
+          exclude: [
+            './node_modules/**',
+            './e2e/**',
+            './dist/**',
+            './playwright-report/**',
+            './src/@custom_types/**',
+            './*.js',
+            './*.ts',
+            './*.cjs',
+            './.git/**'
+          ]
         },
         outputFile: {
           junit: './test-results/test-output.xml',

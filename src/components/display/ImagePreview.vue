@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import loadImage from 'blueimp-load-image'
+  import loadImage, { type LoadImageOptions } from 'blueimp-load-image'
   import { onMounted, ref, watch } from 'vue'
   import _isEmpty from 'lodash-es/isEmpty'
-  import type { KeyIndexable } from '@/util/ts/key-accessor'
-  // @ts-ignore
-  import bus from 'vue3-eventbus'
+  import { bus } from 'vue3-eventbus'
+
+  type imageOptions = loadImage.LoadImageOptions & {}
 
   const props = defineProps({
     showNa: Boolean,
@@ -28,16 +28,16 @@
     { deep: true }
   )
 
-  const loadImageByPath = (path: string, options: any) => {
-    return loadImage(path, options).then((data: any) => {
+  const loadImageByPath = (path: string, options: imageOptions) => {
+    return loadImage(path, options).then((data: loadImage.LoadImageResult) => {
       if (data.image && imgBlock.value) {
         imgBlock.value.appendChild(data.image)
       }
     })
   }
 
-  const getOptions = (): {} => {
-    const options = {} as KeyIndexable
+  const getOptions = (): imageOptions => {
+    const options = {} as LoadImageOptions
     if (props.maxWidth) {
       options.maxWidth = parseInt(props.maxWidth)
     }
@@ -70,8 +70,8 @@
    * Attempts to setup the options for the full size image by setting the maximum width and height
    * to the containers dimensions at 95%.
    */
-  const getFullImageOptions = (): {} => {
-    const options = {} as KeyIndexable
+  const getFullImageOptions = (): object => {
+    const options = {} as LoadImageOptions
     const nodes: NodeList = document.querySelectorAll(props.containerSelector ?? 'body')
     if (nodes.length > 0) {
       const node = nodes.item(0) as Element
@@ -103,7 +103,7 @@
     bus.on('showingImage', handleShowEvent)
     const imageUrl = props.fullSizeImageUrl ? props.fullSizeImageUrl : props.imageUrl
     if (imageUrl) {
-      loadImage(imageUrl, getFullImageOptions()).then((data: any) => {
+      loadImage(imageUrl, getFullImageOptions()).then((data: loadImage.LoadImageResult) => {
         showingFullImage.value = true
         if (data.image) {
           fullImage.value.appendChild(data.image)

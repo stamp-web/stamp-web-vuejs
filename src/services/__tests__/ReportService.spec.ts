@@ -6,6 +6,7 @@ import type { Country } from '@/models/entityModels'
 import { createInstance } from '@/models/entityModels'
 import { CurrencyCode } from '@/models/CurrencyCode'
 import { Condition } from '@/models/Condition'
+import type { CatalogueNumber } from '@/models/CatalogueNumber'
 
 describe('ReportingService', () => {
   describe('buildReport', () => {
@@ -14,7 +15,7 @@ describe('ReportingService', () => {
       for (let i = 0; i < 5; i++) {
         const s = StampModelHelper.newInstance()
         Object.assign(s, { rate: `${i + 1}d`, description: 'red' })
-        const cn = s.activeCatalogueNumber ?? ({} as any)
+        const cn = s.activeCatalogueNumber ?? ({} as CatalogueNumber)
         cn.number = `test-${i}`
         cn.catalogueRef = 23
         cn.condition = 0
@@ -158,6 +159,7 @@ describe('ReportingService', () => {
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'Issues',
           type: 'issues',
           value: 'stampOwnerships[0]',
           additional: []
@@ -175,6 +177,7 @@ describe('ReportingService', () => {
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'Issues',
           type: 'issues',
           value: 'stampOwnerships[0]',
           additional: []
@@ -192,6 +195,7 @@ describe('ReportingService', () => {
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'Notes',
           type: 'notes',
           value: 'stampOwnerships[0]',
           additional: []
@@ -209,6 +213,7 @@ describe('ReportingService', () => {
       const obj = ReportService.generateTableCellValue(
         s,
         {
+          name: 'Notes',
           type: 'notes',
           value: 'stampOwnerships[0]',
           additional: []

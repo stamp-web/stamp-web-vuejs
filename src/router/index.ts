@@ -1,8 +1,15 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
+type ImportMetaEnv = {
+  BASE_URL: string
+}
+
+type AppImportMeta = ImportMeta & {
+  env: ImportMetaEnv
+}
+
 const router = createRouter({
-  // @ts-ignore
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory((import.meta as AppImportMeta).env.BASE_URL),
   routes: [
     {
       path: '/browse',

@@ -1,14 +1,23 @@
 import type { Stamp } from '@/models/Stamp'
 import { nextTick, ref } from 'vue'
 
+type selectionOptions = {
+  shiftKey?: boolean
+}
+
+type selecteableCollectionData = {
+  list: Stamp[]
+  total: number
+  selected: Stamp[]
+}
 const stampSelectableCollection = () => {
-  const data = ref({
+  const data = ref<selecteableCollectionData>({
     list: new Array<Stamp>(),
     total: 0,
     selected: new Array<Stamp>()
   })
 
-  const initializeCollection = (theRef: any) => {
+  const initializeCollection = (theRef: selecteableCollectionData) => {
     data.value = theRef
   }
 
@@ -89,7 +98,7 @@ const stampSelectableCollection = () => {
     return data.value.selected.length < 1
   }
 
-  const setSelected = (stamp: Stamp, options?: Partial<any>) => {
+  const setSelected = (stamp: Stamp, options?: selectionOptions) => {
     const indx = data.value.selected.findIndex((s: Stamp) => s.id === stamp.id)
     if (indx < 0) {
       // @ts-ignore

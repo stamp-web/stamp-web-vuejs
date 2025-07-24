@@ -44,8 +44,11 @@ describe('ProgressBar', () => {
           interval: 50
         }
       })
-      await delay(200)
-      expect(comp.vm.count).toBeGreaterThanOrEqual(15)
+      await delay(201)
+      expect(
+        comp.vm.count,
+        'after four cycles the value should be more than 15'
+      ).toBeGreaterThanOrEqual(15)
       const style = comp.vm.$progressBar?.getAttribute('style')?.trim() || ''
       const regex = new RegExp(/width: \d+%/g)
       expect(regex.test(style)).toBeTruthy()
@@ -114,8 +117,9 @@ describe('ProgressBar', () => {
           }
         })
         fail('Should have failed with max ! > min')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
-        // do nothing
+        expect(ProgressBar).toBeDefined()
       }
     })
   })

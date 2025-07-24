@@ -2,14 +2,16 @@
   import { computed } from 'vue'
   import { ConditionHelper } from '@/models/Condition'
   import { resolvePath } from '@/util/object-utils'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
 
-  const props = defineProps({
-    params: Object as any
-  })
+  const props = defineProps<{
+    params?: CellRendererParameters
+  }>()
 
   const condition = computed(() => {
-    const value = +resolvePath(props.params?.data, props.params?.path, -1)
-    return ConditionHelper.toString(value)
+    const rawValue = resolvePath(props.params?.data, props.params?.path, -1)
+    const value = Number(rawValue)
+    return Number.isFinite(value) ? ConditionHelper.toString(value) : ''
   })
 </script>
 

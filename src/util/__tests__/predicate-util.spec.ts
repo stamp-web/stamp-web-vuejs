@@ -5,7 +5,7 @@ import { PredicateUtilities } from '../predicate-util'
 describe('PredicateUtilities', () => {
   describe('concat tests', () => {
     it('concat nothing', () => {
-      const arr: any[] = []
+      const arr = [] as unknown[]
       const result = PredicateUtilities.concat(Operators.AND, arr)
       expect(result).toBeUndefined()
     })

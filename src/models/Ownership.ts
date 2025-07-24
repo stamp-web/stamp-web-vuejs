@@ -10,7 +10,7 @@ import { Defects } from '@/models/Defects'
 import { Deception } from '@/models/Deception'
 import { asLocalDate } from '@/util/date-utils'
 
-export interface Ownership extends PersistedModel {
+export type Ownership = PersistedModel & {
   pricePaid: number
   purchased?: Date
   grade: Grade
@@ -55,12 +55,12 @@ export class OwnershipHelper {
     model['_deception'] = EnumHelper.asEnumArray(Deception, model.deception)
   }
 
-  static fromTagElementView(model: any) {
+  static fromTagElementView(model: Record<string, unknown>) {
     const fieldNames = ['defects', 'deception']
     fieldNames.forEach((name) => {
       let total = 0
       if (model[`_${name}`]) {
-        model[`_${name}`].forEach((v: number) => {
+        ;(model[`_${name}`] as number[]).forEach((v: number) => {
           total += v
         })
         model[name] = total

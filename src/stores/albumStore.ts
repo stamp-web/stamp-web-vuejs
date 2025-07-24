@@ -6,7 +6,7 @@ import type BaseManagedService from '@/services/BasedManagedService'
 import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
 
-type AlbumStoreType = PiniaStore<'albumStore', {}, {}, {}, BaseNamedModelStore<Album>>
+type AlbumStoreType = PiniaStore<'albumStore', object, object, object, BaseNamedModelStore<Album>>
 
 export const albumStore = useStore<AlbumStoreType, BaseNamedModelStore<Album>>(
   'albumStore',

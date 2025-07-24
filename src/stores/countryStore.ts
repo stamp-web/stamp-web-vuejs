@@ -6,7 +6,13 @@ import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
 import CountryService from '@/services/CountryService'
 import type BaseManagedService from '@/services/BasedManagedService'
 
-type CountryStoreType = PiniaStore<'countryStore', {}, {}, {}, BaseNamedModelStore<Country>>
+type CountryStoreType = PiniaStore<
+  'countryStore',
+  object,
+  object,
+  object,
+  BaseNamedModelStore<Country>
+>
 
 export const countryStore = useStore<CountryStoreType, BaseNamedModelStore<Country>>(
   'countryStore',

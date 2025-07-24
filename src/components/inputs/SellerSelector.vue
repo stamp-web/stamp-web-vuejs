@@ -3,7 +3,7 @@
   import { sellerStore } from '@/stores/sellerStore'
   import type { Seller } from '@/models/entityModels'
   import type { SelectElement } from '@vueform/vueform'
-  import { scrollOnOpen } from '@/components/inputs/select-helper'
+  import { scrollOnOpen, type SelectElementInstance } from '@/components/inputs/select-helper'
 
   const store = sellerStore()
   const items = ref(new Array<Seller>())
@@ -18,7 +18,7 @@
   const propName = computed(() => {
     return $props.name || 'sellerRef'
   })
-  const onOpen = async (instance: SelectElement) => {
+  const onOpen = async (instance: SelectElementInstance) => {
     scrollOnOpen(instance, propName.value)
   }
 

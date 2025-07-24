@@ -7,6 +7,7 @@
   import { Parser, Operators, Predicate } from 'odata-filter-parser'
   import type { Log } from 'vuejs3-logger'
   import dayjs from 'dayjs'
+  import { type ColumnState } from 'ag-grid-community'
 
   import editableModel from '@/components/behaviors/editableModel'
   import stampSelectableCollection from '@/components/behaviors/stampSelectableCollection'
@@ -58,6 +59,8 @@
   import type { ODataParams } from '@/services/types/odataParams'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
   import type { ColumnControl } from '@/views/types/columnControl'
+  import type { SearchOptions } from '@/stores/types/searchOptions'
+  import type { ReportOptions } from '@/services/types/reportTypes'
 
   const { t } = useI18n()
 
@@ -202,17 +205,16 @@
       : ''
   }
 
-  const onSortChanged = (columnDef: any) => {
+  const onSortChanged = (columnDef: ColumnState) => {
     if (columnDef?.sort) {
       query.value.$orderby = OdataUtil.createSort(columnDef.colId, columnDef.sort)
-    } else if (query.value.$orderby) {
-      // @ts-ignore
-      delete query.value.$orderby
+    } else {
+      query.value.$orderby = ''
     }
     gotoPage(1)
   }
 
-  const findWithQuery = async (theQuery: any) => {
+  const findWithQuery = async (theQuery: SearchOptions) => {
     logger.info('query info', query.value)
     const results = await store.find(theQuery)
     setCollection(results, true)
@@ -256,17 +258,17 @@
     await fetchReportData()
   }
 
-  const processPrintReport = async (generate: boolean, options: any) => {
+  const processPrintReport = async (generate: boolean, options: unknown /*ReportOptions*/) => {
     reportPrintModel.value.show = false
     if (generate) {
-      let opts = reportService.buildReport(
+      const opts = reportService.buildReport(
         getCollection(),
         await countriesStore.find(),
         await cataloguesStore.find(),
         reporting.value.reportValue,
         {
           model: options
-        }
+        } as ReportOptions
       )
       new PdfGenerator().printReport(opts)
     }
@@ -298,7 +300,7 @@
   const processDelete = async (stamps: Array<Stamp>) => {
     if (stamps && stamps.length > 0) {
       const toUpdate = new Array<Stamp>()
-      const promises = new Array<Promise<any>>()
+      const promises = new Array<Promise<unknown>>()
       stamps.forEach((s) => {
         toUpdate.push(s)
         promises.push(store.remove(s))
@@ -318,7 +320,7 @@
     }
   }
 
-  const processBulkEdit = async (bulkEdit: boolean = false, values: Record<string, any>) => {
+  const processBulkEdit = async (bulkEdit: boolean = false, values: Record<string, unknown>) => {
     if (bulkEdit) {
       const selectedStamps = getCurrentSelectedStamps()
       if (selectedStamps && selectedStamps.length > 0) {
@@ -400,10 +402,11 @@
       } else {
         hideEditor()
       }
-      // @ts-ignore
-    } catch (err: Error) {
+    } catch (err: unknown) {
       Prompt.alert({
-        message: t('messages.save-failure', { message: extractErrorMessage(err) }),
+        message: t('messages.save-failure', {
+          message: extractErrorMessage(err as Error)
+        }),
         title: t('titles.save-failure'),
         asHtml: true
       })
@@ -424,8 +427,8 @@
         ]
       }
     } else {
-      // @ts-ignore
       query.value = {
+        ...query.value,
         ...structuredClone(route.query)
       }
       if (query.value.$filter) {

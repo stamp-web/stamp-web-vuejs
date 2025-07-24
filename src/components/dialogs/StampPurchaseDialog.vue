@@ -54,7 +54,8 @@
           calculateValues()
         }
         $form.value.validate()
-        submitInvalid.value
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const c = submitInvalid.value
       }
     }
   )
@@ -91,7 +92,7 @@
   const stampCount = computed(() => {
     let count = 0
     if ($props.stamps) {
-      let includeExisting = model.value?.existing
+      const includeExisting = model.value?.existing
       count = $props.stamps.length
       $props.stamps.forEach((s) => {
         if (s.wantList || (!includeExisting && s.stampOwnerships[0].pricePaid > 0)) {
@@ -104,7 +105,7 @@
 
   const calculateValues = () => {
     if ($props.stamps) {
-      let total = calculateStampCatalogueTotal($props.stamps, model.value?.existing)
+      const total = calculateStampCatalogueTotal($props.stamps, model.value?.existing)
       state.value.count = stampCount.value
       $pricePaid.value.validate().then(() => {
         if (!$pricePaid.value.invalid && model.value?.pricePaid && total > 0.0) {

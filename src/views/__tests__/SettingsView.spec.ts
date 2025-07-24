@@ -6,8 +6,18 @@ import SettingsView from '@/views/SettingsView.vue'
 import { preferenceStore } from '@/stores/PreferenceStore'
 import type { Preference } from '@/models/Preference'
 
+interface SettingsViewComponent {
+  model: {
+    countryRef: number
+    stampCollectionRef: number
+    code: string
+  }
+  savePreferences: () => Promise<void>
+  preprocessPreferences: (list: Array<Preference>) => void
+}
+
 describe('SettingsView', () => {
-  let store: any = null
+  let store: ReturnType<typeof preferenceStore>
   let wrapper: VueWrapper
 
   beforeEach(() => {
@@ -34,11 +44,9 @@ describe('SettingsView', () => {
   })
 
   it('savePreferences', async () => {
-    // @ts-ignore
-    const model = wrapper.vm.model
-    model.countryRef = 115
+    const component = wrapper.vm as unknown as SettingsViewComponent
+    component.model.countryRef = 115
 
-    //
     const findByNameAndCategory = vi.fn().mockImplementation((name, category) => {
       if (category === 'stamps' && name === 'countryRef') {
         return Promise.resolve({
@@ -52,12 +60,10 @@ describe('SettingsView', () => {
     })
     const spyfindByNameAndCategory = vi.spyOn(store, 'findByNameAndCategory')
     const spyUpdate = vi.spyOn(store, 'update')
-    spyUpdate.mockReturnValue(() => {
-      return Promise.resolve({} as Preference)
-    })
+    spyUpdate.mockReturnValue(Promise.resolve({} as Preference))
     spyfindByNameAndCategory.mockImplementation(findByNameAndCategory)
-    // @ts-ignore
-    await wrapper.vm.savePreferences()
+
+    await component.savePreferences()
     expect(spyfindByNameAndCategory).toHaveBeenCalled()
   })
   it('preprocessPreferences', () => {
@@ -66,12 +72,10 @@ describe('SettingsView', () => {
     list.push({ name: 'countryRef', category: 'stamps', value: '101' } as Preference)
     list.push({ name: 'code', category: 'stamps', value: 'USD' } as Preference)
 
-    // @ts-ignore
-    wrapper.vm.preprocessPreferences(list)
-    // @ts-ignore
-    const model = wrapper.vm.model
-    expect(model.countryRef).toBe(101)
-    expect(model.stampCollectionRef).toBe(100)
-    expect(model.code).toBe('USD')
+    const component = wrapper.vm as unknown as SettingsViewComponent
+    component.preprocessPreferences(list)
+    expect(component.model.countryRef).toBe(101)
+    expect(component.model.stampCollectionRef).toBe(100)
+    expect(component.model.code).toBe('USD')
   })
 })

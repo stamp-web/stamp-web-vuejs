@@ -3,7 +3,7 @@
   import { catalogueStore } from '@/stores/catalogueStore'
   import type { Catalogue } from '@/models/Catalogue'
   import type { SelectElement } from '@vueform/vueform'
-  import { scrollOnOpen } from '@/components/inputs/select-helper'
+  import { scrollOnOpen, type SelectElementInstance } from '@/components/inputs/select-helper'
 
   const cataloguesStore = catalogueStore()
   const items = ref(new Array<Catalogue>())
@@ -19,7 +19,7 @@
   const propName = computed((): string => {
     return $props.name || 'catalogueRef'
   })
-  const onOpen = async (instance: SelectElement) => {
+  const onOpen = async (instance: SelectElementInstance) => {
     scrollOnOpen(instance, propName.value)
   }
 

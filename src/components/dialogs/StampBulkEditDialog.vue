@@ -31,7 +31,7 @@
   })
 
   const model = defineModel<{
-    properties: Array<String>
+    properties: Array<string>
     albumRef: number
     catalogueRef: number
     countryRef: number
@@ -39,7 +39,7 @@
     updateImagePath: boolean
   }>()
   model.value = {
-    properties: new Array<String>(),
+    properties: new Array<string>(),
     albumRef: -1,
     catalogueRef: -1,
     countryRef: -1,

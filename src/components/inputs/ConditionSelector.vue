@@ -1,5 +1,6 @@
 <script lang="ts" setup>
   import { Condition, ConditionHelper } from '@/models/Condition'
+  import type { ValueRecord } from '@/components/inputs/types/valueRecord'
 
   const $props = defineProps({
     label: String,
@@ -9,7 +10,7 @@
   })
 
   const getConditions = async () => {
-    const conditions = new Array<any>()
+    const conditions = new Array<ValueRecord<number>>()
     // @ts-ignore
     Object.keys(Condition).forEach((key) => {
       const val = parseInt(key)

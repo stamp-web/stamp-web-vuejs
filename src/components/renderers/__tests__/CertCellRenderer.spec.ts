@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
+import { createInstance } from '@/models/entityModels'
+import type { Stamp } from '@/models/Stamp'
+
 describe('CertCellRenderer', () => {
   describe('computed', () => {
     it('no stamp in row', () => {
@@ -33,10 +36,10 @@ describe('CertCellRenderer', () => {
     })
 
     it('has no certificate', () => {
-      const stamp = {
+      const stamp = createInstance<Stamp>({
         id: 456,
         stampOwnerships: [{ id: 123, cert: false }]
-      }
+      })
       const wrapper = shallowMount(CertCellRenderer, {
         propsData: {
           params: {

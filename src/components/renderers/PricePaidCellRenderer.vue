@@ -4,10 +4,11 @@
   import { CurrencyTools } from '@/models/CurrencyCode'
   import { type Ownership } from '@/models/Ownership'
   import { CurrencyCode } from '@/models/CurrencyCode'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
 
-  const props = defineProps({
-    params: Object as any
-  })
+  const props = defineProps<{
+    params?: CellRendererParameters
+  }>()
 
   const pricePaid = computed(() => {
     const ownership = resolvePath(props.params?.data, props.params?.path) as Ownership

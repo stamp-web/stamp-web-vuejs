@@ -22,28 +22,27 @@ export enum HttpMethod {
 export default abstract class BaseService<T> {
   protected abstract getResourceName(): string
 
-  augmentHeaders(headers?: {}): RawAxiosRequestHeaders {
+  augmentHeaders(headers?: object): RawAxiosRequestHeaders {
     const h = headers || {}
     return merge(h, {
       'Content-Type': 'application/json'
     }) as RawAxiosRequestHeaders
   }
 
-  toParameters(options: Object): string {
+  toParameters(options: Record<string, string | number | boolean> = {}): string {
     let s = ''
     if (options) {
       Object.keys(options).forEach((k, idx) => {
         if (idx > 0) {
           s += '&'
         }
-        // @ts-ignore
         s += `${k}=${encodeURIComponent(options[k])}`
       })
     }
     return s
   }
 
-  createURI(options: Object | undefined, id?: number | string): string {
+  createURI(options: object | undefined, id?: number | string): string {
     let uri = `/stamp-webservices/rest/${this.getResourceName()}`
     if (id) {
       uri += `/${id}`

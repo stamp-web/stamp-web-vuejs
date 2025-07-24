@@ -1,10 +1,21 @@
 <script setup lang="ts">
   import { computed } from 'vue'
+  import type { Stamp } from '@/models/Stamp'
+  import type { CellRendererParameters } from '@/components/renderers/types/cellRendererParameters'
 
-  const props = defineProps({
-    params: Object as any,
-    stamp: Object as any
-  })
+  type ColDef = {
+    colId?: string
+    [key: string]: unknown
+  }
+
+  type CellParams = CellRendererParameters & {
+    colDef?: ColDef
+  }
+
+  const props = defineProps<{
+    params?: CellParams
+    stamp?: Stamp
+  }>()
 
   const text = computed(() => {
     const params = props.params

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { AxiosError } from 'axios'
+import { AxiosError, type AxiosResponse } from 'axios'
 import {
   isNil,
   augmentModel,
@@ -11,7 +11,7 @@ import {
   fixFraction
 } from '@/util/object-utils'
 import { Defects } from '@/models/Defects'
-import { Deception } from '../../models/Deception'
+import { Deception } from '@/models/Deception'
 
 describe('object-utils', () => {
   describe('isNil', () => {
@@ -41,7 +41,7 @@ describe('object-utils', () => {
   })
 
   describe('augmentModel', () => {
-    let model: Object
+    let model: object
 
     beforeEach(() => {
       model = {
@@ -54,9 +54,9 @@ describe('object-utils', () => {
         obj: { key: 'value' },
         arr: [5, 7, 9]
       })
-      // @ts-ignore
+      // @ts-expect-error: adding key that was not present
       expect(model.obj).toStrictEqual({})
-      // @ts-ignore
+      // @ts-expect-error: adding key that was not present
       expect(model.arr).toStrictEqual([])
     })
 
@@ -64,7 +64,7 @@ describe('object-utils', () => {
       augmentModel(model, {
         d: 42
       })
-      // @ts-ignore
+      // @ts-expect-error: adding key that was not present
       expect(model.d).toBe(0)
     })
 
@@ -72,7 +72,7 @@ describe('object-utils', () => {
       augmentModel(model, {
         d: 'foo'
       })
-      // @ts-ignore
+      // @ts-expect-error: adding key that was not present
       expect(model.d).toBe(null)
     })
 
@@ -90,7 +90,7 @@ describe('object-utils', () => {
           { c: 'bar', id: 21 }
         ]
       })
-      // @ts-ignore
+      // @ts-expect-error: adding key that was not present
       expect(m.d).toStrictEqual([])
     })
   })
@@ -157,23 +157,21 @@ describe('object-utils', () => {
     })
     describe('asEnumArray tests', () => {
       it('empty defects nothing is determined', () => {
-        // @ts-ignore
-        const v = EnumHelper.asEnumArray(Defects, undefined)
+        const v = EnumHelper.asEnumArray(Defects, undefined) as string[]
         expect(v).toStrictEqual([])
       })
 
       it('value for enum is 0', () => {
-        // @ts-ignore
-        const v = EnumHelper.asEnumArray(Defects, 0)
+        const v = EnumHelper.asEnumArray(Defects, 0) as string[]
         expect(v).toStrictEqual([])
       })
 
       it('single defect is determined', () => {
-        let v = EnumHelper.asEnumArray(Defects, Defects.CLIPPED)
+        let v = EnumHelper.asEnumArray(Defects, Defects.CLIPPED) as string[]
         expect(v.length).toBe(1)
         expect(v[0].toString()).toEqual(Defects.CLIPPED.toString())
 
-        v = EnumHelper.asEnumArray(Defects, Defects.FADING)
+        v = EnumHelper.asEnumArray(Defects, Defects.FADING) as string[]
         expect(v.length).toBe(1)
         expect(v[0].toString()).toBe(Defects.FADING.toString())
       })
@@ -182,7 +180,7 @@ describe('object-utils', () => {
         const v = EnumHelper.asEnumArray(
           Defects,
           Defects.CLIPPED + Defects.BLEEDING + Defects.CREASED
-        )
+        ) as string[]
         expect(v.length).toBe(3)
         expect(v[0]).toBe(Defects.BLEEDING)
         expect(v[1]).toBe(Defects.CLIPPED)
@@ -200,19 +198,18 @@ describe('object-utils', () => {
 
     it('Reference Error', () => {
       try {
-        // @ts-ignore
+        // @ts-expect-error: Purposely uses an undefined object
         foo.substring(1)
-      } catch (err: any) {
-        const msg = extractErrorMessage(err)
+      } catch (err: unknown) {
+        const msg = extractErrorMessage(err as Error)
         expect(msg).toBe('foo is not defined')
       }
     })
 
     it('Axios Error', () => {
-      // @ts-ignore
       const err = new AxiosError('axios test message', undefined, undefined, undefined, {
         data: 'axios data message'
-      })
+      } as AxiosResponse)
       const msg = extractErrorMessage(err)
       expect(msg).toBe('axios data message')
     })

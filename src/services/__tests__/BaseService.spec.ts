@@ -24,14 +24,6 @@ describe('BaseService', () => {
       const s = service.toParameters({})
       expect(s).toEqual('')
     })
-    it('null params', () => {
-      const s = service.toParameters(null as unknown as Object)
-      expect(s).toEqual('')
-    })
-    it('undefined params', () => {
-      const s = service.toParameters(undefined as unknown as Object)
-      expect(s).toEqual('')
-    })
     it('single param', () => {
       const s = service.toParameters({ key: 'value' })
       expect(s).toEqual('key=value')
@@ -50,12 +42,12 @@ describe('BaseService', () => {
 
   describe('createURI', () => {
     it('no options and no id', () => {
-      const uri = service.createURI(undefined as unknown as Object)
+      const uri = service.createURI(undefined as unknown as object)
       expect(uri).toEqual('/stamp-webservices/rest/albums')
     })
 
     it('no options with an id', () => {
-      const uri = service.createURI(undefined as unknown as Object, 42)
+      const uri = service.createURI(undefined as unknown as object, 42)
       expect(uri).toEqual('/stamp-webservices/rest/albums/42')
     })
 

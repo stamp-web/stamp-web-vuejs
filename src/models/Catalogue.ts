@@ -3,7 +3,7 @@ import { type PersistedNamedModel } from '@/models/entityModels'
 import { EnumHelper } from '@/util/object-utils'
 import localeUtil from '@/util/locale-utils'
 
-export interface Catalogue extends PersistedNamedModel {
+export type Catalogue = PersistedNamedModel & {
   issue: number
   type: number
   code: CurrencyCode

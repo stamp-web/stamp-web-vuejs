@@ -1,24 +1,23 @@
-export interface PersistedModel {
+export type PersistedModel = {
   id: number
 }
-export interface PersistedNamedModel extends PersistedModel {
+export type PersistedNamedModel = PersistedModel & {
   name: string
   description?: string
   count?: number
 }
 
-export interface Country extends PersistedNamedModel {}
+export type Country = PersistedNamedModel
 
-export interface Album extends PersistedNamedModel {
+export type Album = PersistedNamedModel & {
   stampCollectionRef: number
 }
-export interface StampCollection extends PersistedNamedModel {}
+export type StampCollection = PersistedNamedModel
 
-export interface Seller extends PersistedNamedModel {
+export type Seller = PersistedNamedModel & {
   stampCollectionRef: number
 }
 
-export function createInstance<T>(data: Object) {
-  const c = data
-  return <T>c
+export function createInstance<T>(data: Record<string, unknown>) {
+  return (<T>data) as T
 }

@@ -30,8 +30,8 @@ const useFilterableCollection = (
    * to store this in the local cache immediately since the local cache is only used for page refresh
    * restoring the local cache.
    */
-  const updateLocalCache = debounce((value: string) => {
-    LocalCache.setItem(filterKey, value)
+  const updateLocalCache = debounce((value) => {
+    LocalCache.setItem(filterKey, value as string)
   }, 500)
 
   const setCollection = (list: PersistedNamedModel[]) => {
@@ -56,17 +56,14 @@ const useFilterableCollection = (
 
   const setFilterString = (str: string) => {
     const trimmed = str.trim()
-    console.log('set the filter string', trimmed)
     if (collection.filterString !== trimmed) {
       collection.filterString = trimmed
-      console.log('yep it was unique')
       updateLocalCache(trimmed)
       //const list = filteredList.value
     }
   }
 
   const setSelected = (sel: PersistedNamedModel | undefined) => {
-    console.log('selected is', sel)
     collection.selected = sel
   }
 

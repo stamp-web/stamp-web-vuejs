@@ -1,16 +1,28 @@
 import { nextTick } from 'vue'
 import type { SelectElement } from '@vueform/vueform'
 
-export async function scrollOnOpen(instance: SelectElement, name: string, prop = 'id') {
+type SelectElementInput = HTMLDivElement & {
+  dropdown: HTMLElement
+}
+
+export type SelectElementInstance = SelectElement & {
+  data: Record<string, unknown>
+  items: Array<{
+    name: string
+    [key: string]: unknown
+  }>
+}
+
+export async function scrollOnOpen(
+  instance: SelectElementInstance | undefined,
+  name: string,
+  prop = 'id'
+) {
   if (instance && instance.items) {
-    const option = (instance.items as Array<any>).find((o: any) => {
-      // @ts-ignore
-      return o[prop] === instance.data[name]
-    })
+    const option = instance.items.find((o) => o[prop] === instance.data[name])
     if (option) {
-      const values: Array<HTMLElement> = Array.from(
-        // @ts-ignore
-        instance.input.dropdown.querySelectorAll('span')
+      const values = Array.from(
+        (instance.input as SelectElementInput).dropdown.querySelectorAll('span')
       )
       if (values) {
         const v = values.find((val: HTMLElement) => {

@@ -31,7 +31,7 @@
   const store = sellerStore()
 
   const findStamps = (model: Seller) => {
-    let p = new Predicate({
+    const p = new Predicate({
       subject: 'sellerRef',
       operator: Operators.EQUALS,
       value: model.id
@@ -41,8 +41,16 @@
 
   const columnDefs = [
     new ColumnDefinition('name', { sort: 'asc', headerName: t('table-columns.name') }),
-    ColumnDefinition.createActionIconColumn('sw-icon-edit', setEditModel, t('actions.edit')),
-    ColumnDefinition.createActionIconColumn('sw-icon-search', findStamps, t('actions.find-stamps')),
+    ColumnDefinition.createActionIconColumn<Seller>(
+      'sw-icon-edit',
+      setEditModel,
+      t('actions.edit')
+    ),
+    ColumnDefinition.createActionIconColumn<Seller>(
+      'sw-icon-search',
+      findStamps,
+      t('actions.find-stamps')
+    ),
     new ColumnDefinition('count', {
       maxWidth: 120,
       valueFormatter: stampCount,
@@ -67,7 +75,6 @@
       }).then(async (confirmed) => {
         if (confirmed) {
           await store.remove(sel)
-          // @ts-ignore
           setSelected(undefined)
         }
       })

@@ -43,7 +43,7 @@
     Object.keys(model.value).forEach(async (key) => {
       const pref: Preference = await prefStore.findByNameAndCategory(key, 'stamps')
       const v = (model.value as KeyIndexable)[key]
-      const value = v ? v.toString() : null
+      const value = v ? v.toString() : undefined
       if (pref && pref.value !== value) {
         pref.value = value
         await prefStore.update(pref)
