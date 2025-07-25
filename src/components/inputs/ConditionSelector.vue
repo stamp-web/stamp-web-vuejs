@@ -11,7 +11,6 @@
 
   const getConditions = async () => {
     const conditions = new Array<ValueRecord<number>>()
-    // @ts-ignore
     Object.keys(Condition).forEach((key) => {
       const val = parseInt(key)
       if (!Number.isNaN(val)) {

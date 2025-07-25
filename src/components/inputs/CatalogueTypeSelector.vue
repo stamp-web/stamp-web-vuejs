@@ -14,7 +14,6 @@
 
   const items = async () => {
     const types = [] as CatType[]
-    // @ts-ignore
     Object.keys(CatalogueType).forEach((key) => {
       const val = parseInt(key)
       if (!Number.isNaN(val)) {

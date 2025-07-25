@@ -4,52 +4,58 @@ import { OwnershipHelper } from '@/models/Ownership'
 import { nextTick } from 'vue'
 import StampOwnershipForm from '@/components/forms/StampOwnershipForm.vue'
 
+type StampOwnershipFormType = InstanceType<typeof StampOwnershipForm> & {
+  regenerateImagePath: () => void
+  copyToClipboard: () => void
+}
 describe('StampOwnershipFrame', () => {
   describe('regenerateImagePath', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampOwnershipFormType>
 
     it('verify event is raised if there is an image', async () => {
       const owner = OwnershipHelper.newInstance()
       owner.img = 'test country/used/45.png'
 
       wrapper = shallowMount(StampOwnershipForm, {
-        propsData: {
+        props: {
           modelValue: owner,
-          // @ts-ignore
           'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
         }
-      })
+      }) as VueWrapper<StampOwnershipFormType>
       await nextTick()
-      // @ts-ignore
       wrapper.vm.regenerateImagePath()
       expect(wrapper.emitted()).toHaveProperty('regenerate-image-path')
     })
   })
 
   describe('copyToClipboard', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampOwnershipFormType>
 
     it('verify text is in clipboard buffer', async () => {
       const owner = OwnershipHelper.newInstance()
       owner.img = 'test country/used/44aa.png'
-      // @ts-ignore
-      global.navigator.clipboard = {
+
+      const mockClipboard = {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        writeText: (s: string) => {}
-      } as Clipboard
-      const writeText = vi.spyOn(global.navigator.clipboard, 'writeText')
+        writeText: vi.fn().mockImplementation((text: string): Promise<void> => {
+          return Promise.resolve()
+        })
+      }
+
+      Object.defineProperty(global.navigator, 'clipboard', {
+        value: mockClipboard,
+        writable: true
+      })
 
       wrapper = shallowMount(StampOwnershipForm, {
-        propsData: {
+        props: {
           modelValue: owner,
-          // @ts-ignore
           'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
         }
-      })
+      }) as VueWrapper<StampOwnershipFormType>
       await nextTick()
-      // @ts-ignore
       wrapper.vm.copyToClipboard()
-      expect(writeText).toHaveBeenCalledWith('test country/used/44aa.png')
+      expect(mockClipboard.writeText).toHaveBeenCalledWith('test country/used/44aa.png')
     })
   })
 })

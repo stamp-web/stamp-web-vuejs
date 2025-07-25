@@ -13,7 +13,6 @@
 
   const getCurrencies = async () => {
     const codes = new Array<ValueRecord<string>>()
-    // @ts-ignore
     Object.keys(CurrencyCode).forEach((key) => {
       codes.push({ value: key, name: key })
     })

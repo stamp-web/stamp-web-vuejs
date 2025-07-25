@@ -6,9 +6,27 @@ import { StampModelHelper } from '@/models/Stamp'
 import { Condition } from '@/models/Condition'
 import { createTestingPinia, type TestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
+import type { CatalogueNumber } from '@/models/CatalogueNumber'
+import type { Ownership } from '@/models/Ownership'
+
+type StampEditorType = {
+  title: string
+  calculateImagePath: () => string
+  setRefs: () => void
+  state: {
+    countryName: string
+    prefix: string
+  }
+  stampModel: {
+    countryRef: number
+  }
+  activeCatalogueNumber: CatalogueNumber
+  stampOwnership: Ownership
+}
+
 describe('StampEditor', () => {
   describe('title', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampEditorType>
     let pinia: TestingPinia
 
     beforeEach(() => {
@@ -21,30 +39,28 @@ describe('StampEditor', () => {
 
     it('New Wantlist Stamp', async () => {
       wrapper = shallowMount(StampEditor, {
-        propsData: {
+        props: {
           model: StampModelHelper.newInstance(true)
         },
         global: {
           plugins: [pinia]
         }
-      })
+      }) as VueWrapper<StampEditorType>
       await nextTick()
-      // @ts-ignore
       const title = wrapper.vm.title
       expect(title).toBe('New Wantlist Stamp')
     })
 
     it('New Stamp', async () => {
       wrapper = shallowMount(StampEditor, {
-        propsData: {
+        props: {
           model: StampModelHelper.newInstance(false)
         },
         global: {
           plugins: [pinia]
         }
-      })
+      }) as VueWrapper<StampEditorType>
       await nextTick()
-      // @ts-ignore
       const title = wrapper.vm.title
       expect(title).toBe('New Stamp')
     })
@@ -53,15 +69,14 @@ describe('StampEditor', () => {
       const m = StampModelHelper.newInstance(false)
       m.id = 100
       wrapper = shallowMount(StampEditor, {
-        propsData: {
+        props: {
           model: m
         },
         global: {
           plugins: [pinia]
         }
-      })
+      }) as VueWrapper<StampEditorType>
       await nextTick()
-      // @ts-ignore
       const title = wrapper.vm.title
       expect(title).toBe('Edit Stamp')
     })
@@ -70,22 +85,21 @@ describe('StampEditor', () => {
       const m = StampModelHelper.newInstance(true)
       m.id = 23
       wrapper = shallowMount(StampEditor, {
-        propsData: {
+        props: {
           model: m
         },
         global: {
           plugins: [pinia]
         }
-      })
+      }) as VueWrapper<StampEditorType>
       await nextTick()
-      // @ts-ignore
       const title = wrapper.vm.title
       expect(title).toBe('Edit Wantlist Stamp')
     })
   })
 
   describe('calculateImagePath', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampEditorType>
     let pinia: TestingPinia
 
     beforeEach(() => {
@@ -98,47 +112,38 @@ describe('StampEditor', () => {
 
     it('stamp is a wantlist', async () => {
       wrapper = shallowMount(StampEditor, {
-        propsData: {
+        props: {
           model: StampModelHelper.newInstance(true)
         },
         global: {
           plugins: [pinia]
         }
-      })
+      }) as VueWrapper<StampEditorType>
       await nextTick()
-      // @ts-ignore
       const path = wrapper.vm.calculateImagePath()
       expect(path).toBe('')
     })
 
     it('full path generation', async () => {
       wrapper = shallowMount(StampEditor, {
-        propsData: {
+        props: {
           model: StampModelHelper.newInstance(false)
         },
         global: {
           plugins: [pinia]
         }
-      })
+      }) as VueWrapper<StampEditorType>
       await nextTick()
-      // @ts-ignore
       wrapper.vm.setRefs()
-      // @ts-ignore
       wrapper.vm.state = {
         countryName: 'Albania',
         prefix: ''
       }
-      // @ts-ignore
       wrapper.vm.stampModel.countryRef = 13
-      // @ts-ignore
       wrapper.vm.activeCatalogueNumber.catalogueRef = 23
-      // @ts-ignore
       wrapper.vm.activeCatalogueNumber.number = '46a'
-      // @ts-ignore
       wrapper.vm.activeCatalogueNumber.condition = Condition.USED
-      // @ts-ignore
       wrapper.vm.calculateImagePath()
-      // @ts-ignore
       const path = wrapper.vm.stampOwnership.img
       expect(path).toBe('Albania/used/46a.jpg')
     })

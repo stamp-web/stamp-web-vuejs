@@ -11,7 +11,6 @@
 
   const getGrades = async () => {
     const grades = new Array<ValueRecord<number>>()
-    // @ts-ignore
     Object.keys(Grade).forEach((key) => {
       const val = parseInt(key)
       if (!Number.isNaN(val)) {

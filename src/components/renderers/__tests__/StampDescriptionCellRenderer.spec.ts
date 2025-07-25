@@ -3,6 +3,7 @@ import { shallowMount } from '@vue/test-utils'
 import StampDescriptionCellRenderer from '@/components/renderers/StampDescriptionCellRenderer.vue'
 import { createInstance } from '@/models/entityModels'
 import type { Stamp } from '@/models/Stamp'
+
 describe('StampDescriptionCellRenderer', () => {
   describe('computed', () => {
     it('no stamp', () => {

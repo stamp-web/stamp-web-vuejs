@@ -3,27 +3,31 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import FilterInput from '@/components/inputs/FilterInput.vue'
 import { debounce } from '@/util/timer-utils'
 
+type FilterInputType = InstanceType<typeof FilterInput> & {
+  model: {
+    text: string
+  }
+  clear: () => void
+}
+
 describe('FilterInput', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mock('@/util/timer-utils')
-    // @ts-ignore
-    debounce.mockImplementation((fn) => fn)
+    vi.mock('@/util/timer-utils', () => ({
+      debounce: vi.fn((fn) => fn)
+    }))
   })
 
   describe('clear()', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<FilterInputType>
 
     beforeEach(async () => {
-      wrapper = mount(FilterInput)
+      wrapper = mount(FilterInput) as VueWrapper<FilterInputType>
     })
 
     it('clears and fires filterChanged', async () => {
-      // @ts-ignore
       wrapper.vm.model.text = 'temp filter'
-      // @ts-ignore
       wrapper.vm.clear()
-      // @ts-ignore
       expect(wrapper.vm.model.text).toBe('')
       // We call filterChanged once, but since there is a watch on model.text
       // clearing the text will also invoke it, but we should only get a single

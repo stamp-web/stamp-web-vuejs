@@ -95,7 +95,6 @@
   }
   const close = () => {
     if (props.close) {
-      // @ts-ignore
       props.close()
     }
   }
