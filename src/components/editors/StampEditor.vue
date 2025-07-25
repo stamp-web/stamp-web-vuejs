@@ -21,10 +21,7 @@
 
   const logger = inject('vuejs3-logger') as Log
 
-  const $props = defineProps({
-    // @ts-ignore
-    model: {} as Stamp
-  })
+  const props = defineProps<{ model: Stamp }>()
 
   const stampModel = ref<Stamp>()
   const activeCatalogueNumber = ref<CatalogueNumber>()
@@ -50,7 +47,7 @@
   defineEmits(['cancel', 'save', 'convert'])
 
   watch(
-    () => [$props.model],
+    () => [props.model],
     () => {
       setRefs()
     },
@@ -131,11 +128,15 @@
    * that are not edited or used (such as IDs) so we restore the objects by merging in the new values
    * into the previous values
    *
-   * With Vueform 10.1.4 the code to convert the numbers to strings should no longer be needed
+   * With Vueform 10.1.4+ the code to convert the numbers to strings should no longer be needed
    */
   const getSaveModel = () => {
-    const m = Object.assign($props.model, stampModel.value)
-    m.activeCatalogueNumber = Object.assign(m.activeCatalogueNumber, activeCatalogueNumber.value)
+    const m = Object.assign({}, props.model, stampModel.value) as Stamp
+    m.activeCatalogueNumber = Object.assign(
+      {},
+      m.activeCatalogueNumber,
+      activeCatalogueNumber.value
+    )
     if (m.stampOwnerships?.length > 0) {
       m.stampOwnerships[0] = Object.assign(m.stampOwnerships[0], stampOwnership.value)
       // Fix any data members that are not in the pure data formats (despite editor configurations)
@@ -167,13 +168,13 @@
   }
 
   const setRefs = () => {
-    stampModel.value = $props.model
-    activeCatalogueNumber.value = $props.model.activeCatalogueNumber
-    if ($props.model.stampOwnerships?.length > 0) {
-      stampOwnership.value = $props.model.stampOwnerships[0]
+    stampModel.value = props.model
+    activeCatalogueNumber.value = props.model.activeCatalogueNumber
+    if (props.model.stampOwnerships?.length > 0) {
+      stampOwnership.value = props.model.stampOwnerships[0]
     }
     state.value.wantList = stampModel.value?.wantList || false
-    state.value.edit = $props.model?.id > 0
+    state.value.edit = props.model?.id > 0
   }
 
   onMounted(async () => {

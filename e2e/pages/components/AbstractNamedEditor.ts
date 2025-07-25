@@ -2,8 +2,7 @@ import { Locator, Page } from '@playwright/test'
 
 export abstract class AbstractNamedEditorCmp {
   protected readonly page: Page
-  // @ts-ignore
-  protected editorLocator: Locator
+  protected editorLocator!: Locator
 
   constructor(page: Page) {
     this.page = page

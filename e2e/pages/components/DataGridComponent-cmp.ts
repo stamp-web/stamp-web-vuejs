@@ -2,8 +2,7 @@ import { Locator, Page } from '@playwright/test'
 
 export class DataGridComponentCmp {
   readonly page: Page
-  // @ts-ignore
-  tableLocator: Locator
+  tableLocator!: Locator
   constructor(page: Page) {
     this.page = page
   }

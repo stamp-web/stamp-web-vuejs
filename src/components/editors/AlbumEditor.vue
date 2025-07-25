@@ -9,10 +9,7 @@
 
   const prefStore = preferenceStore()
 
-  const props = defineProps({
-    // @ts-ignore
-    model: {} as Album
-  })
+  const props = defineProps<{ model: Album }>()
 
   const model$ = ref()
   const form$ = ref()

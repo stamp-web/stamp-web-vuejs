@@ -4,6 +4,12 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 import SellerEditor from '../SellerEditor.vue'
+import type { Seller } from '@/models/entityModels'
+
+type SellerEditorType = {
+  title: string
+  invalid: boolean
+}
 
 describe('SellerEditor', () => {
   beforeEach(() => {
@@ -15,31 +21,28 @@ describe('SellerEditor', () => {
   })
 
   describe('computed fields', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<SellerEditorType>
 
     it('title edit scenario', async () => {
       wrapper = mount(SellerEditor, {
-        propsData: {
+        props: {
           model: {
             id: 56,
             name: 'test-seller'
-          }
+          } as Seller
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<SellerEditorType>
       expect(wrapper.vm.title).toBe('Edit Seller')
     })
 
     it('title create scenario', async () => {
       wrapper = mount(SellerEditor, {
-        propsData: {
-          model: {}
+        props: {
+          model: {} as Seller
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<SellerEditorType>
       expect(wrapper.vm.title).toBe('New Seller')
       await nextTick()
-      // @ts-ignore
       expect(wrapper.vm.invalid).toBe(true)
     })
   })

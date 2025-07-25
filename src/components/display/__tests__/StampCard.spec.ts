@@ -10,7 +10,10 @@ interface StampCardInstance {
     selected: boolean
   }
   toggleSelection: (event?: MouseEvent) => void
-  actionClicked: (evt: MouseEvent, action: string) => void
+  actionClicked: (
+    evt: MouseEvent,
+    action: 'selected' | 'deselected' | 'edit-stamp' | 'delete-stamp'
+  ) => void
   imageUrl: string | undefined
   fullSizeImage: string | undefined
   observer: IntersectionObserver
@@ -18,7 +21,7 @@ interface StampCardInstance {
 
 describe('StampCard', () => {
   describe('toggleSelection', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampCardInstance>
 
     beforeEach(() => {
       wrapper = shallowMount(StampCard, {
@@ -29,7 +32,7 @@ describe('StampCard', () => {
           } as Stamp,
           isSelected: false
         }
-      })
+      }) as unknown as VueWrapper<StampCardInstance>
     })
 
     it('verify toggled to selected', () => {
@@ -51,7 +54,7 @@ describe('StampCard', () => {
   })
 
   describe('actionClicked', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampCardInstance>
 
     beforeEach(() => {
       wrapper = shallowMount(StampCard, {
@@ -62,7 +65,7 @@ describe('StampCard', () => {
           } as Stamp,
           isSelected: false
         }
-      })
+      }) as unknown as VueWrapper<StampCardInstance>
     })
 
     it('verify edit action emitted', () => {
@@ -110,8 +113,7 @@ describe('StampCard', () => {
             thumbPath: 'https://some-images/Pictures/Thumbnails'
           }
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<StampCardInstance>
       expect(comp.vm.imageUrl).toBe(
         'https://some-images/Pictures/Thumbnails/Germany/used/thumb-456.png'
       )
@@ -123,8 +125,7 @@ describe('StampCard', () => {
           stamp: stamp,
           path: 'stampOwnerships[0].img'
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<StampCardInstance>
       expect(comp.vm.imageUrl).toBe('/Germany/used/thumb-456.png')
     })
   })
@@ -150,8 +151,7 @@ describe('StampCard', () => {
             imagePath: 'https://some-images/Pictures'
           }
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<StampCardInstance>
       expect(comp.vm.fullSizeImage).toBe('https://some-images/Pictures/Germany/used/456.png')
     })
 
@@ -161,8 +161,7 @@ describe('StampCard', () => {
           stamp: stamp,
           path: 'stampOwnerships[0].img'
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<StampCardInstance>
       expect(comp.vm.fullSizeImage).toBe('/Germany/used/456.png')
     })
   })
@@ -177,8 +176,7 @@ describe('StampCard', () => {
           } as Stamp,
           path: 'stampOwnerships[0].img'
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<StampCardInstance>
       const observer = comp.vm.observer
       vi.spyOn(observer, 'disconnect')
       comp.unmount()
@@ -196,12 +194,10 @@ describe('StampCard', () => {
           } as Stamp,
           isSelected: false
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<StampCardInstance>
       expect(comp.vm.status.selected).toBe(false)
       comp.setProps({ isSelected: true })
       await nextTick()
-      // @ts-ignore
       expect(comp.vm.status.selected).toBe(true)
     })
   })

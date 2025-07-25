@@ -102,7 +102,6 @@ test.describe('edit scenarios', () => {
   })
 
   test.afterEach(async ({ request }) => {
-    // @ts-ignore
     await CatalogueTestHelper.delete(request, model.id)
   })
 

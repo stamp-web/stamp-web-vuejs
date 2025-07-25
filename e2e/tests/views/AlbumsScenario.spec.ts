@@ -51,8 +51,7 @@ test.describe('delete scenarios', () => {
   let view: AlbumViewPage
   let name: string
   let collectionName: string
-  // @ts-ignore
-  let collection
+  let collection: StampCollection
 
   test.beforeEach(async ({ request }) => {
     name = `deleteAlbum-${new Date().getTime()}`
@@ -65,7 +64,6 @@ test.describe('delete scenarios', () => {
   })
 
   test.afterEach(async ({ request }) => {
-    // @ts-ignore
     await StampCollectionTestHelper.delete(request, collection.id)
   })
 

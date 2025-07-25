@@ -7,10 +7,7 @@
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
   import CatalogueTypeSelector from '@/components/inputs/CatalogueTypeSelector.vue'
 
-  const props = defineProps({
-    // @ts-ignore
-    model: {} as Catalogue
-  })
+  const props = defineProps<{ model: Catalogue }>()
 
   defineEmits(['cancel', 'save'])
 

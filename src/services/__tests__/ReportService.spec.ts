@@ -82,8 +82,9 @@ describe('ReportingService', () => {
 
     it('catalogue number', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
-      s.activeCatalogueNumber.number = '23a'
+      if (s.activeCatalogueNumber) {
+        s.activeCatalogueNumber.number = '23a'
+      }
       const obj = ReportService.generateTableCellValue(
         s,
         {
@@ -91,16 +92,17 @@ describe('ReportingService', () => {
           type: 'catalogueNumber',
           value: 'activeCatalogueNumber.number'
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [],
+        []
       )
       expect(obj).toBe('23a')
     })
 
     it('catalogue condition', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
-      s.activeCatalogueNumber.condition = Condition.MINT
+      if (s.activeCatalogueNumber) {
+        s.activeCatalogueNumber.condition = Condition.MINT
+      }
       const obj = ReportService.generateTableCellValue(
         s,
         {
@@ -108,19 +110,18 @@ describe('ReportingService', () => {
           type: 'condition',
           value: 'activeCatalogueNumber.condition'
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [],
+        []
       )
       expect(obj).toBe('Mint')
     })
 
     it('catalogue value', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
-      s.activeCatalogueNumber.value = 500.25
-      // @ts-ignore
-      s.activeCatalogueNumber.catalogueRef = 23
-
+      if (s.activeCatalogueNumber) {
+        s.activeCatalogueNumber.value = 500.25
+        s.activeCatalogueNumber.catalogueRef = 23
+      }
       const obj = ReportService.generateTableCellValue(
         s,
         {
@@ -129,7 +130,7 @@ describe('ReportingService', () => {
           value: 'activeCatalogueNumber.value',
           additional: ['activeCatalogueNumber.catalogueRef']
         },
-        new Array<Country>(),
+        [],
         [createInstance({ id: 23, name: 'some catalogue', code: CurrencyCode.EUR }) as Catalogue]
       )
       expect(obj).toBe('€500.25')
@@ -137,7 +138,6 @@ describe('ReportingService', () => {
 
     it('country name', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.countryRef = 123
       const obj = ReportService.generateTableCellValue(
         s,
@@ -146,15 +146,14 @@ describe('ReportingService', () => {
           type: 'country',
           value: 'countryRef'
         },
-        [createInstance({ id: 123, name: 'Test Country' })],
-        new Array<Catalogue>()
+        [createInstance({ id: 123, name: 'Test Country' }) as Country],
+        []
       )
       expect(obj).toBe('Test Country')
     })
 
     it('contains deception', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].deception = 15
       const obj = ReportService.generateTableCellValue(
         s,
@@ -164,15 +163,14 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [],
+        []
       )
       expect(obj).toBe('Δ')
     })
 
     it('contains defects', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].defects = 1
       const obj = ReportService.generateTableCellValue(
         s,
@@ -182,15 +180,14 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [],
+        []
       )
       expect(obj).toBe('×')
     })
 
     it('contains notes', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].notes = 'these are the notes'
       const obj = ReportService.generateTableCellValue(
         s,
@@ -200,15 +197,14 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [],
+        []
       )
       expect(obj).toBe('these are the notes')
     })
 
     it('no notes', () => {
       const s = StampModelHelper.newInstance(false)
-      // @ts-ignore
       s.stampOwnerships[0].notes = undefined
       const obj = ReportService.generateTableCellValue(
         s,
@@ -218,8 +214,8 @@ describe('ReportingService', () => {
           value: 'stampOwnerships[0]',
           additional: []
         },
-        new Array<Country>(),
-        new Array<Catalogue>()
+        [],
+        []
       )
       expect(obj).toBe('')
     })

@@ -27,40 +27,48 @@ export type Ownership = PersistedModel & {
 }
 
 export class OwnershipHelper {
-  static newInstance(preferences?: Array<Preference>): Ownership {
+  private static readonly preferenceMapping: Record<
+    string,
+    {
+      type: 'number' | 'string'
+      field: keyof Ownership
+    }
+  > = {
+    albumRef: { type: 'number', field: 'albumRef' },
+    sellerRef: { type: 'number', field: 'sellerRef' },
+    condition: { type: 'number', field: 'condition' },
+    grade: { type: 'number', field: 'grade' },
+    code: { type: 'string', field: 'code' }
+  }
+
+  private static applyPreference(
+    ownership: Ownership,
+    pref: Preference,
+    mapping: (typeof OwnershipHelper.preferenceMapping)[string]
+  ): void {
+    if (!pref.value) return
+
+    const value = mapping.type === 'number' ? +pref.value : pref.value
+    // TypeScript will ensure type safety here since we're using keyof Ownership
+    ownership[mapping.field] = value as never
+  }
+
+  static newInstance(preferences?: Preference[]): Ownership {
     const ownership = createInstance<Ownership>({ id: 0 })
     const purchased = LocalCache.getItem('ownership-purchased')
     if (purchased) {
       // We need to offset the plain date string to account for UTC offset
       ownership.purchased = asLocalDate(purchased)
     }
-    if (preferences && preferences.length > 0) {
-      const intPrefKeys = ['albumRef', 'sellerRef', 'condition', 'grade']
-      const strPrefKeys: string[] = ['code']
-      intPrefKeys.concat(strPrefKeys).forEach((key) => {
-        const pref = preferences.find((p) => key === p.name)
+    if (preferences?.length) {
+      Object.entries(this.preferenceMapping).forEach(([prefName, mapping]) => {
+        const pref = preferences.find((p) => p.name === prefName)
         if (pref) {
-          const value = intPrefKeys.includes(key) && pref.value ? +pref.value : pref.value
-          switch (key) {
-            case 'albumRef':
-              ownership.albumRef = value as number
-              break
-            case 'sellerRef':
-              ownership.sellerRef = value as number
-              break
-            case 'condition':
-              ownership.condition = value as Condition
-              break
-            case 'grade':
-              ownership.grade = value as Grade
-              break
-            case 'code':
-              ownership.code = value as CurrencyCode
-              break
-          }
+          this.applyPreference(ownership, pref, mapping)
         }
       })
     }
+
     return ownership
   }
 

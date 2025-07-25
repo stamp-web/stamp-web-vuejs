@@ -11,8 +11,7 @@ export default abstract class BaseManagedService<
       `/stamp-webservices/rest/${this.getResourceName()}/!countStamps`
     )
     const list: CountModel[] = new Array<CountModel>()
-    // @ts-ignore
-    response.data.forEach((item) => {
+    response.data.forEach((item: T) => {
       list.push(item as CountModel)
     })
     return list

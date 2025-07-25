@@ -86,7 +86,6 @@ const stampSelectableCollection = () => {
   }
 
   const isSelected = (stamp: Stamp): boolean => {
-    // @ts-ignore
     return data.value.selected.includes(stamp)
   }
 
@@ -101,7 +100,6 @@ const stampSelectableCollection = () => {
   const setSelected = (stamp: Stamp, options?: selectionOptions) => {
     const indx = data.value.selected.findIndex((s: Stamp) => s.id === stamp.id)
     if (indx < 0) {
-      // @ts-ignore
       data.value.selected.push(stamp)
     }
     if (data.value.selected.length > 1 && options?.shiftKey) {
@@ -117,7 +115,6 @@ const stampSelectableCollection = () => {
         const currentStamp: Stamp = data.value.list[i]
         const c_indx = data.value.selected.findIndex((s: Stamp) => s.id === currentStamp.id)
         if (c_indx < 0) {
-          // @ts-ignore
           data.value.selected.push(currentStamp)
         }
       }

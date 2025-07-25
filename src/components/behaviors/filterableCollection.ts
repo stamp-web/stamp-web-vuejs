@@ -1,4 +1,4 @@
-import type { PersistedNamedModel } from '@/models/entityModels'
+import type { PersistedModel, PersistedNamedModel } from '@/models/entityModels'
 import { reactive, computed } from 'vue'
 import _isEmpty from 'lodash-es/isEmpty'
 import LocalCache from '@/stores/LocalCache'
@@ -14,13 +14,13 @@ import { debounce } from '@/util/timer-utils'
  *
  *  There are methods added to filterCollection as well as set the selected model
  */
-const useFilterableCollection = (
+const useFilterableCollection = <T extends PersistedNamedModel>(
   filterKey = 'filter-text',
   customFilter?: (item: PersistedNamedModel, search: string) => boolean
 ) => {
   const collection = reactive({
-    list: [] as PersistedNamedModel[],
-    selected: undefined as PersistedNamedModel | undefined,
+    list: [] as T[],
+    selected: undefined as T | undefined,
     filterString: LocalCache.getItem(filterKey) || ''
   })
 
@@ -34,13 +34,14 @@ const useFilterableCollection = (
     LocalCache.setItem(filterKey, value as string)
   }, 500)
 
-  const setCollection = (list: PersistedNamedModel[]) => {
+  const setCollection = (list: T[]) => {
+    // @ts-expect-error: unwrapping the T array
     collection.list = list
   }
 
   const filterFunction =
     customFilter ||
-    ((item: PersistedNamedModel, search: string) => {
+    ((item: T, search: string) => {
       const upperSearch = search.toUpperCase()
       return (
         item.name.toUpperCase().includes(upperSearch) ||
@@ -51,6 +52,7 @@ const useFilterableCollection = (
   const filteredList = computed(() => {
     const search = collection.filterString.trim()
     if (!search) return collection.list
+    // @ts-expect-error: Unwrapping the T type
     return collection.list.filter((item) => filterFunction(item, search))
   })
 
@@ -63,7 +65,8 @@ const useFilterableCollection = (
     }
   }
 
-  const setSelected = (sel: PersistedNamedModel | undefined) => {
+  const setSelected = (sel?: T) => {
+    // @ts-expect-error: Unwrapping the T
     collection.selected = sel
   }
 

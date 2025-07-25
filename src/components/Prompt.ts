@@ -10,6 +10,24 @@ export interface AlertOptions {
 export interface ConfirmationOptions extends AlertOptions {
   denyButtonLabel?: string
 }
+
+type promptParams = {
+  title: string
+  customClass: typeof customStylingForSweetAlerts
+  width: string
+  showDenyButton: boolean
+  confirmButtonText: string
+  denyButtonText?: string
+  html?: string
+  text?: string
+}
+
+const withPromptDefaults = <T extends Partial<promptParams>>(params: T): T & { width: string } => ({
+  width: '25em',
+  customClass: customStylingForSweetAlerts,
+  ...params
+})
+
 const customStylingForSweetAlerts = {
   container: '',
   popup: 'pb-2',
@@ -46,15 +64,12 @@ const customStylingForSweetAlerts = {
 
 class prompt {
   confirm(options: ConfirmationOptions): Promise<boolean> {
-    const params = {
+    const params = withPromptDefaults({
       title: options.title || '',
-      customClass: customStylingForSweetAlerts,
-      width: '25em',
       showDenyButton: true,
       confirmButtonText: options.confirmButtonLabel || 'Yes',
       denyButtonText: options.denyButtonLabel || 'No'
-    }
-    // @ts-ignore
+    }) as promptParams
     params[options.asHtml ? 'html' : 'text'] = options.message
     return Swal.fire(params).then((result: SweetAlertResult) => {
       return Promise.resolve(result.isConfirmed)
@@ -62,14 +77,11 @@ class prompt {
   }
 
   alert(options: AlertOptions): Promise<void> {
-    const params = {
+    const params = withPromptDefaults({
       title: options.title || '',
-      customClass: customStylingForSweetAlerts,
-      width: '25em',
       showDenyButton: false,
       confirmButtonText: options.confirmButtonLabel || 'Ok'
-    }
-    // @ts-ignore
+    }) as promptParams
     params[options.asHtml ? 'html' : 'text'] = options.message
     return Swal.fire(params).then(() => {
       return Promise.resolve()

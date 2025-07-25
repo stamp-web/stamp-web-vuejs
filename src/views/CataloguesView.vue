@@ -25,9 +25,9 @@
   const router = useRouter()
 
   const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
-    filterableCollection('catalogue-filter')
+    filterableCollection<Catalogue>('catalogue-filter')
 
-  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<Catalogue>()
   const dataGridRef = ref()
   const store = catalogueStore()
 
@@ -74,7 +74,7 @@
   }
 
   const remove = () => {
-    const sel = selected.value as Catalogue
+    const sel = selected.value
     if (sel) {
       Prompt.confirm({
         message: t('messages.delete-catalogue', { issue: sel.issue, catalogue: sel.name })
@@ -88,7 +88,7 @@
   }
 
   const save = async () => {
-    const editModel = getEditModel() as Catalogue
+    const editModel = getEditModel()
     if (editModel && editModel.id > 0) {
       await store.update(editModel)
     } else {

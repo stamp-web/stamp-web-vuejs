@@ -2,10 +2,11 @@ import { fileURLToPath } from 'node:url'
 import path from 'path'
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config'
+import type { ConfigEnv } from 'vite'
 
-export default defineConfig((configEnv) =>
+export default defineConfig((configEnv: ConfigEnv) =>
   mergeConfig(
-    // @ts-ignore
+    // @ts-expect-error: challenge matching the configuration for config
     viteConfig(configEnv),
     defineConfig({
       resolve: {

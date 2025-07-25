@@ -12,7 +12,7 @@ import type { SearchOptions } from '@/stores/types/searchOptions'
 export type BaseModelStore<T extends PersistedModel, Id extends string = string> = PiniaStore<
   Id,
   {
-    items: { list: Array<T>; total: number; loading: boolean }
+    items: { list: T[]; total: number; loading: boolean }
     inflightPromise: Promise<EntityList<T>> | null
     lastOptions: SearchOptions
   },
@@ -39,7 +39,7 @@ export function baseModelStore<T extends PersistedModel, Id extends string = str
 > {
   return defineGenericStore<BaseModelStore<T>>({
     state: {
-      items: reactive({ list: [] as Array<T>, total: 0, loading: false }),
+      items: reactive({ list: [] as T[], total: 0, loading: false }),
       inflightPromise: undefined,
       lastOptions: {}
     },
@@ -64,21 +64,21 @@ export function baseModelStore<T extends PersistedModel, Id extends string = str
         }
       },
 
-      // @ts-ignore
-      async find(options = this.baseSearchOptions): Promise<T[]> {
+      async find(options?): Promise<T[]> {
+        const searchOptions = options ?? this.baseSearchOptions
         // attempt caching for inflight promises.  This will have to be cancelled
         // for finds that have options
         if (
           this.items.loading &&
           this.inflightPromise &&
-          (_isEmpty(options) || _isEqual(options, this.lastOptions))
+          (_isEmpty(searchOptions) || _isEqual(searchOptions, this.lastOptions))
         ) {
           await this.inflightPromise
         }
-        if (this.items.list.length === 0 || !_isEqual(options, this.lastOptions)) {
+        if (this.items.list.length === 0 || !_isEqual(searchOptions, this.lastOptions)) {
           this.items.loading = true
-          this.lastOptions = options
-          this.inflightPromise = this.service.find(options)
+          this.lastOptions = searchOptions
+          this.inflightPromise = this.service.find(searchOptions)
           const data: EntityList<T> = await this.inflightPromise
           this.items.list.splice(0, this.items.list.length)
           const list = new Array<T>()
@@ -86,15 +86,14 @@ export function baseModelStore<T extends PersistedModel, Id extends string = str
             list.push(createInstance(<T>e))
             this.items.total = data.total
           })
-          // @ts-ignore
-          this.items.list = this.postFind(list, options)
+          // @ts-expect-error: so far have not been able to resolve this difference in Typing
+          this.items.list = this.postFind(list, searchOptions)
           this.items.loading = false
           this.inflightPromise = null
         }
         return this.items.list as Array<T>
       },
       async findById(id) {
-        // @ts-ignore
         if (this.items.list.length <= 0 || this.lastOptions.$filter) {
           await this.find()
         }

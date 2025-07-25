@@ -4,7 +4,12 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import AlbumEditor from '@/components/editors/AlbumEditor.vue'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
+import type { Album } from '@/models/entityModels'
 
+type AlbumEditorType = {
+  title: string
+  invalid: boolean
+}
 describe('AlbumEditor', () => {
   beforeEach(() => {
     const pinia = createTestingPinia({
@@ -15,31 +20,29 @@ describe('AlbumEditor', () => {
   })
 
   describe('computed fields', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<AlbumEditorType>
 
     it('title edit scenario', async () => {
       wrapper = mount(AlbumEditor, {
-        propsData: {
+        props: {
           model: {
             id: 56,
             name: 'test-album'
-          }
+          } as Album
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<AlbumEditorType>
+      await nextTick()
       expect(wrapper.vm.title).toBe('Edit Album')
     })
 
     it('title create scenario', async () => {
       wrapper = mount(AlbumEditor, {
-        propsData: {
-          model: {}
+        props: {
+          model: {} as Album
         }
-      })
-      // @ts-ignore
+      }) as unknown as VueWrapper<AlbumEditorType>
       expect(wrapper.vm.title).toBe('New Album')
       await nextTick()
-      // @ts-ignore
       expect(wrapper.vm.invalid).toBe(true)
     })
   })

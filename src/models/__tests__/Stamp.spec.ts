@@ -40,6 +40,18 @@ describe('StampModelHelper tests', () => {
       expect(stamp.activeCatalogueNumber).toBeDefined()
       expect(stamp.stampOwnerships).toBeDefined()
     })
+
+    it('wantlist stamp with preference but countryRef is not a valid number', () => {
+      const prefs = [
+        { name: 'countryRef', category: 'stamps', value: 'Not a number' } as Preference
+      ]
+      const stamp = StampModelHelper.newInstance(true, prefs)
+      expect(stamp.id).toBe(0)
+      expect(stamp.wantList).toBe(true)
+      expect(stamp.countryRef).toBeUndefined()
+      expect(stamp.activeCatalogueNumber).toBeDefined()
+      expect(stamp.stampOwnerships).toBeDefined()
+    })
   })
   describe('calculateImagePath', () => {
     it('verify wantlist does not generate', () => {

@@ -18,7 +18,7 @@ describe('stampStore', () => {
             active: true,
             number: '23a',
             catalogueRef: 5
-          } as CatalogueNumber
+          } as unknown as CatalogueNumber
         ]
       } as Stamp
       const newStamp = setActiveCatalogueNumber(s)
@@ -49,7 +49,7 @@ describe('stampStore', () => {
             active: false,
             number: '23b',
             catalogueRef: 5
-          } as CatalogueNumber
+          } as unknown as CatalogueNumber
         ]
       } as Stamp
       const newStamp = setActiveCatalogueNumber(s)
@@ -68,7 +68,7 @@ describe('stampStore', () => {
             active: false,
             number: '23',
             catalogueRef: 5
-          } as CatalogueNumber,
+          } as unknown as CatalogueNumber,
           {
             id: 558,
             active: true,

@@ -24,9 +24,9 @@
   const router = useRouter()
 
   const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
-    filterableCollection('country-filter')
+    filterableCollection<Country>('country-filter')
 
-  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<Country>()
   const dataGridRef = ref()
   const store = countryStore()
 
@@ -68,7 +68,7 @@
   }
 
   const remove = () => {
-    const sel = selected.value as Country
+    const sel = selected.value
     if (sel) {
       Prompt.confirm({
         message: t('messages.delete-country', { country: sel.name })
@@ -82,7 +82,7 @@
   }
 
   const save = async () => {
-    const editModel = getEditModel() as Country
+    const editModel = getEditModel()
     if (editModel && editModel.id > 0) {
       await store.update(editModel)
     } else {

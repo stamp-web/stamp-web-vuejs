@@ -45,7 +45,7 @@ describe('StampEditor', () => {
         global: {
           plugins: [pinia]
         }
-      }) as VueWrapper<StampEditorType>
+      }) as unknown as VueWrapper<StampEditorType>
       await nextTick()
       const title = wrapper.vm.title
       expect(title).toBe('New Wantlist Stamp')
@@ -59,7 +59,7 @@ describe('StampEditor', () => {
         global: {
           plugins: [pinia]
         }
-      }) as VueWrapper<StampEditorType>
+      }) as unknown as VueWrapper<StampEditorType>
       await nextTick()
       const title = wrapper.vm.title
       expect(title).toBe('New Stamp')
@@ -75,7 +75,7 @@ describe('StampEditor', () => {
         global: {
           plugins: [pinia]
         }
-      }) as VueWrapper<StampEditorType>
+      }) as unknown as VueWrapper<StampEditorType>
       await nextTick()
       const title = wrapper.vm.title
       expect(title).toBe('Edit Stamp')
@@ -91,7 +91,7 @@ describe('StampEditor', () => {
         global: {
           plugins: [pinia]
         }
-      }) as VueWrapper<StampEditorType>
+      }) as unknown as VueWrapper<StampEditorType>
       await nextTick()
       const title = wrapper.vm.title
       expect(title).toBe('Edit Wantlist Stamp')
@@ -118,7 +118,7 @@ describe('StampEditor', () => {
         global: {
           plugins: [pinia]
         }
-      }) as VueWrapper<StampEditorType>
+      }) as unknown as VueWrapper<StampEditorType>
       await nextTick()
       const path = wrapper.vm.calculateImagePath()
       expect(path).toBe('')
@@ -132,7 +132,7 @@ describe('StampEditor', () => {
         global: {
           plugins: [pinia]
         }
-      }) as VueWrapper<StampEditorType>
+      }) as unknown as VueWrapper<StampEditorType>
       await nextTick()
       wrapper.vm.setRefs()
       wrapper.vm.state = {

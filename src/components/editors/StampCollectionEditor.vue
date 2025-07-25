@@ -5,10 +5,8 @@
   import localeUtil from '@/util/locale-utils'
   import type { StampCollection } from '@/models/entityModels'
 
-  const props = defineProps({
-    // @ts-ignore
-    model: {} as StampCollection
-  })
+  const props = defineProps<{ model: StampCollection }>()
+
   defineEmits(['cancel', 'save'])
 
   const form$ = ref()

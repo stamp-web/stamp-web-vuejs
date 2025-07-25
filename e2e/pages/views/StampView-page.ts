@@ -4,10 +4,9 @@ import { StampEditorCmp } from '../components/StampEditor-cmp.js'
 
 export class StampViewPage {
   readonly page: Page
-  // @ts-ignore
-  private grid: DataGridComponentCmp
-  // @ts-ignore
-  private editor: StampEditorCmp
+
+  private grid!: DataGridComponentCmp
+  private editor!: StampEditorCmp
 
   constructor(page: Page) {
     this.page = page

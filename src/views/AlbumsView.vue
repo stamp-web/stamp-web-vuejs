@@ -25,8 +25,8 @@
   const router = useRouter()
 
   const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
-    filterableCollection('albums-filter')
-  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+    filterableCollection<Album>('albums-filter')
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<Album>()
   const dataGridRef = ref()
   const store = albumStore()
 
@@ -81,7 +81,7 @@
   }
 
   const save = async () => {
-    const editModel = getEditModel() as Album
+    const editModel = getEditModel()
     if (editModel && editModel.id > 0) {
       await store.update(editModel)
     } else {

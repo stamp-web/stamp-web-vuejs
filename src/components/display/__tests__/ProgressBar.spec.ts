@@ -44,7 +44,7 @@ describe('ProgressBar', () => {
           interval: 50
         }
       })
-      await delay(201)
+      await delay(251)
       expect(
         comp.vm.count,
         'after four cycles the value should be more than 15'

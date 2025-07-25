@@ -8,28 +8,30 @@ export type CatalogueNumber = PersistedModel & {
   catalogueRef: number
   number: string
   condition: Condition
-  active: boolean
-  unknown: boolean
-  nospace: boolean
+  active: { type: boolean; default: true }
+  unknown: { type: boolean; default: false }
+  nospace: { type: boolean; default: false }
 }
 
 export class CatalogueNumberHelper {
-  static newInstance(preferences?: Array<Preference>): CatalogueNumber {
+  static newInstance(preferences?: Preference[]): CatalogueNumber {
     const catalogueNumber = createInstance<CatalogueNumber>({
       id: 0,
       active: true
     })
 
-    if (preferences && preferences.length > 0) {
-      const prefKeys = ['catalogueRef', 'condition']
+    type NumericKeys = keyof Pick<CatalogueNumber, 'catalogueRef' | 'condition'>
+    const prefKeys: NumericKeys[] = ['catalogueRef', 'condition']
+
+    if (preferences && preferences?.length > 0) {
       prefKeys.forEach((key) => {
-        const pref = preferences.find((p) => key === p.name)
-        if (pref) {
-          // @ts-ignore
-          catalogueNumber[key] = +pref.value
+        const pref = preferences.find((p) => p.name === key)
+        if (pref?.value) {
+          catalogueNumber[key] = +pref.value as CatalogueNumber[NumericKeys]
         }
       })
     }
+
     return catalogueNumber
   }
 }

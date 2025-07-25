@@ -4,8 +4,7 @@ import { encodeId } from '../../helpers/test-utils.js'
 
 export class StampEditorCmp {
   protected readonly page: Page
-  // @ts-ignore
-  protected editorLocator: Locator
+  protected editorLocator!: Locator
 
   constructor(page: Page) {
     this.page = page

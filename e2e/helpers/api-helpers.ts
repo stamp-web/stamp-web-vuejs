@@ -16,7 +16,7 @@ abstract class entityTestHelper<T extends PersistedModel> {
     return this.getResourceName()
   }
 
-  async create(request: APIRequestContext, payload: string) {
+  async create(request: APIRequestContext, payload: object) {
     const result = await request.post(`/stamp-webservices/rest/${this.getResourceName()}`, {
       data: payload
     })
@@ -71,7 +71,6 @@ class countryTestHelper extends entityTestHelper<Country> {
   }
 }
 
-// @ts-ignore
 class catalogueTestHelper extends entityTestHelper<Catalogue> {
   getResourceName(): string {
     return 'catalogues'
@@ -84,7 +83,6 @@ class sellerTestHelper extends entityTestHelper<Seller> {
   }
 }
 
-// @ts-ignore
 class stampTestHelper extends entityTestHelper<Stamp> {
   getResourceName(): string {
     return 'stamps'

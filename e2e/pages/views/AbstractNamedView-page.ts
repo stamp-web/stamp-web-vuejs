@@ -5,12 +5,9 @@ import { AbstractNamedEditorCmp } from '../components/AbstractNamedEditor.js'
 
 export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
   protected readonly page: Page
-  // @ts-ignore
-  protected grid: DataGridComponentCmp
-  // @ts-ignore
-  protected editor: T
-  // @ts-ignore
-  protected filter: FilterInputCmp
+  protected grid: DataGridComponentCmp | null = null
+  protected editor: T | null = null
+  protected filter: FilterInputCmp | null = null
 
   constructor(page: Page) {
     this.page = page
@@ -50,7 +47,7 @@ export abstract class AbstractNamedViewPage<T extends AbstractNamedEditorCmp> {
     return this.page.locator(`button[id="delete-${this.getModelName()}"]`)
   }
 
-  async goto() {
+  async goto(): Promise<void> {
     await this.page.goto(this.getPageURL())
     await this.getGrid().waitForLoadingComplete()
   }

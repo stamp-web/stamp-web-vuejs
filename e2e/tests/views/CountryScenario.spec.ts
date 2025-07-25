@@ -110,7 +110,6 @@ test.describe('navigate to stamps', () => {
       catalogueNumbers: [
         {
           number: 'test-43c',
-          // @ts-ignore
           catalogueRef: catalogue.id,
           value: 25.54,
           condition: 0,
@@ -123,7 +122,6 @@ test.describe('navigate to stamps', () => {
 
   test.afterEach(async ({ request }) => {
     await CountryTestHelper.delete(request, country.id)
-    // @ts-ignore
     await CatalogueTestHelper.delete(request, catalogue.id)
   })
 

@@ -5,10 +5,7 @@
   import localeUtil from '@/util/locale-utils'
   import type { Country } from '@/models/entityModels'
 
-  const props = defineProps({
-    // @ts-ignore
-    model: {} as Country
-  })
+  const props = defineProps<{ model: Country }>()
 
   defineEmits(['cancel', 'save'])
 

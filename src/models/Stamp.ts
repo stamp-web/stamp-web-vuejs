@@ -12,13 +12,13 @@ export type Stamp = PersistedModel & {
   printing: number
   wantList: boolean
   countryRef: number
-  stampOwnerships: Array<Ownership>
-  catalogueNumbers: Array<CatalogueNumber>
+  stampOwnerships: Ownership[]
+  catalogueNumbers: CatalogueNumber[]
   activeCatalogueNumber?: CatalogueNumber
 }
 
 export class StampModelHelper {
-  static newInstance = (wantList = false, preferences?: Array<Preference>): Stamp => {
+  static newInstance = (wantList = false, preferences?: Preference[]): Stamp => {
     const catalogueNumber = CatalogueNumberHelper.newInstance(preferences)
 
     const stamp = createInstance<Stamp>({
@@ -34,8 +34,7 @@ export class StampModelHelper {
 
     if (preferences && preferences.length > 0) {
       const pref = preferences.find((p) => 'countryRef' === p.name)
-      if (pref) {
-        // @ts-ignore
+      if (pref?.value && !isNaN(Number(pref.value))) {
         stamp.countryRef = +pref.value
       }
     }

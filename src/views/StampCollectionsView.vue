@@ -24,9 +24,9 @@
   const router = useRouter()
 
   const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
-    filterableCollection('stampCollections-filter')
+    filterableCollection<StampCollection>('stampCollections-filter')
 
-  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<StampCollection>()
   const dataGridRef = ref()
   const store = stampCollectionStore()
 
@@ -68,7 +68,7 @@
   }
 
   const remove = () => {
-    const selectedCollection = selected.value as StampCollection
+    const selectedCollection = selected.value
     if (selectedCollection) {
       Prompt.confirm({
         message: t('messages.delete-collection', { collection: selectedCollection.name })
@@ -82,7 +82,7 @@
   }
 
   const save = async () => {
-    const editModel = getEditModel() as StampCollection
+    const editModel = getEditModel()
     if (editModel && editModel.id > 0) {
       await store.update(editModel)
     } else {

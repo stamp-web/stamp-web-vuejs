@@ -5,7 +5,7 @@
   import { TransitionRoot } from '@headlessui/vue'
   import SellerEditor from '@/components/editors/SellerEditor.vue'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
-  import type { Seller } from '@/models/entityModels'
+  import type { Seller, StampCollection } from '@/models/entityModels'
   import { sellerStore } from '@/stores/sellerStore'
   import { createInstance } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'
@@ -24,9 +24,9 @@
   const router = useRouter()
 
   const { setCollection, setFilterString, filteredList, filterString, selected, setSelected } =
-    filterableCollection('seller-filter')
+    filterableCollection<Seller>('seller-filter')
 
-  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel()
+  const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<Seller>()
   const dataGridRef = ref()
   const store = sellerStore()
 
@@ -68,7 +68,7 @@
   }
 
   const remove = () => {
-    const sel = selected.value as Seller
+    const sel = selected.value
     if (sel) {
       Prompt.confirm({
         message: t('messages.delete-seller', { seller: sel.name })

@@ -13,6 +13,8 @@
 
   const { t } = useI18n()
 
+  type emitOptions = 'selected' | 'deselected' | 'edit-stamp' | 'delete-stamp'
+
   const props = defineProps({
     stamp: { type: Object as PropType<Stamp>, required: true },
     path: String,
@@ -26,7 +28,11 @@
   const imageFrame = useTemplateRef('imageFrame')
   const imageVisible = ref(false)
 
-  const emit = defineEmits(['selected', 'deselected', 'edit-stamp', 'delete-stamp'])
+  const emit = defineEmits<{
+    (e: emitOptions, stamp: Stamp): void
+    /* Need to special handle selected/deselected due to additional options */
+    (e: 'selected' | 'deselected', stamp: Stamp, options: { shiftKey: boolean }): void
+  }>()
 
   watch(
     () => [[props.isSelected]],
@@ -62,9 +68,8 @@
     return img
   })
 
-  const actionClicked = (evt: MouseEvent, action: string) => {
+  const actionClicked = (evt: MouseEvent, action: emitOptions) => {
     evt.stopPropagation()
-    // @ts-ignore
     emit(action, props.stamp)
   }
 

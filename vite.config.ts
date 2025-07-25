@@ -1,6 +1,14 @@
 import { fileURLToPath, URL } from 'node:url'
 import fs from 'fs'
-import { defineConfig, loadEnv } from 'vite'
+import {
+  defineConfig,
+  loadEnv,
+  type ConfigEnv,
+  type ProxyOptions,
+  type ServerOptions,
+  HttpProxy,
+  PluginOption
+} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import process from 'node:process'
@@ -8,9 +16,14 @@ import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 import replace from '@rollup/plugin-replace'
 
+type CustomConfig = {
+  https?: boolean
+  proxy?: Record<string, ProxyOptions>
+  plugins: PluginOption[]
+}
+
 // https://vitejs.dev/config/
-// @ts-ignore
-export default ({ mode }) => {
+export default ({ mode }: ConfigEnv) => {
   const CI = !!process.env.CI
   /**
    * When called from vitest the mode will be 'test'. Any variables defined in .env.test will
@@ -25,8 +38,8 @@ export default ({ mode }) => {
   }
   processEnvironment()
 
-  const config = {
-    plugins: [vue(), basicSsl(), tailwindcss, autoprefixer],
+  const config: CustomConfig = {
+    plugins: [vue(), basicSsl(), tailwindcss, autoprefixer] as PluginOption[],
     https: true
   }
 
@@ -36,7 +49,6 @@ export default ({ mode }) => {
   }
 
   if (mode !== 'production' && !CI) {
-    // @ts-ignore
     config.proxy = {
       '^/stamp-webservices': {
         target: process.env.VITE_PROXY_URL,
@@ -46,8 +58,7 @@ export default ({ mode }) => {
           cert: fs.readFileSync(process.env.VITE_SSL_CERT as string, 'utf8')
         },
         changeOrigin: true,
-        configure: (proxy: object, options: object) => {
-          // @ts-ignore
+        configure: (proxy: HttpProxy.Server, options: ProxyOptions) => {
           options.auth = `${process.env.VITE_PROXY_USER}:${process.env.VITE_PROXY_PASSWORD}`
         }
       }
@@ -55,7 +66,6 @@ export default ({ mode }) => {
   }
 
   return defineConfig({
-    // @ts-ignore
     plugins: config.plugins,
     base: '',
     build: {
@@ -99,11 +109,9 @@ export default ({ mode }) => {
       include: ['nouislider', 'wnumb', 'trix', 'axios', 'lodash']
     },
     server: {
-      // @ts-ignore
       https: config.https,
-      // @ts-ignore
-      proxy: config.proxy
-    },
+      proxy: config.proxy as Record<string, ProxyOptions>
+    } as ServerOptions,
     resolve: {
       alias: {
         vue: 'vue/dist/vue.esm-bundler',

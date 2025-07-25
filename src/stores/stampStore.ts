@@ -101,9 +101,10 @@ export const stampStore = useStore<StampStoreType, BaseModelStore<Stamp>>(
               const cat = catalogues.find((c) => c.id === cId)
               if (cat && currentCatalogue && cat.type === currentCatalogue.type) {
                 const cont = s.activeCatalogueNumber?.condition
-                // @ts-ignore
-                if (ConditionHelper.isSameFamily(cn.condition, cont)) {
-                  result = true
+                if (cat.type === currentCatalogue.type && cont) {
+                  if (ConditionHelper.isSameFamily(cn.condition, cont)) {
+                    result = true
+                  }
                 }
               }
             })

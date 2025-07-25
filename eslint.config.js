@@ -50,7 +50,7 @@ export default [
       tseslint
     },
     rules: {
-      '@typescript-eslint/ban-ts-comment': 'off'
+      '@typescript-eslint/ban-ts-comment': 'warn'
     }
   }
 ]

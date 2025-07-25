@@ -1,9 +1,25 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { shallowMount, mount } from '@vue/test-utils'
+import { shallowMount, mount, VueWrapper } from '@vue/test-utils'
 import ImagePreview from '../ImagePreview.vue'
 import { nextTick } from 'vue'
-// @ts-ignore
 import bus from 'vue3-eventbus'
+
+// Create proper mock for blueimp-load-image
+vi.mock('blueimp-load-image', () => ({
+  default: vi.fn()
+}))
+
+type ImagePreviewType = InstanceType<typeof ImagePreview> & {
+  hasValidImage: boolean
+  showingFullImage: boolean
+  processImage: () => void
+  showFullImage: () => void
+  getOptions: () => Record<string, unknown>
+  $refs: {
+    imgBlock: HTMLDivElement
+    fullImage: HTMLDivElement
+  }
+}
 
 // consistently wait for 2 DOM updates with the loadImage
 const DOM_UPDATES = 2
@@ -15,6 +31,7 @@ async function waitOnDOMUpdate(count: number = DOM_UPDATES) {
     await nextTick()
   }
 }
+
 describe('ImagePreview', () => {
   describe('processImage', () => {
     beforeEach(() => {
@@ -23,76 +40,76 @@ describe('ImagePreview', () => {
     })
 
     it('empty imageUrl', async () => {
-      const img = await import('blueimp-load-image')
-      // @ts-ignore
-      const fn = (img.default = vi.fn())
-      const wrapper = shallowMount(ImagePreview)
-      // @ts-ignore
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      const wrapper = shallowMount(ImagePreview) as VueWrapper<ImagePreviewType>
       wrapper.vm.processImage()
-      expect(fn).not.toHaveBeenCalled()
+      expect(loadImageMock).not.toHaveBeenCalled()
     })
 
     it('valid imageUrl', async () => {
-      const img = await import('blueimp-load-image')
       const imgPath = 'http://test.image-server.com/Pictures/Germany/425.png'
       const imgCmp = document.createElement('img')
       imgCmp.src = imgPath
-      // @ts-ignore
-      const fn = (img.default = vi.fn().mockResolvedValue({
-        image: imgCmp
-      }))
+
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      loadImageMock.mockResolvedValue({ image: imgCmp })
+
       const wrapper = mount(ImagePreview, {
-        propsData: {
+        props: {
           imageUrl: imgPath
         }
-      })
+      }) as VueWrapper<ImagePreviewType>
 
       await waitOnDOMUpdate()
-      expect(fn).toHaveBeenCalledTimes(1)
-      // @ts-ignore
+      expect(loadImageMock).toHaveBeenCalledTimes(1)
       expect(wrapper.vm.hasValidImage).toBe(true)
-      // @ts-ignore
       expect(wrapper.vm.$refs.imgBlock.firstElementChild).toBe(imgCmp)
     })
 
     it('invalid imageUrl with no showNa', async () => {
-      const img = await import('blueimp-load-image')
       const imgPath = 'http://test.image-server.com/Pictures/Germany/425.png'
-      // @ts-ignore
-      const fn = (img.default = vi.fn().mockRejectedValue({ value: 'boom' }))
-      const wrapper = await mount(ImagePreview, {
-        propsData: {
+
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      loadImageMock.mockRejectedValue({ value: 'boom' })
+
+      const wrapper = mount(ImagePreview, {
+        props: {
           imageUrl: imgPath
         }
-      })
+      }) as VueWrapper<ImagePreviewType>
       await waitOnDOMUpdate()
-      expect(fn).toHaveBeenCalledTimes(1)
-      // @ts-ignore
+      expect(loadImageMock).toHaveBeenCalledTimes(1)
       expect(wrapper.vm.hasValidImage).toBe(false)
     })
 
     it('invalid imageUrl with showNa set', async () => {
-      const img = await import('blueimp-load-image')
       const imgPath = 'http://test.image-server.com/Pictures/Germany/425.png'
       const imgCmp = document.createElement('img')
       imgCmp.src = 'http://localhost:3000/src/assets/images/not-available.jpg'
-      // @ts-ignore
-      const fn = (img.default = vi
-        .fn()
-        .mockRejectedValueOnce({ value: 'invalid' })).mockResolvedValue({ image: imgCmp })
-      const wrapper = await mount(ImagePreview, {
-        propsData: {
+
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      loadImageMock.mockRejectedValueOnce({ value: 'invalid' }).mockResolvedValue({ image: imgCmp })
+
+      const wrapper = mount(ImagePreview, {
+        props: {
           imageUrl: imgPath,
           showNa: true
         }
-      })
-      // the second loadImage call requires and additional set of waits
+      }) as VueWrapper<ImagePreviewType>
+
       await waitOnDOMUpdate(5)
-      expect(fn).toHaveBeenCalledTimes(2)
-      // @ts-ignore
+      expect(loadImageMock).toHaveBeenCalledTimes(2)
       expect(wrapper.vm.hasValidImage).toBe(false)
 
-      const divBlock = wrapper.vm.$refs.imgBlock as HTMLDivElement
+      const divBlock = wrapper.vm.$refs.imgBlock
       expect(divBlock.hasChildNodes()).toBe(true)
       expect(divBlock.firstChild).toBe(imgCmp)
     })
@@ -100,23 +117,22 @@ describe('ImagePreview', () => {
 
   describe('test watch', () => {
     it('no valid image', async () => {
-      const img = await import('blueimp-load-image')
       const imagePath = 'http://new-imagepath/someimage.png'
       const imgCmp = document.createElement('img')
       imgCmp.src = imagePath
-      // @ts-ignore
-      img.default = vi.fn().mockResolvedValue({ image: imgCmp })
 
-      const wrapper = await mount(ImagePreview, {
-        propsData: {}
-      })
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      loadImageMock.mockResolvedValue({ image: imgCmp })
+
+      const wrapper = mount(ImagePreview) as VueWrapper<ImagePreviewType>
       await waitOnDOMUpdate()
-      wrapper.setProps({ imageUrl: imagePath })
+      await wrapper.setProps({ imageUrl: imagePath })
       await waitOnDOMUpdate()
-      // @ts-ignore
       expect(wrapper.vm.hasValidImage).toBe(true)
 
-      const imgBlock = wrapper.vm.$refs.imgBlock as HTMLDivElement
+      const imgBlock = wrapper.vm.$refs.imgBlock
       expect(imgBlock.hasChildNodes()).toBe(true)
       expect(imgBlock.firstChild).toBe(imgCmp)
     })
@@ -129,82 +145,72 @@ describe('ImagePreview', () => {
     })
 
     it('no valid image', async () => {
-      const wrapper = await mount(ImagePreview, {
-        propsData: {}
-      })
-
+      const wrapper = mount(ImagePreview) as VueWrapper<ImagePreviewType>
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
-      // @ts-ignore
       wrapper.vm.showFullImage()
       expect(watcher).not.toHaveBeenCalled()
     })
 
     it('already showing image', async () => {
-      const wrapper = await mount(ImagePreview, {
-        propsData: {}
-      })
-      // @ts-ignore
+      const wrapper = mount(ImagePreview) as VueWrapper<ImagePreviewType>
       wrapper.vm.showingFullImage = true
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
-      // @ts-ignore
       wrapper.vm.showFullImage()
       expect(watcher).not.toHaveBeenCalled()
     })
 
     it('valid with no full size image', async () => {
-      const img = await import('blueimp-load-image')
       const imagePath = 'http://test-image-path.com/Pictures/Italy/124.jpg'
       const imgCmp = document.createElement('img')
       imgCmp.src = imagePath
-      // @ts-ignore
-      img.default = vi.fn().mockResolvedValue({ image: imgCmp })
-      const wrapper = await mount(ImagePreview, {
-        propsData: {
+
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      loadImageMock.mockResolvedValue({ image: imgCmp })
+
+      const wrapper = mount(ImagePreview, {
+        props: {
           imageUrl: imagePath
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ImagePreviewType>
       wrapper.vm.hasValidImage = true
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
-      // @ts-ignore
       wrapper.vm.showFullImage()
       await waitOnDOMUpdate()
       expect(watcher).toHaveBeenCalledTimes(1)
-      // @ts-ignore
       expect(wrapper.vm.showingFullImage).toBe(true)
-      // @ts-ignore
       expect(wrapper.vm.$refs.fullImage.firstChild).toBe(imgCmp)
     })
 
     it('valid with full size image', async () => {
-      const img = await import('blueimp-load-image')
       const fullImagePath = 'http://test-image-path.com/Pictures/Italy/256.jpg'
       const thumbImagePath = 'http://test-image-path.com/Pictures/Italy/256.jpg'
       const imgCmp = document.createElement('img')
       imgCmp.src = fullImagePath
-      // @ts-ignore
-      img.default = vi.fn().mockResolvedValue({ image: imgCmp })
-      const wrapper = await mount(ImagePreview, {
-        propsData: {
+
+      const loadImageMock = (await import('blueimp-load-image')).default as unknown as ReturnType<
+        typeof vi.fn
+      >
+      loadImageMock.mockResolvedValue({ image: imgCmp })
+
+      const wrapper = mount(ImagePreview, {
+        props: {
           imageUrl: thumbImagePath,
           fullSizeImageUrl: fullImagePath
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ImagePreviewType>
       wrapper.vm.hasValidImage = true
       const watcher = vi.fn()
       bus.on('showingImage', watcher)
-      // @ts-ignore
       wrapper.vm.showFullImage()
       await waitOnDOMUpdate()
       expect(watcher).toHaveBeenCalledTimes(1)
-      // @ts-ignore
       expect(wrapper.vm.showingFullImage).toBe(true)
-      // @ts-ignore
-      const fullImage = wrapper.vm.$refs.fullImage as HTMLDivElement
+      const fullImage = wrapper.vm.$refs.fullImage
       expect(fullImage.firstChild).toBe(imgCmp)
       expect((fullImage.firstChild as HTMLImageElement).src).toBe(fullImagePath)
     })
@@ -212,20 +218,18 @@ describe('ImagePreview', () => {
 
   describe('getOptions', () => {
     it('no options', () => {
-      const wrapper = shallowMount(ImagePreview)
-      // @ts-ignore
+      const wrapper = shallowMount(ImagePreview) as VueWrapper<ImagePreviewType>
       const options = wrapper.vm.getOptions()
       expect(options).toStrictEqual({ canvas: true })
     })
 
     it('with height and width options', () => {
       const wrapper = shallowMount(ImagePreview, {
-        propsData: {
+        props: {
           maxWidth: '400',
           maxHeight: '600'
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ImagePreviewType>
       const options = wrapper.vm.getOptions()
       expect(options?.maxHeight).toBe(600)
       expect(options?.maxWidth).toBe(400)
@@ -233,11 +237,10 @@ describe('ImagePreview', () => {
 
     it('only width options', () => {
       const wrapper = shallowMount(ImagePreview, {
-        propsData: {
+        props: {
           maxWidth: '400'
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ImagePreviewType>
       const options = wrapper.vm.getOptions()
       expect(options?.maxHeight).toBeUndefined()
       expect(options?.maxWidth).toBe(400)
@@ -245,11 +248,10 @@ describe('ImagePreview', () => {
 
     it('only height options', () => {
       const wrapper = shallowMount(ImagePreview, {
-        propsData: {
+        props: {
           maxHeight: '300'
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ImagePreviewType>
       const options = wrapper.vm.getOptions()
       expect(options?.maxHeight).toBe(300)
       expect(options?.maxWidth).toBeUndefined()

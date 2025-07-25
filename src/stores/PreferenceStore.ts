@@ -28,20 +28,16 @@ export const preferenceStore = useStore<PreferenceStoreType, BaseModelStore<Pref
     },
     actions: {
       async findByCategory(category: string): Promise<Array<Preference>> {
-        // @ts-ignore
         if (this.items.list.length > 0 && !this.lastOptions.$filter) {
           const filtered = this.items.list.filter((p) => p.category === category)
           return Promise.resolve(filtered)
         } else {
           const params = structuredClone(this.baseSearchOptions)
-          // @ts-ignore
           params.$filter = `(category eq '${category}')`
           return this.find(params)
         }
-        // @ts-ignore
       },
       async findByNameAndCategory(name: string, category: string): Promise<Preference> {
-        // @ts-ignore
         if (this.items.list.length <= 0 || this.lastOptions.$filter) {
           await this.find()
         }
