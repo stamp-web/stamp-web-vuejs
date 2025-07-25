@@ -1,6 +1,10 @@
-import type { RawAxiosRequestHeaders } from 'axios'
 import merge from 'lodash-es/merge'
 import isEmpty from 'lodash-es/isEmpty'
+
+type ServiceHeaders = {
+  'Content-Type': string
+  [key: string]: string
+}
 
 export enum HttpResponseCode {
   HTTP_OK = 200,
@@ -20,13 +24,13 @@ export enum HttpMethod {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default abstract class BaseService<T> {
-  protected abstract getResourceName(): string
+  abstract getResourceName(): string
 
-  augmentHeaders(headers?: object): RawAxiosRequestHeaders {
+  augmentHeaders(headers?: object): ServiceHeaders {
     const h = headers || {}
     return merge(h, {
       'Content-Type': 'application/json'
-    }) as RawAxiosRequestHeaders
+    }) as ServiceHeaders
   }
 
   toParameters(options: Record<string, string | number | boolean> = {}): string {
