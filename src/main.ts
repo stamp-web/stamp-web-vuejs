@@ -16,7 +16,6 @@ import { Tooltip, vTooltip } from 'floating-vue'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
-// @ts-ignore
 import eventBus from 'vue3-eventbus'
 import {
   ModuleRegistry,
@@ -59,7 +58,6 @@ ModuleRegistry.registerModules([
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' })
 
-// @ts-ignore
 const app = createApp(App)
   .use(createPinia())
   .use(router)

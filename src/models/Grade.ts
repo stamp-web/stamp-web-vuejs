@@ -1,7 +1,7 @@
 import localeUtil from '@/util/locale-utils'
 import { EnumHelper } from '@/util/object-utils'
 
-export const enum Grade {
+export enum Grade {
   XF = 0,
   VF = 1,
   FVF = 2,
@@ -13,7 +13,6 @@ export const enum Grade {
 
 export class GradeHelper {
   static toString(value: number): string {
-    // @ts-ignore
     const g = EnumHelper.enumToString(Grade, value)
     return g ? localeUtil.t(`grade.${g}`) : ''
   }

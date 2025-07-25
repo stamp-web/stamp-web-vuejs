@@ -1,7 +1,7 @@
 import localeUtil from '@/util/locale-utils'
 import { EnumHelper } from '@/util/object-utils'
 
-export const enum Condition {
+export enum Condition {
   MINT = 0,
   MINT_NH = 1,
   USED = 2,
@@ -14,7 +14,6 @@ export const enum Condition {
 }
 export class ConditionHelper {
   static toString(value: number): string {
-    // @ts-ignore
     const g = EnumHelper.enumToString(Condition, value)
     return g ? localeUtil.t(`condition.${g}`) : ''
   }

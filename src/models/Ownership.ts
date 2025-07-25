@@ -40,8 +40,24 @@ export class OwnershipHelper {
       intPrefKeys.concat(strPrefKeys).forEach((key) => {
         const pref = preferences.find((p) => key === p.name)
         if (pref) {
-          // @ts-ignore
-          ownership[key] = intPrefKeys.includes(key) ? +pref.value : pref.value
+          const value = intPrefKeys.includes(key) && pref.value ? +pref.value : pref.value
+          switch (key) {
+            case 'albumRef':
+              ownership.albumRef = value as number
+              break
+            case 'sellerRef':
+              ownership.sellerRef = value as number
+              break
+            case 'condition':
+              ownership.condition = value as Condition
+              break
+            case 'grade':
+              ownership.grade = value as Grade
+              break
+            case 'code':
+              ownership.code = value as CurrencyCode
+              break
+          }
         }
       })
     }
@@ -49,9 +65,9 @@ export class OwnershipHelper {
   }
 
   static toTagElementView(model: Ownership) {
-    // @ts-ignore
+    // @ts-expect-error - _defects is a runtime field from the form (bug #64)
     model['_defects'] = EnumHelper.asEnumArray(Defects, model.defects)
-    // @ts-ignore
+    // @ts-expect-error - _deception is a runtime field from the form (bug #64)
     model['_deception'] = EnumHelper.asEnumArray(Deception, model.deception)
   }
 

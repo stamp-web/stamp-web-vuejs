@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { StampModelHelper } from '@/models/Stamp'
 import { Condition } from '@/models/Condition'
 import { type Preference } from '@/models/Preference'
+import { fail } from 'assert'
 
 describe('StampModelHelper tests', () => {
   describe('newInstance', () => {
@@ -11,10 +12,8 @@ describe('StampModelHelper tests', () => {
       expect(stamp.wantList).toBe(false)
       expect(stamp.activeCatalogueNumber).toBeDefined()
       expect(stamp.catalogueNumbers.length).toBe(1)
-      // @ts-ignore
-      expect(stamp.activeCatalogueNumber.id).toBe(0)
-      // @ts-ignore
-      expect(stamp.activeCatalogueNumber.active).toBe(true)
+      expect(stamp.activeCatalogueNumber?.id).toBe(0)
+      expect(stamp.activeCatalogueNumber?.active).toBe(true)
       expect(stamp.stampOwnerships).toBeDefined()
       expect(stamp.stampOwnerships.length).toBe(1)
       expect(stamp.stampOwnerships[0].id).toBe(0)
@@ -26,10 +25,8 @@ describe('StampModelHelper tests', () => {
       expect(stamp.wantList).toBe(true)
       expect(stamp.activeCatalogueNumber).toBeDefined()
       expect(stamp.catalogueNumbers.length).toBe(1)
-      // @ts-ignore
-      expect(stamp.activeCatalogueNumber.id).toBe(0)
-      // @ts-ignore
-      expect(stamp.activeCatalogueNumber.active).toBe(true)
+      expect(stamp.activeCatalogueNumber?.id).toBe(0)
+      expect(stamp.activeCatalogueNumber?.active).toBe(true)
       expect(stamp.stampOwnerships).toBeDefined()
       expect(stamp.stampOwnerships.length).toBe(0)
     })
@@ -47,10 +44,12 @@ describe('StampModelHelper tests', () => {
   describe('calculateImagePath', () => {
     it('verify wantlist does not generate', () => {
       const stamp = StampModelHelper.newInstance(true)
-      expect(
-        // @ts-ignore
-        StampModelHelper.calculateImagePath(stamp, stamp.activeCatalogueNumber, 'test country')
-      ).toBe('')
+      const cn = stamp.activeCatalogueNumber
+      if (cn) {
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe('')
+      } else {
+        fail('Catalogue number should not be null')
+      }
     })
 
     it('verify with cover bound stamp', () => {
@@ -59,11 +58,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.ON_PAPER
         cn.number = '45a'
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+          'test country/on-cover/45a.jpg'
+        )
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
-        'test country/on-cover/45a.jpg'
-      )
     })
 
     it('verify with special characters apostrophe', () => {
@@ -72,11 +72,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.MINT
         cn.number = "45a W OR 5'4'5"
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+          'test country/45a W OR 5-4-5.jpg'
+        )
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
-        'test country/45a W OR 5-4-5.jpg'
-      )
     })
 
     it('verify stamp with rotary press printing', () => {
@@ -85,11 +86,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.MINT
         cn.number = "21 a W OR 1'4'1/0'5'0"
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+          'test country/21 a W OR 1-4-1_0-5-0.jpg'
+        )
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
-        'test country/21 a W OR 1-4-1_0-5-0.jpg'
-      )
     })
 
     it('verify with special characters', () => {
@@ -98,11 +100,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.USED
         cn.number = '23%`<>"[]{};'
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
+          'test country/used/23----------.jpg'
+        )
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country')).toBe(
-        'test country/used/23----------.jpg'
-      )
     })
 
     it('verify with used stamp', () => {
@@ -111,11 +114,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.CTO
         cn.number = '45a'
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'mk')).toBe(
+          'test country/used/mk45a.jpg'
+        )
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'mk')).toBe(
-        'test country/used/mk45a.jpg'
-      )
     })
 
     it('verify with used stamp but no include used in path', () => {
@@ -124,11 +128,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.CTO
         cn.number = '45a'
+        expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'sc', false)).toBe(
+          'test country/sc45a.jpg'
+        )
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'sc', false)).toBe(
-        'test country/sc45a.jpg'
-      )
     })
 
     it('preserves existing image file', () => {
@@ -138,11 +143,12 @@ describe('StampModelHelper tests', () => {
       if (cn) {
         cn.condition = Condition.CTO
         cn.number = '45a'
+        expect(
+          StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'mk', true, true)
+        ).toBe('test country/used/someStamp-23.jpg')
+      } else {
+        fail('Catalogue number should not be null')
       }
-      // @ts-ignore
-      expect(StampModelHelper.calculateImagePath(stamp, cn, 'test country', 'mk', true, true)).toBe(
-        'test country/used/someStamp-23.jpg'
-      )
     })
   })
 })

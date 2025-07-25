@@ -1,8 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import CertCellRenderer from '@/components/renderers/CertCellRenderer.vue'
 import { createInstance } from '@/models/entityModels'
 import type { Stamp } from '@/models/Stamp'
+
+type CertCellRendererType = InstanceType<typeof CertCellRenderer> & {
+  certIcon: string
+  tooltip: string
+}
 
 describe('CertCellRenderer', () => {
   describe('computed', () => {
@@ -13,8 +18,7 @@ describe('CertCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<CertCellRendererType>
       expect(wrapper.vm.certIcon).toBeUndefined()
     })
 
@@ -30,8 +34,7 @@ describe('CertCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<CertCellRendererType>
       expect(wrapper.vm.certIcon).toBeUndefined()
     })
 
@@ -47,8 +50,7 @@ describe('CertCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<CertCellRendererType>
       expect(wrapper.vm.certIcon).toBeUndefined()
     })
 
@@ -63,10 +65,8 @@ describe('CertCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<CertCellRendererType>
       expect(wrapper.vm.certIcon).toBe('sw-icon-ribbon')
-      // @ts-ignore
       expect(wrapper.vm.tooltip).toBe('A certificate or expertization opinion exists')
     })
   })

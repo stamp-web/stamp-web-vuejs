@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import PricePaidCellRenderer from '@/components/renderers/PricePaidCellRenderer.vue'
-import { CurrencyCode } from '../../../models/CurrencyCode'
+import { CurrencyCode } from '@/models/CurrencyCode'
+
+type PricePaidCellRendererType = InstanceType<typeof PricePaidCellRenderer> & {
+  pricePaid: string
+}
+
 describe('PricePaidCellRenderer', () => {
   describe('computed', () => {
     it('no row object', () => {
@@ -11,8 +16,7 @@ describe('PricePaidCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<PricePaidCellRendererType>
       expect(wrapper.vm.pricePaid).toBe('')
     })
 
@@ -24,8 +28,7 @@ describe('PricePaidCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<PricePaidCellRendererType>
       expect(wrapper.vm.pricePaid).toBe('')
     })
 
@@ -45,8 +48,7 @@ describe('PricePaidCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<PricePaidCellRendererType>
       expect(wrapper.vm.pricePaid).toBe('$45.23')
     })
 
@@ -65,8 +67,7 @@ describe('PricePaidCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<PricePaidCellRendererType>
       expect(wrapper.vm.pricePaid).toBe('$46.45')
     })
 
@@ -86,8 +87,7 @@ describe('PricePaidCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<PricePaidCellRendererType>
       expect(wrapper.vm.pricePaid).toBe('¥56,500')
     })
   })

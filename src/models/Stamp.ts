@@ -52,7 +52,6 @@ export class StampModelHelper {
   ) => {
     let path = ''
     if (!stamp.wantList) {
-      // @ts-ignore
       if (countryName && catalogueNumber && countryName !== '' && catalogueNumber.number) {
         path = `${countryName}/`
         if (includeUsedInPath && ConditionHelper.isUsed(catalogueNumber.condition)) {

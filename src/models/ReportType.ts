@@ -8,7 +8,6 @@ export enum ReportType {
 
 export class ReportTypeHelper {
   public static toString(value: number): string {
-    // @ts-ignore
     const g = EnumHelper.enumToString(ReportType, value)
     return g ? localeUtil.t(`reportType.${g}`) : ''
   }

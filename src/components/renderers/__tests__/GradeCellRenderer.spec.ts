@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import GradeCellRenderer from '@/components/renderers/GradeCellRenderer.vue'
+
+type GradeCellRendererType = InstanceType<typeof GradeCellRenderer> & {
+  grade: string
+}
+
 describe('GradeCellRenderer', () => {
   describe('computed', () => {
     it('no stamp in row', () => {
@@ -10,8 +15,7 @@ describe('GradeCellRenderer', () => {
             path: 'stampOwnerships[0].grade'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<GradeCellRendererType>
       expect(wrapper.vm.grade).toBe('')
     })
 
@@ -29,8 +33,7 @@ describe('GradeCellRenderer', () => {
             path: 'stampOwnerships[0].grade'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<GradeCellRendererType>
       expect(wrapper.vm.grade).toBe('Fine-Very-Fine (FVF)')
     })
   })

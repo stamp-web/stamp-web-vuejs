@@ -185,7 +185,6 @@
   onMounted(async () => {
     rowSelection.mode = props.multiSelect ? 'multiRow' : 'singleRow'
     if (props.multiSelect) {
-      // @ts-ignore
       rowSelection.headerCheckbox = false
     }
     if (gridEl.value.$el) {

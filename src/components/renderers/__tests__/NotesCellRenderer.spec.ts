@@ -6,12 +6,15 @@ import { type Ownership } from '@/models/Ownership'
 import { createInstance } from '@/models/entityModels'
 import { type Stamp } from '@/models/Stamp'
 
+type NotesCellRendererType = InstanceType<typeof NotesCellRenderer> & {
+  notesIcon: string | undefined
+  tooltip: string
+}
+
 describe('NotesCellRenderer', () => {
   describe('computed', () => {
-    function expectNoNotes(wrapper: VueWrapper) {
-      // @ts-ignore
+    function expectNoNotes(wrapper: VueWrapper<NotesCellRendererType>) {
       expect(wrapper.vm.notesIcon).toBeUndefined()
-      // @ts-ignore
       expect(wrapper.vm.tooltip).toBe('')
     }
 
@@ -24,7 +27,7 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
+      }) as VueWrapper<NotesCellRendererType>
       expectNoNotes(wrapper)
     })
 
@@ -41,7 +44,7 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
+      }) as VueWrapper<NotesCellRendererType>
       expectNoNotes(wrapper)
     })
 
@@ -58,7 +61,7 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
+      }) as VueWrapper<NotesCellRendererType>
       expectNoNotes(wrapper)
     })
 
@@ -73,10 +76,8 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<NotesCellRendererType>
       expect(wrapper.vm.notesIcon).toBe('sw-icon-info')
-      // @ts-ignore
       expect(wrapper.vm.tooltip).toBe('this is noted')
     })
 
@@ -91,10 +92,8 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<NotesCellRendererType>
       expect(wrapper.vm.notesIcon).toBe('sw-icon-defect')
-      // @ts-ignore
       const tooltip: string = wrapper.vm.tooltip
       expect(tooltip.includes('this is noted')).toBe(true)
       expect(tooltip.includes('Defects:')).toBe(true)
@@ -113,10 +112,8 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<NotesCellRendererType>
       expect(wrapper.vm.notesIcon).toBe('sw-icon-attention')
-      // @ts-ignore
       const tooltip: string = wrapper.vm.tooltip
       expect(tooltip.includes('some notes')).toBe(true)
       expect(tooltip.includes('Deception:')).toBe(true)
@@ -135,10 +132,8 @@ describe('NotesCellRenderer', () => {
             path: 'stampOwnerships[0]'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<NotesCellRendererType>
       expect(wrapper.vm.notesIcon).toBe('sw-icon-attention')
-      // @ts-ignore
       const tooltip: string = wrapper.vm.tooltip
       expect(tooltip.includes('rough stamp')).toBe(true)
       expect(tooltip.includes('Deception:')).toBe(true)

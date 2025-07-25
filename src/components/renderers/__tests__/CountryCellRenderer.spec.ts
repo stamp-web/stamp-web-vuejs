@@ -1,9 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 import CountryCellRenderer from '@/components/renderers/CountryCellRenderer.vue'
 import { countryStore } from '@/stores/countryStore'
+import type { Country } from '@/models/entityModels'
+
+type CountryCellRendererType = InstanceType<typeof CountryCellRenderer> & {
+  countries: Country[]
+  findCountryName: (id: number) => string
+  countryName: string
+}
 
 describe('CountryCellRenderer', () => {
   let store = null
@@ -24,18 +31,14 @@ describe('CountryCellRenderer', () => {
 
   describe('findCountryName tests', () => {
     it('test matching id', () => {
-      const wrapper = shallowMount(CountryCellRenderer)
-      // @ts-ignore
+      const wrapper = shallowMount(CountryCellRenderer) as VueWrapper<CountryCellRendererType>
       wrapper.vm.countries = countryResult
-      // @ts-ignore
       expect(wrapper.vm.findCountryName(2)).toBe('United States')
     })
 
     it('no matching id', () => {
-      const wrapper = shallowMount(CountryCellRenderer)
-      // @ts-ignore
+      const wrapper = shallowMount(CountryCellRenderer) as VueWrapper<CountryCellRendererType>
       wrapper.vm.countries = countryResult
-      // @ts-ignore
       expect(wrapper.vm.findCountryName(42)).toBe('')
     })
   })
@@ -52,10 +55,8 @@ describe('CountryCellRenderer', () => {
             value: 1
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<CountryCellRendererType>
       comp.vm.countries = countryResult
-      // @ts-ignore
       expect(comp.vm.countryName).toBe('Germany')
     })
   })

@@ -24,7 +24,6 @@ export enum Defects {
 
 export class DefectsHelper {
   public static toString(value: number): string {
-    // @ts-ignore
     const g = EnumHelper.enumToString(Defects, value)
     return g ? localeUtil.t(`defects.${g}`) : ''
   }

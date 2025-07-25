@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import ConditionCellRenderer from '@/components/renderers/ConditionCellRenderer.vue'
+
+type ConditionCellRendererType = InstanceType<typeof ConditionCellRenderer> & {
+  condition: string
+}
+
 describe('ConditionCellRenderer', () => {
   describe('computed', () => {
     it('no stamp in row', () => {
@@ -10,8 +15,8 @@ describe('ConditionCellRenderer', () => {
             path: 'stampOwnerships[0].condition'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ConditionCellRendererType>
+
       expect(wrapper.vm.condition).toBe('')
     })
 
@@ -29,8 +34,7 @@ describe('ConditionCellRenderer', () => {
             path: 'stampOwnerships[0].condition'
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<ConditionCellRendererType>
       expect(wrapper.vm.condition).toBe('Used')
     })
   })

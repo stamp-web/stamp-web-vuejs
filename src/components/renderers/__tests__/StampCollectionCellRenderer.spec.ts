@@ -1,9 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, type VueWrapper } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
 import { setActivePinia } from 'pinia'
 import StampCollectionCellRenderer from '../StampCollectionCellRenderer.vue'
-import { stampCollectionStore } from '../../../stores/stampCollectionStore'
+import { stampCollectionStore } from '@/stores/stampCollectionStore'
+import type { StampCollection } from '@/models/entityModels'
+
+type StampCollectionCellRendererType = InstanceType<typeof StampCollectionCellRenderer> & {
+  collections: StampCollection[]
+  findCollectionName: (id: number) => string
+  collectionName: string | undefined
+}
 
 describe('StampCollectionCellRenderer', () => {
   let store = null
@@ -27,18 +34,18 @@ describe('StampCollectionCellRenderer', () => {
 
   describe('findCollectionName tests', () => {
     it('test matching id', () => {
-      const wrapper = shallowMount(StampCollectionCellRenderer)
-      // @ts-ignore
+      const wrapper = shallowMount(
+        StampCollectionCellRenderer
+      ) as VueWrapper<StampCollectionCellRendererType>
       wrapper.vm.collections = collectionResult
-      // @ts-ignore
       expect(wrapper.vm.findCollectionName(2)).toBe('collection-2')
     })
 
     it('no matching id', () => {
-      const wrapper = shallowMount(StampCollectionCellRenderer)
-      // @ts-ignore
+      const wrapper = shallowMount(
+        StampCollectionCellRenderer
+      ) as VueWrapper<StampCollectionCellRendererType>
       wrapper.vm.collections = collectionResult
-      // @ts-ignore
       expect(wrapper.vm.findCollectionName(42)).toBe('')
     })
   })
@@ -55,10 +62,8 @@ describe('StampCollectionCellRenderer', () => {
             value: 2
           }
         }
-      })
-      // @ts-ignore
+      }) as VueWrapper<StampCollectionCellRendererType>
       comp.vm.collections = collectionResult
-      // @ts-ignore
       expect(comp.vm.collectionName).toBe('collection-2')
     })
   })

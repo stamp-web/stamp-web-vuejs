@@ -9,7 +9,7 @@ export type Catalogue = PersistedNamedModel & {
   code: CurrencyCode
 }
 
-export const enum CatalogueType {
+export enum CatalogueType {
   STANLEY_GIBBONS = 0,
   SCOTT = 1,
   MICHEL = 2,
@@ -34,7 +34,6 @@ export class CatalogueModelHelper {
   }
 
   static toString(value: number): string {
-    // @ts-ignore
     const c = EnumHelper.enumToString(CatalogueType, value)
     return c ? localeUtil.t(`catalogueType.${c}`) : ''
   }

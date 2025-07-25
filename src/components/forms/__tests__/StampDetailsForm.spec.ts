@@ -4,9 +4,13 @@ import { nextTick } from 'vue'
 import { StampModelHelper } from '../../../models/Stamp'
 import StampDetailsForm from '../StampDetailsForm.vue'
 
+type StampDetailsFormType = InstanceType<typeof StampDetailsForm> & {
+  onKeyDown: (event: KeyboardEvent) => void
+}
+
 describe('StampDetailsForm', () => {
   describe('onKeyDown', () => {
-    let wrapper: VueWrapper
+    let wrapper: VueWrapper<StampDetailsFormType>
 
     it('verify event is raised on TAB', async () => {
       const stamp = StampModelHelper.newInstance()
@@ -15,12 +19,10 @@ describe('StampDetailsForm', () => {
       wrapper = shallowMount(StampDetailsForm, {
         propsData: {
           modelValue: stamp,
-          // @ts-ignore
           'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
         }
       })
       await nextTick()
-      // @ts-ignore
       wrapper.vm.onKeyDown(
         new KeyboardEvent('keydown', {
           key: 'Tab'
@@ -36,12 +38,10 @@ describe('StampDetailsForm', () => {
       wrapper = shallowMount(StampDetailsForm, {
         propsData: {
           modelValue: stamp,
-          // @ts-ignore
           'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
         }
       })
       await nextTick()
-      // @ts-ignore
       wrapper.vm.onKeyDown(
         new KeyboardEvent('keydown', {
           key: 'Tab'
@@ -57,12 +57,10 @@ describe('StampDetailsForm', () => {
       wrapper = shallowMount(StampDetailsForm, {
         propsData: {
           modelValue: stamp,
-          // @ts-ignore
           'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
         }
       })
       await nextTick()
-      // @ts-ignore
       wrapper.vm.onKeyDown(
         new KeyboardEvent('keydown', {
           key: 'a'

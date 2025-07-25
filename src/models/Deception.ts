@@ -13,7 +13,6 @@ export enum Deception {
 
 export class DeceptionHelper {
   public static toString(value: number): string {
-    // @ts-ignore
     const g = EnumHelper.enumToString(Deception, value)
     return g ? localeUtil.t(`deception.${g}`) : ''
   }

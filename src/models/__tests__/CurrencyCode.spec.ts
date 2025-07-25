@@ -29,7 +29,7 @@ describe('CurrencyTools', () => {
     })
 
     it('USD null value', () => {
-      // @ts-ignore
+      // @ts-expect-error: input is typed as a number
       const v = CurrencyTools.asCurrencyString(null, CurrencyCode.USD)
       expect(v).toBe('')
     })
