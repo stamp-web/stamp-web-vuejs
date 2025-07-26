@@ -7,6 +7,7 @@ class LocaleUtilities {
   private readonly i18n
   constructor() {
     this.i18n = createI18n({
+      legacy: false,
       locale: 'en-US',
       fallbackLocale: 'en-US',
       globalInjection: true,
@@ -35,7 +36,7 @@ class LocaleUtilities {
     const i18n = this.getI18n()
 
     if (i18n.global.availableLocales.includes(locale)) {
-      i18n.global.locale = locale
+      i18n.global.locale.value = locale
       return true
     }
 
