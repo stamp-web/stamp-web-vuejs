@@ -1,47 +1,50 @@
-import { defineStore } from 'pinia'
-import type { PersistedNamedModel } from '@/models/entityModels'
-import { type BaseState, createBaseStore } from '@/stores/baseStore'
-import type BaseManagedService from '@/services/BasedManagedService'
 import type { SearchOptions } from '@/stores/types/searchOptions'
+import { baseStoreComposition, type BaseStoreOptions } from '@/stores/baseStore'
+import type BaseManagedService from '@/services/BasedManagedService'
+import { type PersistedNamedModel } from '@/models/entityModels'
+import { CountModel } from '@/models/countModel'
 
-export function createNamedStore<T extends PersistedNamedModel>(
-  storeId: string,
+export type BaseNamedStoreOptions<T extends PersistedNamedModel> = BaseStoreOptions<T> & {
   service: BaseManagedService<T>
+}
+
+export function baseNamedStoreComposition<T extends PersistedNamedModel>(
+  options: BaseNamedStoreOptions<T>
 ) {
-  const baseStore = createBaseStore<T>(storeId, service)
+  options.baseSearchOptions = options.baseSearchOptions ?? {
+    $orderby: 'name asc'
+  }
 
-  return defineStore(storeId, {
-    state: (): BaseState<T> => {
-      const initialState = baseStore().$state
-      return {
-        items: {
-          // @ts-expect-error: type unwrap problem
-          list: [...initialState.items.list],
-          total: initialState.items.total,
-          loading: initialState.items.loading
-        },
-        inflightPromise: initialState.inflightPromise,
-        lastOptions: { ...initialState.lastOptions }
-      }
-    },
-
-    actions: {
-      ...baseStore(),
-      postFind(models: T[], options?: SearchOptions) {
-        if (!options || options.$orderby?.startsWith('name') || !models.length) {
-          const sortedModels = [...models]
-          sortedModels.sort((a, b) => {
-            const nameA = a.name.toLowerCase()
-            const nameB = b.name.toLowerCase()
-            return nameA.localeCompare(nameB)
-          })
-          if (options?.$orderby === 'name desc') {
-            return sortedModels.reverse()
-          }
-          return sortedModels
+  options.postFind =
+    options.postFind ??
+    ((models: T[], options?: SearchOptions): T[] => {
+      if (!options || options.$orderby?.startsWith('name')) {
+        const m = models.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+        if (options && options.$orderby === 'name desc') {
+          return m.reverse()
         }
-        return models
+        return m
       }
-    }
-  })
+      return models
+    })
+
+  const baseComposition = baseStoreComposition<T>(options)
+
+  async function getStampCount(): Promise<CountModel[]> {
+    const counts = await (baseComposition.service as BaseManagedService<T>).getStampCount()
+    counts.forEach((cm) => {
+      const item = baseComposition.state.items.list.find((c: T) => {
+        return c.id === cm.id
+      })
+      if (item) {
+        item.count = cm.count
+      }
+    })
+    return counts
+  }
+
+  return {
+    ...baseComposition,
+    getStampCount
+  }
 }

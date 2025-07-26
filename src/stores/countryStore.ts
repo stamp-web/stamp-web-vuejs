@@ -1,28 +1,48 @@
-import { useStore } from 'pinia-generic'
-import type { PiniaStore } from 'pinia-generic'
-import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
+import { defineStore } from 'pinia'
+
+import { baseNamedStoreComposition } from '@/stores/baseNamedStore'
+import countryService from '@/services/CountryService'
 import type { Country } from '@/models/entityModels'
-import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
-import CountryService from '@/services/CountryService'
-import type BaseManagedService from '@/services/BasedManagedService'
+import type { CountModel } from '@/models/countModel'
 
-type CountryStoreType = PiniaStore<
-  'countryStore',
-  object,
-  object,
-  object,
-  BaseNamedModelStore<Country>
->
+const baseComposition = baseNamedStoreComposition<Country>({
+  service: countryService
+})
 
-export const countryStore = useStore<CountryStoreType, BaseNamedModelStore<Country>>(
-  'countryStore',
-  {
-    state: {},
-    getters: {
-      service(): BaseManagedService<Country> {
-        return CountryService
-      }
+export const countryStore = defineStore('countryStore', {
+  state: () => ({
+    ...baseComposition.state
+  }),
+  getters: {
+    service() {
+      return countryService
     }
   },
-  baseNamedModelStore<Country>()
-)
+
+  actions: {
+    async find(options?: object): Promise<Country[]> {
+      return baseComposition.find(options)
+    },
+    async findById(id: number): Promise<Country> {
+      return baseComposition.findById(id)
+    },
+    async findRandom(): Promise<Country | undefined> {
+      return baseComposition.findRandom()
+    },
+    async remove(model: Country): Promise<void> {
+      return baseComposition.remove(model)
+    },
+    async create(model: Country): Promise<Country> {
+      return baseComposition.create(model)
+    },
+    async update(model: Country): Promise<Country> {
+      return baseComposition.update(model)
+    },
+    getCount(): number {
+      return baseComposition.getCount()
+    },
+    getStampCount(): Promise<CountModel[]> {
+      return baseComposition.getStampCount()
+    }
+  }
+})

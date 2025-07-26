@@ -11,7 +11,7 @@
   import GradeSelector from '@/components/inputs/GradeSelector.vue'
   import CountrySelector from '@/components/inputs/CountrySelector.vue'
   import CurrencySelector from '@/components/inputs/CurrencySelector.vue'
-  import { preferenceStore } from '@/stores/PreferenceStore'
+  import { preferenceStore } from '@/stores/preferenceStore'
   import type { Preference } from '@/models/Preference'
   import type { KeyIndexable } from '@/util/ts/key-accessor'
 

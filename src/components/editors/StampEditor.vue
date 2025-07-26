@@ -131,10 +131,9 @@
    * With Vueform 10.1.4+ the code to convert the numbers to strings should no longer be needed
    */
   const getSaveModel = () => {
-    const m = Object.assign({}, props.model, stampModel.value) as Stamp
+    const m = Object.assign(props.model, stampModel.value) as Stamp
     m.activeCatalogueNumber = Object.assign(
-      {},
-      m.activeCatalogueNumber,
+      m.activeCatalogueNumber ?? {},
       activeCatalogueNumber.value
     )
     if (m.stampOwnerships?.length > 0) {

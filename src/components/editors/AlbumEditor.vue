@@ -5,7 +5,7 @@
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import localeUtil from '@/util/locale-utils'
   import StampCollectionSelector from '@/components/inputs/StampCollectionSelector.vue'
-  import { preferenceStore } from '@/stores/PreferenceStore'
+  import { preferenceStore } from '@/stores/preferenceStore'
 
   const prefStore = preferenceStore()
 

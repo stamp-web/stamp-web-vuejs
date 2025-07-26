@@ -1,21 +1,40 @@
-import { defineStore, type Store } from 'pinia'
+import { defineStore } from 'pinia'
 import _cloneDeep from 'lodash-es/cloneDeep'
 
 import type { Stamp } from '@/models/Stamp'
-import { type BaseState, createBaseStore } from '@/stores/baseStore'
+import { baseStoreComposition } from '@/stores/baseStore'
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
-import StampService from '@/services/StampService'
+import stampService from '@/services/StampService'
 import { ConditionHelper } from '@/models/Condition'
 import { catalogueStore } from '@/stores/catalogueStore'
 import type { EntityList } from '@/models/entityList'
 import { Operators, Predicate } from 'odata-filter-parser'
 import { PredicateUtilities } from '@/util/predicate-util'
-import BaseModelService from '@/services/BaseModelService'
 import type { SearchOptions } from '@/stores/types/searchOptions'
 
-const stampService = StampService
-const baseStore = createBaseStore<Stamp>('nonStampStore', stampService)
-const baseStoreInstance = baseStore()
+const baseComposition = baseStoreComposition<Stamp>({
+  service: stampService,
+  baseSearchOptions: { $orderby: 'number asc' } as SearchOptions,
+  /**
+   * Will set the active catalogue number post creation of the stamp.
+   *
+   * @override
+   * @param stamp
+   */
+  postCreate(stamp: Stamp): Stamp {
+    return setActiveCatalogueNumber(stamp)
+  },
+
+  /**
+   * Will set the active catalogue number post update of the stamp.
+   *
+   * @override
+   * @param stamp
+   */
+  postUpdate(stamp: Stamp): Stamp {
+    return setActiveCatalogueNumber(stamp)
+  }
+})
 
 export const setActiveCatalogueNumber = (s: Stamp): Stamp => {
   const activeCN = s.catalogueNumbers?.find((cn: CatalogueNumber) => {
@@ -45,23 +64,18 @@ const createFilter = (stamp: Stamp, cn: CatalogueNumber): object => {
 
 export const stampStore = defineStore('stampStore', {
   state: () => ({
-    ...baseStoreInstance.$state
+    ...baseComposition.state
   }),
   getters: {
     service() {
-      return StampService
-    },
-    baseSearchOptions() {
-      return baseStoreInstance.baseSearchOptions
+      return stampService
     }
   },
 
   actions: {
-    remove(model: Stamp): Promise<void> {
-      return baseStoreInstance.remove(model)
+    async remove(model: Stamp): Promise<void> {
+      return baseComposition.remove(model)
     },
-
-    // Stamp-specific actions
 
     /**
      * Find stamps based on the options specified.  Since the stamp store is a filtered store/query and not
@@ -71,11 +85,11 @@ export const stampStore = defineStore('stampStore', {
      * @override
      * @param options
      */
-    async find(options?: object): Promise<Array<Stamp>> {
+    async find(options?: object): Promise<Stamp[]> {
       this.items.list.splice(0, this.items.list.length)
       this.items.loading = true
       const data: EntityList<Stamp> = await this.service.find(options)
-      const list = new Array<Stamp>()
+      const list: Stamp[] = []
       data.items.forEach((e) => {
         e = setActiveCatalogueNumber(e)
         list.push(e)
@@ -86,34 +100,14 @@ export const stampStore = defineStore('stampStore', {
       return _cloneDeep(this.items.list)
     },
 
-    create(model: Stamp): Promise<Stamp> {
-      return baseStoreInstance.create(model)
+    async create(model: Stamp): Promise<Stamp> {
+      return baseComposition.create(model)
     },
-    update(model: Stamp): Promise<Stamp> {
-      return baseStoreInstance.update(model)
+    async update(model: Stamp): Promise<Stamp> {
+      return baseComposition.update(model)
     },
     getCount(): number {
-      return baseStoreInstance.getCount()
-    },
-
-    /**
-     * Will set the active catalogue number post creation of the stamp.
-     *
-     * @override
-     * @param stamp
-     */
-    postCreate(stamp: Stamp): Stamp {
-      return setActiveCatalogueNumber(stamp)
-    },
-
-    /**
-     * Will set the active catalogue number post update of the stamp.
-     *
-     * @override
-     * @param stamp
-     */
-    postUpdate(stamp: Stamp): Stamp {
-      return setActiveCatalogueNumber(stamp)
+      return baseComposition.getCount()
     },
 
     async checkIfExists(stamp: Stamp, cn: CatalogueNumber): Promise<boolean> {

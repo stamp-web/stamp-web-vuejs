@@ -26,7 +26,7 @@ describe('BaseModelService', () => {
       super()
     }
 
-    protected getResourceName(): string {
+    getResourceName(): string {
       return 'albums'
     }
   }

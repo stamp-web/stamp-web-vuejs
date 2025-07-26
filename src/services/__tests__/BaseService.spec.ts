@@ -8,7 +8,7 @@ describe('BaseService', () => {
       super()
     }
 
-    protected getResourceName(): string {
+    getResourceName(): string {
       return 'albums'
     }
   }
