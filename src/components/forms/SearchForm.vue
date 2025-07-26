@@ -26,7 +26,7 @@
   type SearchFormModel = {
     purchased?: string[]
     createTimestamp?: string[]
-    updateTimestamp?: string[]
+    modifyTimestamp?: string[]
     countryRef?: number
     stampCollectionRef?: number
     albumRef?: number
@@ -43,7 +43,7 @@
 
   const model = ref<SearchFormModel>({})
 
-  const dateKeys = ['purchased', 'updateTimestamp', 'createTimestamp']
+  const dateKeys = ['purchased', 'modifyTimestamp', 'createTimestamp']
 
   function processDatePredicates(predicates: Array<Predicate>, arr: Array<string>, key: string) {
     if (arr.length > 1) {
@@ -167,7 +167,7 @@
         ></DateRangePicker>
         <DateRangePicker
           :columns="{ container: 12, label: 4, wrapper: 12 }"
-          name="updateTimestamp"
+          name="modifyTimestamp"
           :label="t('form.updated')"
         ></DateRangePicker>
         <CountrySelector

@@ -5,7 +5,7 @@
   import { TransitionRoot } from '@headlessui/vue'
   import SellerEditor from '@/components/editors/SellerEditor.vue'
   import DataGridComponent from '@/components/table/DataGridComponent.vue'
-  import type { Seller, StampCollection } from '@/models/entityModels'
+  import type { Seller } from '@/models/entityModels'
   import { sellerStore } from '@/stores/sellerStore'
   import { createInstance } from '@/models/entityModels'
   import { ColumnDefinition } from '@/components/table/DataGridModels'

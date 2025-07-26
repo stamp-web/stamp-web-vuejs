@@ -23,7 +23,7 @@ export default abstract class BaseModelService<T extends PersistedModel> extends
     return this.save(model, options)
   }
 
-  protected async save(model: T, options = {}): Promise<T> {
+  async save(model: T, options = {}): Promise<T> {
     const isUpdate = model.id && model.id > 0
     const config: AxiosRequestConfig = {
       method: isUpdate ? HttpMethod.PUT : HttpMethod.POST,

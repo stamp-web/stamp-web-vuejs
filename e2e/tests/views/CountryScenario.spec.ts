@@ -176,10 +176,11 @@ test.describe('edit scenarios', () => {
 
   test('edit valid fields', async ({ page }) => {
     await navigateToEditor(page)
+    const descText = 'some description to update'
     await editor.getName().clear()
     await editor.getName().fill(revisedName)
     await editor.getDescription().clear()
-    await editor.getDescription().fill('some description to update')
+    await editor.getDescription().fill(descText)
     expect(await editor.isValid()).toBe(true)
     await editor.getSaveButton().click()
     await view.getFilter().getInput().clear()
@@ -187,6 +188,8 @@ test.describe('edit scenarios', () => {
     await view.getGrid().waitForLoadingComplete()
     const rowItem: Locator = view.getGrid().getRowByText(revisedName)
     await expect(rowItem).toBeVisible()
+    const descItem: Locator = view.getGrid().getRowByText(descText)
+    await expect(descItem).toBeVisible()
   })
 
   test('validation of fields', async ({ page }) => {

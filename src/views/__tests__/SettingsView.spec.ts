@@ -3,7 +3,7 @@ import { setActivePinia } from 'pinia'
 import { createTestingPinia } from '@pinia/testing'
 import { mount, VueWrapper } from '@vue/test-utils'
 import SettingsView from '@/views/SettingsView.vue'
-import { preferenceStore } from '@/stores/PreferenceStore'
+import { preferenceStore } from '@/stores/preferenceStore'
 import type { Preference } from '@/models/Preference'
 
 interface SettingsViewComponent {

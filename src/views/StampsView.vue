@@ -41,7 +41,7 @@
 
   import reportService from '@/services/ReportService'
 
-  import { preferenceStore } from '@/stores/PreferenceStore'
+  import { preferenceStore } from '@/stores/preferenceStore'
   import { catalogueStore } from '@/stores/catalogueStore'
   import { countryStore } from '@/stores/countryStore'
   import { stampStore } from '@/stores/stampStore'

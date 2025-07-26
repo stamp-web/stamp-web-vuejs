@@ -90,7 +90,7 @@ export default ({ mode }: ConfigEnv) => {
             ],
             fetch: ['axios', 'blueimp-load-image'],
             vueCore: ['vue', 'vue-router', 'vue3-eventbus'],
-            pinia: ['pinia', 'pinia-generic'],
+            pinia: ['pinia'],
             i18n: ['vue-i18n'],
             tooltip: ['floating-vue', 'vue-toast-notification'],
             headlessui: ['@headlessui/vue']
