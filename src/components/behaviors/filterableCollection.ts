@@ -1,4 +1,4 @@
-import type { PersistedModel, PersistedNamedModel } from '@/models/entityModels'
+import type { PersistedNamedModel } from '@/models/entityModels'
 import { reactive, computed } from 'vue'
 import _isEmpty from 'lodash-es/isEmpty'
 import LocalCache from '@/stores/LocalCache'

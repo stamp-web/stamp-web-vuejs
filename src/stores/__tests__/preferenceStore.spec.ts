@@ -40,8 +40,6 @@ describe('preferenceStore', () => {
     }
   ]
 
-  const baseMockPreferences = structuredClone(mockPreferences)
-
   beforeEach(() => {
     setActivePinia(createPinia())
     store = preferenceStore()

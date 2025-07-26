@@ -1,28 +1,52 @@
-import { useStore } from 'pinia-generic'
-import type { PiniaStore } from 'pinia-generic'
-import type { BaseNamedModelStore } from '@/stores/baseNamedModelStore'
+import { defineStore } from 'pinia'
+
+import { baseNamedStoreComposition } from '@/stores/baseNamedStore'
+import sellerService from '@/services/SellerService'
 import type { Seller } from '@/models/entityModels'
-import { baseNamedModelStore } from '@/stores/baseNamedModelStore'
-import SellerService from '@/services/SellerService'
-import BaseModelService from '@/services/BaseModelService'
+import type { CountModel } from '@/models/countModel'
+import type { BaseState } from '@/stores/baseStore'
 
-type SellerStoreType = PiniaStore<
-  'sellerStore',
-  object,
-  object,
-  object,
-  BaseNamedModelStore<Seller>
->
+const baseComposition = baseNamedStoreComposition<Seller>({
+  service: sellerService
+})
 
-export const sellerStore = useStore<SellerStoreType, BaseNamedModelStore<Seller>>(
-  'sellerStore',
-  {
-    state: {},
-    getters: {
-      service(): BaseModelService<Seller> {
-        return SellerService
-      }
+export const sellerStore = defineStore('sellerStore', {
+  state: () =>
+    ({
+      items: baseComposition.state.value.items,
+      inflightPromise: baseComposition.state.value.inflightPromise,
+      lastOptions: baseComposition.state.value.lastOptions
+    }) as BaseState<Seller>,
+  getters: {
+    service() {
+      return sellerService
     }
   },
-  baseNamedModelStore<Seller>()
-)
+
+  actions: {
+    async find(options?: object): Promise<Seller[]> {
+      return baseComposition.find(options)
+    },
+    async findById(id: number): Promise<Seller> {
+      return baseComposition.findById(id)
+    },
+    async findRandom(): Promise<Seller | undefined> {
+      return baseComposition.findRandom()
+    },
+    async remove(model: Seller): Promise<void> {
+      return baseComposition.remove(model)
+    },
+    async create(model: Seller): Promise<Seller> {
+      return baseComposition.create(model)
+    },
+    async update(model: Seller): Promise<Seller> {
+      return baseComposition.update(model)
+    },
+    getCount(): number {
+      return baseComposition.getCount()
+    },
+    getStampCount(): Promise<CountModel[]> {
+      return baseComposition.getStampCount()
+    }
+  }
+})

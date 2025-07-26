@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { withDefaults, computed } from 'vue'
+  import { computed } from 'vue'
   import { useI18n } from 'vue-i18n'
   import type { PagingProps } from '@/components/table/types/pagingProps'
 

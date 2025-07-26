@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import _cloneDeep from 'lodash-es/cloneDeep'
 
 import type { Stamp } from '@/models/Stamp'
-import { baseStoreComposition } from '@/stores/baseStore'
+import { type BaseState, baseStoreComposition } from '@/stores/baseStore'
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
 import stampService from '@/services/StampService'
 import { ConditionHelper } from '@/models/Condition'
@@ -44,7 +44,7 @@ export const setActiveCatalogueNumber = (s: Stamp): Stamp => {
   return s
 }
 
-const createFilter = (stamp: Stamp, cn: CatalogueNumber): object => {
+export const createFilter = (stamp: Stamp, cn: CatalogueNumber): object => {
   const searchCriteria = [
     new Predicate({
       subject: 'countryRef',
@@ -63,9 +63,12 @@ const createFilter = (stamp: Stamp, cn: CatalogueNumber): object => {
 }
 
 export const stampStore = defineStore('stampStore', {
-  state: () => ({
-    ...baseComposition.state
-  }),
+  state: () =>
+    ({
+      items: baseComposition.state.value.items,
+      inflightPromise: baseComposition.state.value.inflightPromise,
+      lastOptions: baseComposition.state.value.lastOptions
+    }) as BaseState<Stamp>,
   getters: {
     service() {
       return stampService

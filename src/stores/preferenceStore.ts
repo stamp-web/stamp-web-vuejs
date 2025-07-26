@@ -2,7 +2,7 @@ import PreferenceService from '@/services/PreferenceService'
 import type { Preference } from '@/models/Preference'
 
 import { defineStore } from 'pinia'
-import { baseStoreComposition } from '@/stores/baseStore'
+import { type BaseState, baseStoreComposition } from '@/stores/baseStore'
 import type { SearchOptions } from '@/stores/types/searchOptions'
 
 const baseComposition = baseStoreComposition<Preference>({
@@ -10,9 +10,12 @@ const baseComposition = baseStoreComposition<Preference>({
 })
 
 export const preferenceStore = defineStore('preferenceStore', {
-  state: () => ({
-    ...baseComposition.state
-  }),
+  state: () =>
+    ({
+      items: baseComposition.state.value.items,
+      inflightPromise: baseComposition.state.value.inflightPromise,
+      lastOptions: baseComposition.state.value.lastOptions
+    }) as BaseState<Preference>,
   getters: {
     service() {
       return PreferenceService
@@ -43,7 +46,7 @@ export const preferenceStore = defineStore('preferenceStore', {
 
     async findByCategory(category: string): Promise<Preference[]> {
       if (this.items.list.length > 0 && !this.lastOptions.$filter) {
-        const filtered = this.items.list.filter((p) => p.category === category)
+        const filtered = this.items.list.filter((p: Preference) => p.category === category)
         return Promise.resolve(filtered)
       } else {
         const params = {} as SearchOptions

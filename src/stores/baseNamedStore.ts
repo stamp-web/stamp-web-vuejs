@@ -33,7 +33,7 @@ export function baseNamedStoreComposition<T extends PersistedNamedModel>(
   async function getStampCount(): Promise<CountModel[]> {
     const counts = await (baseComposition.service as BaseManagedService<T>).getStampCount()
     counts.forEach((cm) => {
-      const item = baseComposition.state.items.list.find((c: T) => {
+      const item = baseComposition.state.value.items.list.find((c: T) => {
         return c.id === cm.id
       })
       if (item) {

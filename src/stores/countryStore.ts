@@ -4,15 +4,19 @@ import { baseNamedStoreComposition } from '@/stores/baseNamedStore'
 import countryService from '@/services/CountryService'
 import type { Country } from '@/models/entityModels'
 import type { CountModel } from '@/models/countModel'
+import type { BaseState } from '@/stores/baseStore'
 
 const baseComposition = baseNamedStoreComposition<Country>({
   service: countryService
 })
 
 export const countryStore = defineStore('countryStore', {
-  state: () => ({
-    ...baseComposition.state
-  }),
+  state: () =>
+    ({
+      items: baseComposition.state.value.items,
+      inflightPromise: baseComposition.state.value.inflightPromise,
+      lastOptions: baseComposition.state.value.lastOptions
+    }) as BaseState<Country>,
   getters: {
     service() {
       return countryService
