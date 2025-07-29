@@ -59,6 +59,22 @@
   import type { ColumnControl } from '@/views/types/columnControl'
   import type { SearchOptions } from '@/stores/types/searchOptions'
   import type { ReportOptions } from '@/services/types/reportTypes'
+  import { useStampView } from '@/views/behaviors/stampView'
+
+  /**
+   * StampsView Component
+   *
+   * Main view for managing stamps in a collection. Provides functionality for:
+   * - Viewing stamps in list or card layout
+   * - CRUD operations on stamps
+   * - Bulk operations (purchase, edit, delete)
+   * - Filtering and searching
+   * - Reporting
+   *
+   * @emits refresh - When the view needs to be refreshed
+   * @emits save - When a stamp is saved
+   * @emits delete - When stamps are deleted
+   */
 
   const { t } = useI18n()
 
@@ -150,9 +166,7 @@
 
   const { isEditorShown, setEditModel, getEditModel, hideEditor } = editableModel<Stamp>()
 
-  const viewDef = ref({
-    mode: 'list'
-  })
+  const { getViewMode, setViewMode, calculateEditorWidth } = useStampView()
 
   const prefPaths = ref<PreferencePaths>({
     imagePath: '/',
@@ -173,19 +187,11 @@
     return getEditModel()?.wantList
   })
 
-  const calculateEditorWidth = () => {
-    return isSelectedWantlist.value ? 'min-w-80 max-w-80' : 'min-w-160 max-w-160'
-  }
-
   const setupStats = async () => {
     await nextTick()
     setPagingItems(getCollection())
     setCollectionTotal(store.getCount())
     calculatePagingStats(getCollectionTotal())
-  }
-
-  const setView = (viewType: string) => {
-    viewDef.value.mode = viewType
   }
 
   const getSelectedCardClasses = (stamp: Stamp): string => {
@@ -472,22 +478,22 @@
         <SecondaryButton
           class="ml-2 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tr-none rounded-br-none !border-gray-400"
           icon="sw-icon-list"
-          :tooltip="viewDef?.mode === 'list' ? '' : t('actions.show-list-view')"
-          @click="setView('list')"
-          :disabled="viewDef?.mode === 'list'"
+          :tooltip="getViewMode() === 'list' ? '' : t('actions.show-list-view')"
+          @click="setViewMode('list')"
+          :disabled="getViewMode() === 'list'"
         ></SecondaryButton>
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
           icon="sw-icon-gridview"
-          :tooltip="viewDef?.mode === 'card' ? '' : t('actions.show-card-view')"
-          @click="setView('card')"
-          :disabled="viewDef?.mode === 'card'"
+          :tooltip="getViewMode() === 'card' ? '' : t('actions.show-card-view')"
+          @click="setViewMode('card')"
+          :disabled="getViewMode() === 'card'"
         ></SecondaryButton>
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
           icon="sw-icon-references"
           :tooltip="t('actions.show-reference-catalogueNumbers')"
-          @click="setView('card')"
+          @click="setViewMode('card')"
           :disabled="true"
         ></SecondaryButton>
         <SecondaryButton
@@ -568,7 +574,7 @@
         ></PagingSizeInput>
       </div>
       <div class="h-full w-full flex overflow-hidden">
-        <div class="h-full w-full" v-if="viewDef.mode === 'list'">
+        <div class="h-full w-full" v-if="getViewMode() === 'list'">
           <DataGridComponent
             ref="dataGridRef"
             :columnDefs="columnDefs"
@@ -584,7 +590,7 @@
         </div>
         <div
           class="flex-grow flex flex-grow-0 flex-shrink-1 flex-row flex-auto w-full overflow-y-auto border border-gray-300"
-          v-if="viewDef.mode === 'card'"
+          v-if="getViewMode() === 'card'"
           ref="cardLayout"
         >
           <div
@@ -614,7 +620,7 @@
           leave="transition-opacity duration-150"
           leave-from="opacity-100"
           leave-to="opacity-0"
-          :class="`${calculateEditorWidth()} h-full flex flex-col ml-2`"
+          :class="`${calculateEditorWidth(isSelectedWantlist)} h-full flex flex-col ml-2`"
         >
           <StampEditor
             :model="getEditModel()"
