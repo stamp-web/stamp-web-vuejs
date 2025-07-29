@@ -1,4 +1,4 @@
-import { ref, toRaw } from 'vue'
+import { ref } from 'vue'
 import type { PersistedModel } from '@/models/entityModels'
 
 const editableModel = <T extends PersistedModel>() => {
@@ -6,7 +6,7 @@ const editableModel = <T extends PersistedModel>() => {
   const editingModel = ref<T>()
 
   const setEditModel = (model: T) => {
-    editingModel.value = structuredClone(toRaw(model))
+    editingModel.value = model
     showEditor()
   }
 

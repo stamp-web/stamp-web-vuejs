@@ -1,12 +1,11 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
-  import { computed, inject, nextTick, onMounted, ref, toRaw, watchEffect } from 'vue'
+  import { computed, inject, nextTick, onMounted, ref, watchEffect } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { TransitionRoot, PopoverPanel, Popover, PopoverButton } from '@headlessui/vue'
   import _isEmpty from 'lodash-es/isEmpty'
   import { Parser, Operators, Predicate } from 'odata-filter-parser'
   import type { Log } from 'vuejs3-logger'
-  import dayjs from 'dayjs'
   import { type ColumnState } from 'ag-grid-community'
 
   import editableModel from '@/components/behaviors/editableModel'
@@ -45,7 +44,6 @@
   import { catalogueStore } from '@/stores/catalogueStore'
   import { countryStore } from '@/stores/countryStore'
   import { stampStore } from '@/stores/stampStore'
-  import LocalCache from '@/stores/LocalCache'
 
   import { extractErrorMessage } from '@/util/object-utils'
   import { PredicateUtilities } from '@/util/predicate-util'
@@ -163,16 +161,7 @@
 
   const stampModelUtils = new StampModelUtils()
 
-  const transformEditModel = (m: Stamp) => {
-    if (m.stampOwnerships?.length > 0) {
-      OwnershipHelper.toTagElementView(m.stampOwnerships[0])
-    }
-    setEditModel(m)
-  }
-
-  const columnDefs = ref<ColumnDefinition[]>(
-    createStampColumnDefs(prefPaths.value, transformEditModel)
-  )
+  const columnDefs = ref<ColumnDefinition[]>(createStampColumnDefs(prefPaths.value, setEditModel))
 
   watchEffect(() => {
     Object.keys(columnControl.value).forEach((key) => {
@@ -372,29 +361,19 @@
     // add new stamp ownership to model
     sm.stampOwnerships.push(OwnershipHelper.newInstance(await prefStore.findByCategory('stamps')))
     sm.wantList = false
-    transformEditModel(sm)
+    setEditModel(sm)
   }
 
   const createStamp = async (wantList: boolean = false) => {
     const stampPrefs = await prefStore.findByCategory('stamps')
     const model = StampModelHelper.newInstance(wantList, stampPrefs)
-    transformEditModel(model)
+    setEditModel(model)
   }
 
   const save = async (s: Stamp, saveAndNew: boolean = false) => {
     try {
       const updating = s.id > 0
-      const sModified = structuredClone(toRaw(s))
-      if (sModified.stampOwnerships?.length > 0) {
-        if (!updating && sModified.stampOwnerships[0].purchased) {
-          LocalCache.setItem(
-            'ownership-purchased',
-            dayjs(sModified.stampOwnerships[0].purchased).format('YYYY-MM-DD')
-          )
-        }
-        OwnershipHelper.fromTagElementView(sModified.stampOwnerships[0])
-      }
-      const savedStamp = updating ? await store.update(sModified) : await store.create(sModified)
+      const savedStamp = updating ? await store.update(s) : await store.create(s)
       await updateCollectionEntry(savedStamp)
       setupStats()
       if (saveAndNew) {

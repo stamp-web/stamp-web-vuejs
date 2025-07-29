@@ -40,6 +40,7 @@ class LocaleUtilities {
       return true
     }
 
+    // eslint-disable-next-line no-console
     console.warn(`Locale '${locale}' is not available. Using fallback locale.`)
     return false
   }

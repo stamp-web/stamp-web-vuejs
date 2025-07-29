@@ -10,7 +10,7 @@ import noNeedForLodash from 'eslint-plugin-you-dont-need-lodash-underscore'
 export default [
   {
     ignores: [
-      'dist/**',
+      'dist/assets/**',
       'coverage/**',
       'test-results/**',
       'node_modules/**',
@@ -21,7 +21,7 @@ export default [
   ...defineConfigWithVueTs(
     {
       name: 'app/files-to-lint',
-      files: ['**/*.{ts,mts,tsx,vue}']
+      files: ['src/**/*.{ts,mts,tsx,vue}']
     },
     pluginVue.configs['flat/essential'],
     vueTsConfigs.recommended,
@@ -33,23 +33,23 @@ export default [
       ...pluginPlaywright.configs['flat/recommended'],
       files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}']
     },
-
     skipFormatting
   ),
   {
     name: 'validate the lodash and underscore usages',
-    //files: ['**/*.{ts,js,vue}'],
+    files: ['src/**/*.{ts,js,vue}'],
     plugins: {
       noNeedForLodash
     }
   },
   {
     name: 'TypeScript specific overrides',
-    files: ['**/*.{ts,tsx,mts,vue}'],
+    files: ['src/**/*.{ts,tsx,mts,vue}', 'e2e/**/*.ts'],
     plugins: {
       tseslint
     },
     rules: {
+      'no-console': 'warn',
       '@typescript-eslint/ban-ts-comment': 'warn'
     }
   }

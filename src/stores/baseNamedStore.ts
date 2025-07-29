@@ -15,6 +15,16 @@ export function baseNamedStoreComposition<T extends PersistedNamedModel>(
     $orderby: 'name asc'
   }
 
+  options.postUpdate =
+    options.postUpdate ??
+    ((model: T, originalModel: T): T => {
+      // preserve the count so it does not flicker in the UI
+      if (originalModel.count && model?.count !== originalModel.count) {
+        model.count = originalModel.count
+      }
+      return model
+    })
+
   options.postFind =
     options.postFind ??
     ((models: T[], options?: SearchOptions): T[] => {
@@ -36,7 +46,7 @@ export function baseNamedStoreComposition<T extends PersistedNamedModel>(
       const item = baseComposition.state.value.items.list.find((c: T) => {
         return c.id === cm.id
       })
-      if (item) {
+      if (item && item.count !== cm.count) {
         item.count = cm.count
       }
     })

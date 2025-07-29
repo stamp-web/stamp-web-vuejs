@@ -81,8 +81,7 @@
     }
   }
 
-  const save = async () => {
-    const editModel = getEditModel()
+  const save = async (editModel: Country) => {
     if (editModel && editModel.id > 0) {
       await store.update(editModel)
     } else {
@@ -147,7 +146,7 @@
       leave-to="opacity-0"
       class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
-      <CountryEditor :model="getEditModel()" @cancel="hideEditor()" @save="save()"></CountryEditor>
+      <CountryEditor :model="getEditModel()" @cancel="hideEditor" @save="save"></CountryEditor>
     </TransitionRoot>
   </div>
 </template>

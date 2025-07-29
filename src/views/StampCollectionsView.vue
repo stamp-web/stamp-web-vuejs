@@ -81,12 +81,11 @@
     }
   }
 
-  const save = async () => {
-    const editModel = getEditModel()
-    if (editModel && editModel.id > 0) {
-      await store.update(editModel)
+  const save = async (model: StampCollection) => {
+    if (model && model.id > 0) {
+      await store.update(model)
     } else {
-      await store.create(editModel)
+      await store.create(model)
     }
     hideEditor()
   }
@@ -149,8 +148,8 @@
     >
       <StampCollectionEditor
         :model="getEditModel()"
-        @cancel="hideEditor()"
-        @save="save()"
+        @cancel="hideEditor"
+        @save="save"
       ></StampCollectionEditor>
     </TransitionRoot>
   </div>

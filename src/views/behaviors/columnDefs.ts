@@ -14,7 +14,7 @@ import type { Stamp } from '@/models/Stamp'
 
 export function createStampColumnDefs(
   prefPaths: PreferencePaths,
-  transformationCallback: (data: Stamp, rowIndex?: number) => unknown
+  transformationCallback?: (data: Stamp, rowIndex?: number) => unknown
 ): ColumnDefinition[] {
   const { t } = useI18n()
   return [

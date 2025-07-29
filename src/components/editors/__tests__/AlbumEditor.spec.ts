@@ -8,6 +8,9 @@ import type { Album } from '@/models/entityModels'
 
 type AlbumEditorType = {
   title: string
+  form$: {
+    validate: () => void
+  }
   invalid: boolean
 }
 describe('AlbumEditor', () => {
@@ -42,6 +45,7 @@ describe('AlbumEditor', () => {
         }
       }) as unknown as VueWrapper<AlbumEditorType>
       expect(wrapper.vm.title).toBe('New Album')
+      wrapper.vm.form$.validate()
       await nextTick()
       expect(wrapper.vm.invalid).toBe(true)
     })

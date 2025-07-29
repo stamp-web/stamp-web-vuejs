@@ -21,7 +21,7 @@ export type BaseStoreOptions<T extends PersistedModel> = {
   baseSearchOptions?: SearchOptions
   postFind?: (models: T[], options?: SearchOptions) => T[]
   postCreate?: (model: T) => T
-  postUpdate?: (model: T) => T
+  postUpdate?: (model: T, originalModel: T) => T
 }
 
 export type BaseStoreComposition<T extends PersistedModel> = {
@@ -42,7 +42,8 @@ export function baseStoreComposition<T extends PersistedModel>(
   const { service } = options
   const baseSearchOptions: SearchOptions = options.baseSearchOptions ?? {}
   const postCreate = options.postCreate ?? ((model: T) => model)
-  const postUpdate = options.postUpdate ?? ((model: T) => model)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const postUpdate = options.postUpdate ?? ((model: T, originalModel: T) => model)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const postFind = options.postFind ?? ((models: T[], findOptions?: SearchOptions) => models)
 
@@ -125,7 +126,7 @@ export function baseStoreComposition<T extends PersistedModel>(
     const index = state.value.items.list.findIndex((e) => {
       return e.id === m.id
     })
-    m = postUpdate ? postUpdate(m) : m
+    m = postUpdate ? postUpdate(m, model) : m
     if (index >= 0) {
       ;(state.value.items.list as Array<T>)[index] = m
     } else {

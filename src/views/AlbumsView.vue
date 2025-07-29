@@ -80,12 +80,11 @@
     }
   }
 
-  const save = async () => {
-    const editModel = getEditModel()
-    if (editModel && editModel.id > 0) {
-      await store.update(editModel)
+  const save = async (model: Album) => {
+    if (model && model.id > 0) {
+      await store.update(model)
     } else {
-      await store.create(editModel)
+      await store.create(model)
     }
     hideEditor()
   }
@@ -148,7 +147,7 @@
       leave-to="opacity-0"
       class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
-      <AlbumEditor :model="getEditModel()" @cancel="hideEditor()" @save="save()"></AlbumEditor>
+      <AlbumEditor :model="getEditModel()" @cancel="hideEditor" @save="save"></AlbumEditor>
     </TransitionRoot>
   </div>
 </template>

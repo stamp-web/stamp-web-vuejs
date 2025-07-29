@@ -9,6 +9,9 @@ import type { Seller } from '@/models/entityModels'
 type SellerEditorType = {
   title: string
   invalid: boolean
+  form$: {
+    validate: () => void
+  }
 }
 
 describe('SellerEditor', () => {
@@ -42,6 +45,7 @@ describe('SellerEditor', () => {
         }
       }) as unknown as VueWrapper<SellerEditorType>
       expect(wrapper.vm.title).toBe('New Seller')
+      wrapper.vm.form$.validate()
       await nextTick()
       expect(wrapper.vm.invalid).toBe(true)
     })

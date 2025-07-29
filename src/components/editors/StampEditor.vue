@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, computed, watch, nextTick, inject } from 'vue'
+  import { ref, onMounted, computed, watch, nextTick, inject, toRaw, isReactive } from 'vue'
   import { useI18n } from 'vue-i18n'
 
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
@@ -9,13 +9,15 @@
   import StampOwnershipForm from '@/components/forms/StampOwnershipForm.vue'
 
   import type { Stamp } from '@/models/Stamp'
-  import { type Ownership } from '@/models/Ownership'
+  import { type Ownership, OwnershipHelper } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { debounce } from '@/util/timer-utils'
   import { fixFraction } from '@/util/object-utils'
   import { StampModelHelper } from '@/models/Stamp'
   import { stampStore } from '@/stores/stampStore'
   import { type Log } from 'vuejs3-logger'
+  import LocalCache from '@/stores/LocalCache'
+  import dayjs from 'dayjs'
 
   const { t } = useI18n()
 
@@ -50,8 +52,7 @@
     () => [props.model],
     () => {
       setRefs()
-    },
-    { deep: true }
+    }
   )
 
   const checkIfExists = async () => {
@@ -131,31 +132,47 @@
    * With Vueform 10.1.4+ the code to convert the numbers to strings should no longer be needed
    */
   const getSaveModel = () => {
-    const m = Object.assign(props.model, stampModel.value) as Stamp
-    m.activeCatalogueNumber = Object.assign(
-      m.activeCatalogueNumber ?? {},
-      activeCatalogueNumber.value
-    )
-    if (m.stampOwnerships?.length > 0) {
-      m.stampOwnerships[0] = Object.assign(m.stampOwnerships[0], stampOwnership.value)
-      // Fix any data members that are not in the pure data formats (despite editor configurations)
-      if (m.stampOwnerships[0].pricePaid && typeof m.stampOwnerships[0].pricePaid === 'string') {
-        logger.warn('Ownership price paid was a string. Converting to a number')
-        m.stampOwnerships[0].pricePaid = fixFraction(m.stampOwnerships[0].pricePaid)
-      }
-    }
-    // Fix any data members that are not in the pure data formats (despite editor configurations)
-    if (typeof m.activeCatalogueNumber.value === 'string') {
-      logger.warn('Catalogue value was a string. Converting to a number')
-      m.activeCatalogueNumber.value = fixFraction(m.activeCatalogueNumber.value)
-    }
-    // Since we assign the activeCatalogueNumber into the m.activeCatalogueNumber we may break the chain of reference
-    // so we need to reestablish it
-    const indx = m.catalogueNumbers.findIndex((v: CatalogueNumber) => {
+    const m = isReactive(props.model) ? toRaw(props.model) : props.model
+    const stamp = Object.assign({}, m, toRaw(stampModel.value)) as Stamp
+    const updating = stamp.id > 0
+    const idx = stamp.catalogueNumbers.findIndex((v: CatalogueNumber) => {
       return v.active
     })
-    m.catalogueNumbers[indx] = m.activeCatalogueNumber
-    return m
+    stamp.activeCatalogueNumber = toRaw(activeCatalogueNumber.value)
+    if (stamp.activeCatalogueNumber) {
+      // Fix any data members that are not in the pure data formats (despite editor configurations)
+      if (typeof stamp.activeCatalogueNumber.value === 'string') {
+        logger.warn('Catalogue value was a string. Converting to a number')
+        stamp.activeCatalogueNumber.value = fixFraction(stamp.activeCatalogueNumber.value)
+      }
+      // realign the active catalogue number with the catalogue numbers in model
+      if (idx >= 0) {
+        const cn = isReactive(props.model.catalogueNumbers[idx])
+          ? toRaw(props.model.catalogueNumbers[idx])
+          : props.model.catalogueNumbers[idx]
+        stamp.catalogueNumbers[idx] = Object.assign({}, cn, stamp.activeCatalogueNumber)
+        stamp.activeCatalogueNumber = stamp.catalogueNumbers[idx]
+      } else {
+        stamp.catalogueNumbers = [stamp.activeCatalogueNumber]
+      }
+    }
+
+    if (stampOwnership.value) {
+      const owner = toRaw(stampOwnership.value)
+      OwnershipHelper.fromTagElementView(owner)
+      // Fix any data members that are not in the pure data formats (despite editor configurations)
+      if (owner.pricePaid && typeof owner.pricePaid === 'string') {
+        logger.warn('Ownership price paid was a string. Converting to a number')
+        owner.pricePaid = fixFraction(owner.pricePaid)
+      }
+      // cache the purchase date on the creation of a stamp
+      if (!updating && owner.purchased) {
+        LocalCache.setItem('ownership-purchased', dayjs(owner.purchased).format('YYYY-MM-DD'))
+      }
+      stamp.stampOwnerships = [owner]
+    }
+
+    return stamp
   }
 
   const processTabForward = async () => {
@@ -167,10 +184,12 @@
   }
 
   const setRefs = () => {
-    stampModel.value = props.model
-    activeCatalogueNumber.value = props.model.activeCatalogueNumber
-    if (props.model.stampOwnerships?.length > 0) {
-      stampOwnership.value = props.model.stampOwnerships[0]
+    const pm = isReactive(props.model) ? toRaw(props.model) : props.model
+    stampModel.value = structuredClone(pm) as Stamp
+    activeCatalogueNumber.value = stampModel.value?.activeCatalogueNumber
+    if (stampModel.value?.stampOwnerships?.length > 0) {
+      stampOwnership.value = stampModel.value?.stampOwnerships[0]
+      OwnershipHelper.toTagElementView(stampOwnership.value)
     }
     state.value.wantList = stampModel.value?.wantList || false
     state.value.edit = props.model?.id > 0

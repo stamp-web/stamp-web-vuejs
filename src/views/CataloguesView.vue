@@ -87,8 +87,7 @@
     }
   }
 
-  const save = async () => {
-    const editModel = getEditModel()
+  const save = async (editModel: Catalogue) => {
     if (editModel && editModel.id > 0) {
       await store.update(editModel)
     } else {
@@ -155,11 +154,7 @@
       leave-to="opacity-0"
       class="max-w-[20rem] min-w-[20rem] h-full flex flex-col ml-2"
     >
-      <CatalogueEditor
-        :model="getEditModel()"
-        @cancel="hideEditor()"
-        @save="save()"
-      ></CatalogueEditor>
+      <CatalogueEditor :model="getEditModel()" @cancel="hideEditor" @save="save"></CatalogueEditor>
     </TransitionRoot>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed, watch } from 'vue'
+  import { ref, onMounted, nextTick, computed, watch, isReactive, toRaw } from 'vue'
   import type { Album } from '@/models/entityModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
@@ -11,35 +11,27 @@
 
   const props = defineProps<{ model: Album }>()
 
-  const model$ = ref()
+  const modelValue = ref<Album>()
   const form$ = ref()
 
   defineEmits(['cancel', 'save'])
 
+  async function buildViewModel() {
+    modelValue.value = structuredClone(isReactive(props.model) ? toRaw(props.model) : props.model)
+    if (!props.model.id || props.model.id < 1) {
+      const v = await prefStore.findByNameAndCategory('stampCollectionRef', 'stamps')
+      if (v) {
+        modelValue.value.stampCollectionRef = v.value ? Number.parseInt(v.value) : -1
+      }
+    }
+  }
+
   watch(
     () => [props.model],
     async () => {
-      modelValue.value = props.model
-      if (!props.model.id || props.model.id < 1) {
-        const v = await prefStore.findByNameAndCategory('stampCollectionRef', 'stamps')
-        if (v) {
-          modelValue.value.stampCollectionRef = v.value ? Number.parseInt(v.value) : -1
-        }
-      }
-    },
-    {
-      deep: true
+      await buildViewModel()
     }
   )
-
-  const modelValue = computed({
-    get: () => {
-      return model$.value
-    },
-    set: (value: Album) => {
-      model$.value = value
-    }
-  })
 
   const title = computed(() => {
     return localeUtil.t(
@@ -50,15 +42,16 @@
     return form$.value && form$.value.invalid
   })
 
-  defineExpose({ title })
-
   onMounted(async () => {
+    await buildViewModel()
     await nextTick()
     if (form$.value.el$) {
       form$.value.el$('name').focus()
       form$.value.validate()
     }
   })
+
+  defineExpose({ title })
 </script>
 
 <template>
@@ -67,9 +60,9 @@
     <Vueform
       size="sm"
       ref="form$"
-      :model-value="model"
-      sync
+      :model-value="modelValue"
       class="panel-form-form"
+      sync
       :endpoint="false"
     >
       <StampCollectionSelector
@@ -92,7 +85,7 @@
       />
     </Vueform>
     <div class="panel-form-buttonbar">
-      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)">{{
+      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', modelValue)">{{
         localeUtil.t('actions.save')
       }}</PrimaryButton>
       <SecondaryButton @click="$emit('cancel')">{{

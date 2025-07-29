@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed } from 'vue'
+  import { ref, onMounted, nextTick, computed, isReactive, toRaw, watch } from 'vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import localeUtil from '@/util/locale-utils'
@@ -9,6 +9,7 @@
 
   defineEmits(['cancel', 'save'])
 
+  const modelValue = ref<Country>()
   const form$ = ref()
 
   const title = computed(() => {
@@ -20,7 +21,19 @@
     return form$.value && form$.value.invalid
   })
 
+  async function buildViewModel() {
+    modelValue.value = structuredClone(isReactive(props.model) ? toRaw(props.model) : props.model)
+  }
+
+  watch(
+    () => [props.model],
+    async () => {
+      await buildViewModel()
+    }
+  )
+
   onMounted(async () => {
+    await buildViewModel()
     await nextTick()
     if (form$.value.el$) {
       form$.value.el$('name').focus()
@@ -35,7 +48,7 @@
     <Vueform
       size="sm"
       ref="form$"
-      :model-value="model"
+      :model-value="modelValue"
       sync
       class="panel-form-form"
       :endpoint="false"
@@ -55,7 +68,7 @@
       />
     </Vueform>
     <div class="panel-form-buttonbar">
-      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', model)">{{
+      <PrimaryButton class="mr-2" :disabled="invalid" @click="$emit('save', modelValue)">{{
         localeUtil.t('actions.save')
       }}</PrimaryButton>
       <SecondaryButton @click="$emit('cancel')">{{
