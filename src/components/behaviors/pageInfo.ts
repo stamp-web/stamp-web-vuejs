@@ -48,11 +48,13 @@ const pageInfo = (filterKey?: string) => {
   }
 
   const startingCount = computed(() => {
-    return (info.value.active - 1) * info.value.size + 1
+    const active = info.value.active - 1 > 0 || info.value.total > 0
+    return active ? (info.value.active - 1) * info.value.size + 1 : 0
   })
 
   const endingCount = computed(() => {
-    return (info.value.active - 1) * info.value.size + info.value.list.length
+    const active = info.value.active - 1 > 0 || info.value.total > 0
+    return active ? (info.value.active - 1) * info.value.size + info.value.list.length : 0
   })
 
   return {

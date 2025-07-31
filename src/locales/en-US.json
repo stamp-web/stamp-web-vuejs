@@ -101,6 +101,7 @@
   "display": {
     "deleting-count": "{count} of {total} selected for deletion",
     "selected-count": "Selected: {count}",
+    "total-selected_zero": "Total: 0",
     "total-selected": "Total: {start} - {end} of {total}",
     "wantlist-item": "Wantlist Item"
   },
