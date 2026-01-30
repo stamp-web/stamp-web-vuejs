@@ -29,6 +29,12 @@ pipeline {
             }
         }
 
+        stage('Update Browserslist DB') {
+            steps {
+                 sh 'npx update-browserslist-db@latest'
+            }
+        }
+
         stage('Unit Tests') {
             steps {
                 sh 'npm run test:unit'
