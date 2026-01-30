@@ -9,10 +9,6 @@ pipeline {
         cron('H/15 * * * *')
     }
 
-    environment {
-        NODE_ENV = 'production'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -45,6 +41,9 @@ pipeline {
         }
 
         stage('Build') {
+            environment {
+                NODE_ENV = 'production'
+            }
             steps {
                 sh 'npm run build'
             }
