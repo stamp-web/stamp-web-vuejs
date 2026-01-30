@@ -32,3 +32,4 @@ playwright-report/
 /.env.test
 /public/app-config.json
 /vite.config.ts.timestamp-*.mjs
+/stamp-web-vuejs-*.tgz

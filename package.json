@@ -16,6 +16,9 @@
     "test:e2e": "playwright test",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
+  "files": [
+     "dist/**"
+  ],
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
     "@vueform/vueform": "^1.12.11",

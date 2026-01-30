@@ -55,6 +55,12 @@ pipeline {
             }
         }
 
+        stage('Package') {
+             steps {
+                sh 'npm run build'
+             }
+        }
+
         stage('Post Notify') {
             steps {
                 sh '''
@@ -67,7 +73,7 @@ pipeline {
 
     post {
         success {
-            archiveArtifacts artifacts: 'dist/**', fingerprint: true
+            archiveArtifacts artifacts: 'stamp-web-vuejs-*.tgz', fingerprint: true
         }
         failure {
             echo 'Build failed'
