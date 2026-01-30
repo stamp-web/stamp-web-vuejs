@@ -2,11 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        upstream(
-            upstreamProjects: 'stamp-webservices-pipeline',
-            threshold: hudson.model.Result.SUCCESS
-        )
-        cron('H/15 * * * *')
+            githubPush()
     }
 
     stages {
