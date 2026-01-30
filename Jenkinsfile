@@ -3,7 +3,7 @@ pipeline {
 
     triggers {
         upstream(
-            upstreamProjects: 'stamp-webservices',
+            upstreamProjects: 'stamp-webservices-pipeline',
             threshold: hudson.model.Result.SUCCESS
         )
         cron('H/15 * * * *')
@@ -17,7 +17,7 @@ pipeline {
                     branches: [[name: '*/main']],
                     userRemoteConfigs: [[
                         url: 'https://github.com/stamp-web/stamp-web-vuejs.git',
-                        credentialsId: 'jadrake-github'
+                        credentialsId: 'github'
                     ]]
                 ])
             }
@@ -57,7 +57,7 @@ pipeline {
 
         stage('Package') {
              steps {
-                sh 'npm run build'
+                sh 'npm pack'
              }
         }
 
