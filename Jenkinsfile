@@ -58,8 +58,8 @@ pipeline {
         stage('Package') {
              steps {
                 sh '''
-                    mkdir -p artifacts
-                    npm pack --pack-destination artifacts
+                    mkdir -p archive
+                    npm pack --pack-destination archive
                 '''
              }
         }
@@ -76,7 +76,7 @@ pipeline {
 
     post {
         success {
-            archiveArtifacts artifacts: 'stamp-web-vuejs-*.tgz', fingerprint: true
+            archiveArtifacts artifacts: 'archive/stamp-web-vuejs-*.tgz', fingerprint: true
         }
         failure {
             echo 'Build failed'

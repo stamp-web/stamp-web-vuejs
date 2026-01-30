@@ -24,6 +24,7 @@ coverage
 *.sln
 *.sw?
 
+archive/
 test-results/
 playwright-report/
 /.env.development
