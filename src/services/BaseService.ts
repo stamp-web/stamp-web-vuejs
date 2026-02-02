@@ -47,7 +47,8 @@ export default abstract class BaseService<T> {
   }
 
   createURI(options: object | undefined, id?: number | string): string {
-    let uri = `/stamp-webservices/rest/${this.getResourceName()}`
+    const basePath = window.location.pathname
+    let uri = `${basePath}stamp-webservices/rest/${this.getResourceName()}`
     if (id) {
       uri += `/${id}`
     }
