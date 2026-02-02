@@ -1,5 +1,8 @@
 import merge from 'lodash-es/merge'
 import isEmpty from 'lodash-es/isEmpty'
+import { findBasePath } from '@/util/href-utils'
+
+const basePath = findBasePath(window.location.pathname)
 
 type ServiceHeaders = {
   'Content-Type': string
@@ -47,7 +50,6 @@ export default abstract class BaseService<T> {
   }
 
   createURI(options: object | undefined, id?: number | string): string {
-    const basePath = window.location.pathname
     let uri = `${basePath}stamp-webservices/rest/${this.getResourceName()}`
     if (id) {
       uri += `/${id}`
