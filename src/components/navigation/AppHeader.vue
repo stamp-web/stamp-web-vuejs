@@ -6,14 +6,20 @@
   const { t } = useI18n()
 
   const url = ref('')
+  const legacyStampWeb = ref('')
   const validUrl = computed(() => {
     return url.value !== ''
+  })
+
+  const validLegacyUrl = computed(() => {
+    return legacyStampWeb.value !== ''
   })
   onBeforeMount(async () => {
     await config()
       .getConfiguration()
       .then((result) => {
         url.value = result.data?.plateFlawURL
+        legacyStampWeb.value = result.data?.legacyStampWebURL
       })
       .catch(() => {})
   })
@@ -32,7 +38,10 @@
       >
         <span class="sw-icon-imageburst mr-0.5"></span>{{ t('navigation.plate-flaws') }}
       </a>
-      <a class="text-xs text-gray-100 hover:underline hover:bg-transparent" href="/aurelia"
+      <a
+        v-if="validLegacyUrl"
+        class="text-xs text-gray-100 hover:underline hover:bg-transparent"
+        :href="legacyStampWeb"
         >{{ t('navigation.stamp-web') }}<span class="sw-icon-next"></span
       ></a>
     </div>
