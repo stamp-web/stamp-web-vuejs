@@ -6,10 +6,10 @@
 </script>
 
 <template>
-  <div class="flex w-full md:mt-4"></div>
+  <div class="flex w-full h-1 md:mt-4"></div>
   <InfoItem link="/stampCollections">
     <template #icon>
-      <span class="sw-icon-stamp-collection"></span>
+      <span class="sw-icon-stamp-collection scale-150"></span>
     </template>
     <template #heading>{{ t('models.stamp-collections.name') }}</template>
     {{ t('models.stamp-collections.description') }}
@@ -17,7 +17,7 @@
 
   <InfoItem link="/albums">
     <template #icon>
-      <span class="sw-icon-album"></span>
+      <span class="sw-icon-album scale-150"></span>
     </template>
     <template #heading>{{ t('models.albums.name') }}</template>
     {{ t('models.albums.description') }}
@@ -25,7 +25,7 @@
 
   <InfoItem link="/countries">
     <template #icon>
-      <span class="sw-icon-country"></span>
+      <span class="sw-icon-country scale-150"></span>
     </template>
     <template #heading>{{ t('models.countries.name') }}</template>
     {{ t('models.countries.description') }}
@@ -33,7 +33,7 @@
 
   <InfoItem link="/sellers">
     <template #icon>
-      <span class="sw-icon-seller"></span>
+      <span class="sw-icon-seller scale-150"></span>
     </template>
     <template #heading>{{ t('models.sellers.name') }}</template>
     {{ t('models.sellers.description') }}
@@ -41,7 +41,7 @@
 
   <InfoItem link="/catalogues">
     <template #icon>
-      <span class="sw-icon-catalogue"></span>
+      <span class="sw-icon-catalogue scale-150"></span>
     </template>
     <template #heading>{{ t('models.catalogues.name') }}</template>
     {{ t('models.catalogues.description') }}
@@ -49,7 +49,7 @@
 
   <InfoItem link="/stamps">
     <template #icon>
-      <span class="sw-icon-stamp"></span>
+      <span class="sw-icon-stamp scale-150"></span>
     </template>
     <template #heading>{{ t('models.stamps.name') }}</template>
     {{ t('models.stamps.description') }}
