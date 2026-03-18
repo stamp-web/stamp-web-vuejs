@@ -1,24 +1,24 @@
 <script setup lang="ts" generic="T extends PersistedModel">
-  import { AgGridVue } from 'ag-grid-vue3'
-  import {
-    RowNode,
-    type SortChangedEvent,
-    type ColDef,
-    type RowSelectionOptions,
-    type GridReadyEvent,
-    type RowSelectedEvent
-  } from 'ag-grid-community'
-  import '@/../node_modules/ag-grid-community/styles/ag-grid.css'
-  import '@/../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
-  import { ref, watch, nextTick, onMounted, onBeforeUnmount, onUpdated } from 'vue'
+import { AgGridVue } from 'ag-grid-vue3'
+import {
+  type ColDef,
+  type GridReadyEvent,
+  RowNode,
+  type RowSelectedEvent,
+  type RowSelectionOptions,
+  type SortChangedEvent
+} from 'ag-grid-community'
+import '@/../node_modules/ag-grid-community/styles/ag-grid.css'
+import '@/../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+import { nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 
-  import type { PersistedModel } from '@/models/entityModels'
-  import { ColumnDefinition } from '@/components/table/DataGridModels'
-  import { isNil } from '@/util/object-utils'
-  import { debounce } from '@/util/timer-utils'
-  import type { ColumnVisibilitySet } from '@/components/table/types/columnVisibilitySet'
+import type { PersistedModel } from '@/models/entityModels'
+import { ColumnDefinition } from '@/components/table/DataGridModels'
+import { isNil } from '@/util/object-utils'
+import { debounce } from '@/util/timer-utils'
+import type { ColumnVisibilitySet } from '@/components/table/types/columnVisibilitySet'
 
-  const gridApi = ref()
+const gridApi = ref()
   const gridEl = ref()
   const loading = ref(false)
   const dataLoadTime = ref(0)
@@ -65,7 +65,7 @@
         gridApi.value.setColumnsVisible(hiddenColumns, false)
 
         await nextTick()
-        resizeColumns()
+        await resizeColumns()
       }
     },
     { deep: true }
@@ -140,8 +140,8 @@
     }
   }
 
-  const observer = new ResizeObserver(() => {
-    resizeColumns()
+  const observer = new ResizeObserver(async () => {
+    await resizeColumns()
   })
 
   const onGridReady = (gridEvent: GridReadyEvent) => {
