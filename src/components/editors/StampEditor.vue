@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, computed, watch, nextTick, inject, toRaw, isReactive } from 'vue'
+  import { computed, inject, isReactive, nextTick, onMounted, ref, toRaw, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
 
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
@@ -9,11 +9,11 @@
   import StampOwnershipForm from '@/components/forms/StampOwnershipForm.vue'
 
   import type { Stamp } from '@/models/Stamp'
+  import { StampModelHelper } from '@/models/Stamp'
   import { type Ownership, OwnershipHelper } from '@/models/Ownership'
   import type { CatalogueNumber } from '@/models/CatalogueNumber'
   import { debounce } from '@/util/timer-utils'
   import { fixFraction } from '@/util/object-utils'
-  import { StampModelHelper } from '@/models/Stamp'
   import { stampStore } from '@/stores/stampStore'
   import { type Log } from 'vuejs3-logger'
   import LocalCache from '@/stores/LocalCache'
@@ -52,7 +52,8 @@
     () => [props.model],
     () => {
       setRefs()
-    }
+    },
+    { deep: true }
   )
 
   const checkIfExists = async () => {

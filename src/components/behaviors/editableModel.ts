@@ -5,7 +5,7 @@ const editableModel = <T extends PersistedModel>() => {
   const editorShown = ref(false)
   const editingModel = ref<T>()
 
-  const setEditModel = (model: T) => {
+  const setEditModel = (model: T | undefined) => {
     editingModel.value = model
     showEditor()
   }
