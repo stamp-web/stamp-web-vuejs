@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
-    "@vueform/vueform": "^1.12.11",
+    "@vueform/vueform": "^1.13.9",
     "ag-grid-vue3": "^33.0.3",
     "axios": "^1.13.6",
     "blueimp-load-image": "^5.16.0",
