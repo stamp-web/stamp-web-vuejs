@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { type Album, createInstance, type PersistedNamedModel } from '@/models/entityModels'
-import axios from 'axios'
 import type { AxiosResponse } from 'axios'
+import axios from 'axios'
 import { EntityList } from '@/models/entityList'
 import BaseModelService from '@/services/BaseModelService'
 
@@ -76,6 +76,24 @@ describe('BaseModelService', () => {
       expect(axios.get).toHaveBeenCalled()
       expect(results.total).toBe(1)
       expect(results.items).toStrictEqual([albums[0]])
+    })
+
+    it('no results', async () => {
+      vi.mocked(axios.get).mockResolvedValue({
+        data: {
+          albums: [],
+          total: 0
+        }
+      })
+      const results: EntityList<Album> = await service.find()
+      expect(axios.get).toHaveBeenCalled()
+      expect(results.total).toBe(0)
+      expect(results.items).toHaveLength(0)
+    })
+
+    it('error on API call', async () => {
+      vi.mocked(axios.get).mockRejectedValueOnce(new Error('Network Error'))
+      await expect(service.find()).rejects.toThrow('Network Error')
     })
   })
 

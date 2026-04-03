@@ -1,17 +1,17 @@
 import type { PersistedModel } from '@/models/entityModels'
 import BaseService, { HttpMethod, HttpResponseCode } from '@/services/BaseService'
 import { EntityList } from '@/models/entityList'
-import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 import requiredId from '@/util/decorators/requiredId'
 
 export default abstract class BaseModelService<T extends PersistedModel> extends BaseService<T> {
   async find(options = {}): Promise<EntityList<T>> {
     const response = await axios.get(this.createURI(options))
-    const list: EntityList<T> = new EntityList<T>()
-    list.items = response.data[this.getCollectionName()]
-    list.total = response.data.total
-    return list
+    return new EntityList<T>({
+      items: response.data[this.getCollectionName()],
+      total: response.data.total
+    })
   }
 
   async create(model: T, options = {}): Promise<T> {
