@@ -370,6 +370,15 @@ import { useStampView } from '@/views/behaviors/stampView'
     setEditModel(sm)
   }
 
+  const updateCatalogues = () => {
+    router.push({
+      path: '/update-catalogues',
+      query: {
+        $filter: query.value.$filter
+      }
+    })
+  }
+
   const createStamp = async (wantList: boolean = false) => {
     const stampPrefs = await prefStore.findByCategory('stamps')
     const model = StampModelHelper.newInstance(wantList, stampPrefs)
@@ -518,6 +527,13 @@ import { useStampView } from '@/views/behaviors/stampView'
           :tooltip="areNoneSelected() ? '' : t('actions.bulk-edit')"
           @click="bulkEdit()"
           :disabled="areNoneSelected()"
+        ></SecondaryButton>
+        <SecondaryButton
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
+          icon="sw-icon-catalogue"
+          :tooltip="t('actions.update-catalogues')"
+          @click="updateCatalogues()"
+          :disabled="isCollectionEmpty()"
         ></SecondaryButton>
         <SecondaryButton
           class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 border rounded-tl-none rounded-bl-none !border-gray-400 !border-l-transparent hidden lg:block"

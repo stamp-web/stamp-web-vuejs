@@ -1,27 +1,30 @@
 <script setup lang="ts" generic="T extends PersistedModel">
-import { AgGridVue } from 'ag-grid-vue3'
-import {
-  type ColDef,
-  type GridReadyEvent,
-  RowNode,
-  type RowSelectedEvent,
-  type RowSelectionOptions,
-  type SortChangedEvent
-} from 'ag-grid-community'
-import '@/../node_modules/ag-grid-community/styles/ag-grid.css'
-import '@/../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
-import { nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
+  import { AgGridVue } from 'ag-grid-vue3'
+  import {
+    type CellValueChangedEvent,
+    type ColDef,
+    type GridReadyEvent,
+    RowNode,
+    type RowSelectedEvent,
+    type RowSelectionOptions,
+    type SortChangedEvent
+  } from 'ag-grid-community'
+  import '@/../node_modules/ag-grid-community/styles/ag-grid.css'
+  import '@/../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+  import { nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 
-import type { PersistedModel } from '@/models/entityModels'
-import { ColumnDefinition } from '@/components/table/DataGridModels'
-import { isNil } from '@/util/object-utils'
-import { debounce } from '@/util/timer-utils'
-import type { ColumnVisibilitySet } from '@/components/table/types/columnVisibilitySet'
+  import type { PersistedModel } from '@/models/entityModels'
+  import { ColumnDefinition } from '@/components/table/DataGridModels'
+  import { isNil } from '@/util/object-utils'
+  import { debounce } from '@/util/timer-utils'
+  import type { ColumnVisibilitySet } from '@/components/table/types/columnVisibilitySet'
 
-const gridApi = ref()
+  const gridApi = ref()
   const gridEl = ref()
   const loading = ref(false)
   const dataLoadTime = ref(0)
+
+  const changedRows = new Map()
 
   const props = defineProps({
     rowData: Array<T>,
@@ -30,7 +33,13 @@ const gridApi = ref()
     columnVisibility: {} as ColumnVisibilitySet,
     selectedData: Array<T>
   })
-  const emit = defineEmits(['selected', 'deselected', 'sortChanged'])
+  const emit = defineEmits([
+    'selected',
+    'deselected',
+    'sortChanged',
+    'gridReady',
+    'cell-value-changed'
+  ])
 
   const columns = Object.freeze(Object.assign([] as ColDef[], props.columnDefs))
 
@@ -153,6 +162,12 @@ const gridApi = ref()
     setSelectedDebounced(props.selectedData ?? new Array<T>())
   }
 
+  const onCellValueChanged = (params: CellValueChangedEvent) => {
+    const id = params.data.id
+    changedRows.set(id, params.data)
+    emit('cell-value-changed', params.data)
+  }
+
   const onSelected = (event: RowSelectedEvent) => {
     const selected = event.node?.data
     const isSelected = event.node?.isSelected()
@@ -182,6 +197,21 @@ const gridApi = ref()
     loading.value = false
   }
 
+  const editCell = async (rowIndex: number, colKey: string) => {
+    if (!isNil(gridApi.value) && gridApi.value.getDisplayedRowCount() > 0) {
+      setTimeout(() => {
+        gridApi.value.startEditingCell({ rowIndex, colKey })
+      }, 200)
+    }
+  }
+
+  const hasEditedCells = () => {
+    return changedRows.size > 0
+  }
+  const getEditedCells = () => {
+    return changedRows.values()
+  }
+
   onMounted(async () => {
     rowSelection.mode = props.multiSelect ? 'multiRow' : 'singleRow'
     if (props.multiSelect && rowSelection.mode !== 'singleRow') {
@@ -201,7 +231,14 @@ const gridApi = ref()
     observer.disconnect()
   })
 
-  defineExpose({ resizeColumns, loadingComplete, loadingStarted })
+  defineExpose({
+    resizeColumns,
+    loadingComplete,
+    loadingStarted,
+    editCell,
+    getEditedCells,
+    hasEditedCells
+  })
 </script>
 <template>
   <ag-grid-vue
@@ -215,6 +252,7 @@ const gridApi = ref()
     @sortChanged="onSortChanged"
     @grid-ready="onGridReady"
     @rowSelected="onSelected"
+    @cell-value-changed="onCellValueChanged"
   >
   </ag-grid-vue>
 </template>

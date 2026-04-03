@@ -7,6 +7,7 @@
       tooltip: { type: String, required: false },
       name: { type: String, required: false },
       id: { type: String, required: false },
+      tabindex: { type: String, required: false },
       type: {
         type: String as PropType<'button' | 'submit' | 'reset'>,
         default: 'button',
@@ -48,6 +49,7 @@
     :id="id"
     :aria-label="ariaLabel"
     :type="type"
+    :tabindex="tabindex"
   >
     <span v-if="icon" :class="icon"></span>
     <slot></slot>

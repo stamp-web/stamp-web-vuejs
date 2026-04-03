@@ -42,6 +42,12 @@ const router = createRouter({
           component: () => import('@/views/StampsView.vue')
         },
         {
+          path: '/update-catalogues',
+          name: 'update-catalogues',
+          component: () => import('@/views/UpdateCataloguesView.vue')
+          //meta: { transition: 'slide-left' }
+        },
+        {
           path: '/stampCollections',
           name: 'stampCollections',
           component: () => import('@/views/StampCollectionsView.vue')
@@ -71,6 +77,13 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+// Handle back navigation from update-catalogues to show slide-right transition
+router.beforeEach((to, from) => {
+  if (from.name === 'update-catalogues' && to.name === 'stamps') {
+    to.meta.transition = 'slide-right'
+  }
 })
 
 export default router

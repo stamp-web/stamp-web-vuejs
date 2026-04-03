@@ -1,9 +1,8 @@
 import type { CatalogueNumber } from '@/models/CatalogueNumber'
-import { type PersistedModel } from '@/models/entityModels'
-import { createInstance } from '@/models/entityModels'
-import type { Preference } from '@/models/Preference'
 import { CatalogueNumberHelper } from '@/models/CatalogueNumber'
-import { OwnershipHelper, type Ownership } from '@/models/Ownership'
+import { createInstance, type PersistedModel } from '@/models/entityModels'
+import type { Preference } from '@/models/Preference'
+import { type Ownership, OwnershipHelper } from '@/models/Ownership'
 import { ConditionHelper } from '@/models/Condition'
 
 export type Stamp = PersistedModel & {
@@ -15,6 +14,10 @@ export type Stamp = PersistedModel & {
   stampOwnerships: Ownership[]
   catalogueNumbers: CatalogueNumber[]
   activeCatalogueNumber?: CatalogueNumber
+}
+
+export type AugmentedStamp = Stamp & {
+  [key: string]: unknown
 }
 
 export class StampModelHelper {

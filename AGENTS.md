@@ -12,6 +12,7 @@
   dependencies.
 - **Package manager:** npm
 - **Node version:** 22.x
+- **State Management:** Pinia:3.0.3
 
 ## Project Structure
 
@@ -31,6 +32,7 @@
 
 ## Components
 
+- Favor using Composition API methods.
 - For selecting models, dates, currency codes, enumerations like conditions, grades use the components in the `inputs`
   folder
 - For popup alert or confirm we use the 'Prompt.ts' component in the `src/components` folder
@@ -41,7 +43,8 @@
 ## Commands
 
 - Install deps: `npm i`
-- Run tests: `npm run test:e2e`
+- Run e2e tests: `npm run test:e2e`
+- Run unit tests: `npm run test:unit`
 - Run dev: `npm run dev`
 
 ## Testing
