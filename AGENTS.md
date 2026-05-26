@@ -51,7 +51,7 @@
 
 - All new visual features that result in a view should have at least 1 test
 - All changes should have a unit test created.
-- Unit tests go in `__tests__` next to the source file and are written with Jest.
+- Unit tests go in `__tests__` next to the source file and are written with vitest.
 - E2E tests go in e2e/tests and are written with Playright.
 - Each visual page as a component in the e2e/pages folder for each of the pages
 - There are helpers in e2e/helpers to create objects using the rest API.
