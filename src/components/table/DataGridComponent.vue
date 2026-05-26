@@ -7,7 +7,9 @@
     RowNode,
     type RowSelectedEvent,
     type RowSelectionOptions,
-    type SortChangedEvent
+    type SortChangedEvent,
+    type RedrawRowsParams,
+    type RefreshCellsParams
   } from 'ag-grid-community'
   import '@/../node_modules/ag-grid-community/styles/ag-grid.css'
   import '@/../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
@@ -212,6 +214,18 @@
     return changedRows.values()
   }
 
+  const redrawRows = (params?: RedrawRowsParams<T>) => {
+    if (!isNil(gridApi.value)) {
+      gridApi.value.redrawRows(params)
+    }
+  }
+
+  const refreshCells = (params?: RefreshCellsParams<T>) => {
+    if (!isNil(gridApi.value)) {
+      gridApi.value.refreshCells(params)
+    }
+  }
+
   onMounted(async () => {
     rowSelection.mode = props.multiSelect ? 'multiRow' : 'singleRow'
     if (props.multiSelect && rowSelection.mode !== 'singleRow') {
@@ -237,7 +251,9 @@
     loadingStarted,
     editCell,
     getEditedCells,
-    hasEditedCells
+    hasEditedCells,
+    redrawRows,
+    refreshCells
   })
 </script>
 <template>

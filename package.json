@@ -23,7 +23,7 @@
     "@headlessui/vue": "^1.7.23",
     "@vueform/vueform": "^1.13.9",
     "ag-grid-vue3": "^35.1.0",
-    "axios": "^1.13.6",
+    "axios": "^1.16.1",
     "blueimp-load-image": "^5.16.0",
     "dayjs": "^1.11.13",
     "floating-vue": "^5.2.2",
