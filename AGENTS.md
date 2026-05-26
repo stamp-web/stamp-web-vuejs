@@ -12,6 +12,7 @@
   dependencies.
 - **Package manager:** npm
 - **Node version:** 22.x
+- **State Management:** Pinia:3.0.3
 
 ## Project Structure
 
@@ -31,6 +32,7 @@
 
 ## Components
 
+- Favor using Composition API methods.
 - For selecting models, dates, currency codes, enumerations like conditions, grades use the components in the `inputs`
   folder
 - For popup alert or confirm we use the 'Prompt.ts' component in the `src/components` folder
@@ -41,14 +43,15 @@
 ## Commands
 
 - Install deps: `npm i`
-- Run tests: `npm run test:e2e`
+- Run e2e tests: `npm run test:e2e`
+- Run unit tests: `npm run test:unit`
 - Run dev: `npm run dev`
 
 ## Testing
 
 - All new visual features that result in a view should have at least 1 test
 - All changes should have a unit test created.
-- Unit tests go in `__tests__` next to the source file and are written with Jest.
+- Unit tests go in `__tests__` next to the source file and are written with vitest.
 - E2E tests go in e2e/tests and are written with Playright.
 - Each visual page as a component in the e2e/pages folder for each of the pages
 - There are helpers in e2e/helpers to create objects using the rest API.

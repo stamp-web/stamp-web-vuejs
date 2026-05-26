@@ -1,5 +1,6 @@
 {
   "actions": {
+    "back-stamps": "Back to Stamps",
     "bulk-edit": "Bulk Edit Properties",
     "cancel": "Cancel",
     "clear-selection": "Clear All Selections",
@@ -29,16 +30,18 @@
     "show-card-view": "Show Card View",
     "show-list-view": "Show List View",
     "show-reference-catalogueNumbers": "Show Reference Catalogue Numbers",
+    "update": "Update",
+    "update-catalogues": "Update Catalogues",
     "yes": "Yes"
   },
   "catalogueType": {
-    "STANLEY_GIBBONS" :"Stanley Gibbons",
-    "SCOTT" : "Scott Publishing",
+    "STANLEY_GIBBONS": "Stanley Gibbons",
+    "SCOTT": "Scott Publishing",
     "MICHEL": "Michel",
-    "FACIT" : "Facit",
-    "OTHER":"Other",
-    "DARNELL":"Darnell",
-    "BRIDGER_AND_KAY":"Bridge & Kay",
+    "FACIT": "Facit",
+    "OTHER": "Other",
+    "DARNELL": "Darnell",
+    "BRIDGER_AND_KAY": "Bridge & Kay",
     "VAN_DAM": "Van Dam",
     "JSCA": "JSCA Specialized"
   },
@@ -57,24 +60,24 @@
     "ON_PAPER": "Used on Paper"
   },
   "wantlist-filter": {
-    "All":"All Stamps",
+    "All": "All Stamps",
     "WantList": "Only WantList Stamps",
     "Owned": "Only Owned Stamps"
   },
   "condition-filter": {
     "All": "All Conditions",
-    "Used":  "Only Used Stamps",
-    "Mint":  "Only Mint Stamps",
+    "Used": "Only Used Stamps",
+    "Mint": "Only Mint Stamps",
     "Postal": "Only Postal History"
   },
   "deception": {
-    "FAKE_CANCEL":"Fake Cancel",
-    "FAKE_OVERPRINT":"Fake Overprint",
-    "FISCAL_REMOVED":"Fiscal Cancel Removed",
-    "FORGERY":"Forgery",
-    "FORGERY_POSSIBLE":"Possible Forgery",
-    "REPAIRED":"Repaired",
-    "REPRINT":"Reprint",
+    "FAKE_CANCEL": "Fake Cancel",
+    "FAKE_OVERPRINT": "Fake Overprint",
+    "FISCAL_REMOVED": "Fiscal Cancel Removed",
+    "FORGERY": "Forgery",
+    "FORGERY_POSSIBLE": "Possible Forgery",
+    "REPAIRED": "Repaired",
+    "REPRINT": "Reprint",
     "REGUM": "Regummed"
   },
   "defects": {
@@ -135,6 +138,8 @@
     "page-size": "Page Size",
     "pricePaid": "Price Paid",
     "purchased": "Purchased",
+    "current-catalogue": "Current Catalogue",
+    "new-catalogue": "New Catalogue",
     "rate": "Denomination",
     "regenerate-image": "Regenerate image path",
     "report-title": "Report Title",
@@ -197,7 +202,6 @@
       "name": "Stamp Collections",
       "description": "Stamp Collections is where you can manage your Stamp Collections allowing you to organize your albums."
     }
-
   },
   "navigation": {
     "about": "About",
@@ -243,10 +247,12 @@
     "grade": "Grade",
     "issue": "Issue",
     "name": "Name",
+    "new-catalogue-value": "New Value",
     "notes": "Notes",
     "price-paid": "Price Paid",
     "rate": "Rate",
-    "stamp-collection": "Stamp Collection"
+    "stamp-collection": "Stamp Collection",
+    "unknown": "Unknown"
   },
   "titles": {
     "active-catalogueNumber": "Active Catalogue Number",
@@ -272,6 +278,7 @@
     "ownership-details": "Ownership Details",
     "purchase-price": "Set Purchase Price",
     "save-failure": "Save Error",
-    "stamp-web-editor": "Stamp Web Editor"
+    "stamp-web-editor": "Stamp Web Editor",
+    "update-catalogues": "Update Catalogues"
   }
 }

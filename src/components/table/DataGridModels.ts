@@ -4,6 +4,7 @@ export class ColumnDefinition {
   colId?: string
   comparator?: object
   cellRendererParams?: object
+  editable?: boolean
   field: string | null
   headerComponentParams?: object
   headerName?: string

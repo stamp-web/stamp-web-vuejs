@@ -33,6 +33,7 @@
     :id="id"
     :aria-label="ariaLabel"
     :type="type"
+    :tabindex="tabindex"
   >
     <span v-if="icon" :class="icon"></span>
     <span class="truncate"><slot></slot></span>

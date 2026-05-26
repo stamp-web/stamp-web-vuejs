@@ -18,15 +18,17 @@ import { createPinia } from 'pinia'
 
 import eventBus from 'vue3-eventbus'
 import {
-  ModuleRegistry,
-  //ValidationModule,
-  ColumnAutoSizeModule,
   CellStyleModule,
-  RowSelectionModule,
-  ColumnApiModule,
+  CheckboxEditorModule,
   ClientSideRowModelModule,
+  ColumnApiModule,
+  ColumnAutoSizeModule,
+  CustomEditorModule,
+  ModuleRegistry,
+  provideGlobalGridOptions,
+  RowSelectionModule,
   ScrollApiModule,
-  provideGlobalGridOptions
+  ValidationModule
 } from 'ag-grid-community'
 
 import ProgressBar from '@/components/display/ProgressBar.vue'
@@ -45,7 +47,9 @@ const logOptions = {
 
 // Register all community features
 ModuleRegistry.registerModules([
-  //ValidationModule,
+  ValidationModule,
+  CustomEditorModule,
+  CheckboxEditorModule,
   ColumnAutoSizeModule,
   CellStyleModule,
   RowSelectionModule,
