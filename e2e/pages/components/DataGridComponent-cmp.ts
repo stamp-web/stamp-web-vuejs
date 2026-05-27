@@ -34,7 +34,11 @@ export class DataGridComponentCmp {
   }
 
   getRowCount(): Promise<number> {
-    return this.getTableLocator().locator('div.ag-body-viewport ').getByRole('row').count()
+    return this.getTableRowViewportLocator().getByRole('row').count()
+  }
+
+  getRow(index: number): Locator {
+    return this.getTableRowViewportLocator().getByRole('row').nth(index)
   }
 
   getRowByText(text: string): Locator {
@@ -43,6 +47,10 @@ export class DataGridComponentCmp {
 
   getCellLocatorByText(text: string): Locator {
     return this.getTableLocator().getByRole('gridcell').locator(`text='${text}'`)
+  }
+
+  getColumnById(row: Locator, colId: string): Locator {
+    return row.locator(`[col-id="${colId}"]`)
   }
 
   getAction(icon: string, rowLocator: Locator): Locator {

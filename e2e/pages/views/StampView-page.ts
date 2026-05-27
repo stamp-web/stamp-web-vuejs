@@ -19,8 +19,9 @@ export class StampViewPage {
     return this.grid
   }
 
-  async goto() {
-    await this.page.goto('/#/stamps')
+  async goto(filter = '') {
+    const encodedFilter = encodeURIComponent(filter).replace(/%20/g, '+')
+    await this.page.goto(`/#/stamps${filter === '' ? '' : '?$filter=' + encodedFilter}`)
     await this.getGrid().waitForLoadingComplete()
   }
 
@@ -45,5 +46,9 @@ export class StampViewPage {
 
   getPurchaseButton(): Locator {
     return this.page.locator(`button[id='btn-purchased']`)
+  }
+
+  getUpdateCatalogueButton(): Locator {
+    return this.page.locator(`button[id='btn-update-catalogue']`)
   }
 }

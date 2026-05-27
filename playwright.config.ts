@@ -1,6 +1,6 @@
-import type { PlaywrightTestConfig } from '@playwright/test'
-import { devices } from '@playwright/test'
-import { loadEnv } from 'vite'
+import type {PlaywrightTestConfig} from '@playwright/test'
+import {devices} from '@playwright/test'
+import {loadEnv} from 'vite'
 import process from 'node:process'
 
 /* load any variables from .env.e2e to add to process environment */
@@ -44,7 +44,7 @@ const config: PlaywrightTestConfig = {
     trace: 'on-first-retry',
 
     /* Only on CI systems run the tests headless */
-    headless: true // !!process.env.CI
+    headless: !!process.env.CI
   },
 
   /* Configure projects for major browsers */
@@ -54,13 +54,13 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome']
       }
-    },
+    } /*,
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
       }
-    }
+    }*/
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */

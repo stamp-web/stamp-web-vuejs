@@ -56,6 +56,14 @@
 - Each visual page as a component in the e2e/pages folder for each of the pages
 - There are helpers in e2e/helpers to create objects using the rest API.
 
+### E2E Best Practices
+- **Editing Grid Cells**: When editing a cell in an ag-Grid, do not use `page.keyboard.type()`. This will append to the existing value. Instead, use `locator.fill()` on the cell's input editor to clear and set the value correctly.
+- **Committing Cell Edits**: After filling a cell editor, the change must be committed. The most reliable way to do this is to simulate a blur event by pressing `Tab` or `Enter` using `page.keyboard.press()`.
+- **Verification Flow**: For verification, prefer to follow a natural user flow. For example, after an update, navigate back to a list view and then drill down to the detail view to ensure the changes are reflected, rather than just re-loading the same page.
+- **Component Patterns**: When creating or modifying page objects, always look for existing components (`-cmp.ts` files) or page objects to follow established patterns for interacting with elements like selectors or editors.
+- **Imports**: When importing files within the E2E directory (`e2e/`), always append `.js` to the import path (e.g., `import { SelectCmp } from '../components/Select-cmp.js'`).
+- **Button Locators**: When creating a function that returns a `Locator` for a toolbar button, the function name should end with `Button` (e.g., `getCreateStampButton`).
+
 ## Code Style
 
 - Use `const` exclusively — no `let` unless mutation is required, never `var`

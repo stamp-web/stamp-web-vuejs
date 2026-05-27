@@ -49,7 +49,7 @@
     if (!canUpdate()) {
       return
     }
-
+    dataGridRef.value.loadingStarted()
     try {
       const filterQuery = route.query.$filter as string
       const allStamps = await store.find({
@@ -64,11 +64,12 @@
         await nextTick()
         await dataGridRef.value.editCell(0, 'newValue')
       }
-
       logger.info(`Found ${matchingStamps.value.length} stamps matching the new catalogue`)
     } catch (err) {
       logger.error('Error finding matching stamps:', err)
       matchingStamps.value = []
+    } finally {
+      dataGridRef.value.loadingComplete()
     }
   }
 
@@ -107,13 +108,6 @@
     isSaveEnabled.value = true
   }
 
-  const handleUpdate = async () => {
-    if (!canUpdate()) {
-      return
-    }
-    await findMatchingStamps()
-  }
-
   const canUpdate = () => {
     return (
       modelValue.value &&
@@ -123,21 +117,30 @@
   }
 
   const save = async () => {
+    dataGridRef.value.loadingStarted()
     try {
       const editedValues = dataGridRef.value.getEditedCells()
       const catalogueRef = modelValue.value?.newCatalogueRef
-      editedValues.forEach(async (editedStamp: Stamp) => {
+
+      if (!catalogueRef || catalogueRef <= 0) {
+        logger.warn('New catalogue is not selected. Cannot save.')
+        return
+      }
+
+      const updatePromises = editedValues.map((editedStamp: Stamp) => {
         const cn = editedStamp.activeCatalogueNumber
-        if (cn && catalogueRef && catalogueRef > 0) {
+        if (cn) {
           cn.catalogueRef = catalogueRef
         }
-        dataGridRef.value.loadingStarted()
-        await store.update(editedStamp)
-        await findMatchingStamps()
+        return store.update(editedStamp)
       })
-      //router.back()
+
+      await Promise.all(updatePromises)
+      await findMatchingStamps()
     } catch (err) {
       logger.error('Error saving catalogue updates:', err)
+    } finally {
+      dataGridRef.value.loadingComplete()
     }
   }
 
@@ -147,17 +150,24 @@
 
   onMounted(async () => {
     dataGridRef.value.loadingStarted()
+    try {
+      const [catalogueRef, thumbPref, imagePref] = await Promise.all([
+        prefStore.findByNameAndCategory('catalogueRef', 'stamps'),
+        prefStore.findByNameAndCategory('thumbPath', 'stamps'),
+        prefStore.findByNameAndCategory('imagePath', 'stamps')
+      ])
 
-    const catalogueRef = await prefStore.findByNameAndCategory('catalogueRef', 'stamps')
-    const thumbPref = await prefStore.findByNameAndCategory('thumbPath', 'stamps')
-    const imagePref = await prefStore.findByNameAndCategory('imagePath', 'stamps')
-
-    modelValue.value = {
-      newCatalogueRef: -1,
-      currentCatalogueRef: parseInt(catalogueRef?.value ?? '-1', 10)
+      modelValue.value = {
+        newCatalogueRef: -1,
+        currentCatalogueRef: parseInt(catalogueRef?.value ?? '-1', 10)
+      }
+      prefPaths.value.thumbPath = thumbPref.value ?? '/'
+      prefPaths.value.imagePath = imagePref.value ?? '/'
+    } catch (err) {
+      logger.error('Error fetching preferences on mount:', err)
+    } finally {
+      dataGridRef.value.loadingComplete()
     }
-    prefPaths.value.thumbPath = thumbPref.value ?? '/'
-    prefPaths.value.imagePath = imagePref.value ?? '/'
   })
 </script>
 
@@ -187,7 +197,7 @@
           </Vueform>
         </div>
         <div>
-          <PrimaryButton @click="handleUpdate" :disabled="!canUpdate()">
+          <PrimaryButton @click="findMatchingStamps" :disabled="!canUpdate()">
             {{ t('actions.update') }}
           </PrimaryButton>
         </div>
