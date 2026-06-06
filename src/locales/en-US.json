@@ -280,5 +280,16 @@
     "save-failure": "Save Error",
     "stamp-web-editor": "Stamp Web Editor",
     "update-catalogues": "Update Catalogues"
+  },
+  "about": {
+    "title": "About Stamp Web",
+    "description": "Stamp Web is a modern application designed for stamp collectors to organize, track, and catalog their philatelic collections.",
+    "version": "Version",
+    "author": "Author",
+    "license": "License",
+    "project-links": "Project Links",
+    "component-versions": "Component Build Versions",
+    "no-build-info": "Build information is currently unavailable.",
+    "loading": "Loading build information..."
   }
 }

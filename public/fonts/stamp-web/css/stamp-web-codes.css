@@ -59,5 +59,7 @@
 .sw-icon-mint:before { content: '\e839'; } /* '' */
 .sw-icon-bulk-edit:before { content: '\e83a'; } /* '' */
 .sw-icon-link:before { content: '\e83b'; } /* '' */
+.sw-icon-about:before { content: '\e83c'; } /* '' */
 .sw-icon-unlink:before { content: '\f127'; } /* '' */
 .sw-icon-used:before { content: '\f192'; } /* '' */
+.sw-icon-components:before { content: '\f1b3'; } /* '' */

@@ -9,5 +9,16 @@
     "settings": "Einstellungen",
     "stamp-collections": "Briefmarkensammlungen",
     "stamps": "Briefmarken"
+  },
+  "about": {
+    "title": "Über Stamp Web",
+    "description": "Stamp Web ist eine moderne Anwendung für Briefmarkensammler zur Organisation, Verfolgung und Katalogisierung ihrer philatelistischen Sammlungen.",
+    "version": "Version",
+    "author": "Autor",
+    "license": "Lizenz",
+    "project-links": "Projekt-Links",
+    "component-versions": "Komponenten-Build-Versionen",
+    "no-build-info": "Build-Informationen sind derzeit nicht verfügbar.",
+    "loading": "Build-Informationen werden geladen..."
   }
 }
