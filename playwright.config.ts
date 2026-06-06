@@ -1,6 +1,6 @@
-import type {PlaywrightTestConfig} from '@playwright/test'
-import {devices} from '@playwright/test'
-import {loadEnv} from 'vite'
+import type { PlaywrightTestConfig } from '@playwright/test'
+import { devices } from '@playwright/test'
+import { loadEnv } from 'vite'
 import process from 'node:process'
 
 /* load any variables from .env.e2e to add to process environment */
