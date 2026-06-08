@@ -81,6 +81,7 @@
 - Run `npm run test` before submitting any changes
 - Add TypeScript types for all new functions and interfaces
 - Follow existing patterns in the file you're editing
+- Whenever a request is made, evaluate if there are additional instructions, patterns, or notes to add to `AGENTS.md`
 
 ### Ask First
 

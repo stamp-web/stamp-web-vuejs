@@ -57,6 +57,10 @@ describe('AboutView', () => {
     expect(wrapper.text()).toContain('Build #122')
     expect(wrapper.text()).toContain('stamp-web-vuejs')
     expect(wrapper.text()).toContain('Build #43')
+
+    // Check GitHub font icons
+    const githubIcons = wrapper.findAll('.sw-icon-github')
+    expect(githubIcons.length).toBe(3)
   })
 
   it('handles error state when build-number.json fails to load', async () => {
