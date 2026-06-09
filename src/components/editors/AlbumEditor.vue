@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed, watch, isReactive, toRaw } from 'vue'
+  import { computed, isReactive, nextTick, onMounted, ref, toRaw, watch } from 'vue'
   import type { Album } from '@/models/entityModels'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
@@ -55,7 +55,7 @@
 </script>
 
 <template>
-  <div class="panel-form bg-white" role="form">
+  <div class="panel-form bg-white album-editor" role="form">
     <div class="panel-form-title"><span class="sw-icon-album"></span>{{ title }}</div>
     <Vueform
       size="sm"
@@ -94,3 +94,12 @@
     </div>
   </div>
 </template>
+<style>
+  .album-editor .form-text-sm {
+    font-size: var(--var-text-size-sm);
+  }
+
+  .album-editor .form-text-small-sm {
+    font-size: 0.875em;
+  }
+</style>

@@ -9,53 +9,56 @@
  *
  -----------------------------------------------------------------------------*/
 .panel-form {
-  @apply flex flex-grow flex-col h-full m-0 border-2 border-[var(--vf-primary)];
+    @apply flex flex-grow flex-col h-full m-0 border-2 border-[var(--vf-primary)];
 }
+
 .panel-form-form {
-  @apply flex-grow h-full mb-auto m-2 overflow-y-auto;
+    @apply flex-grow h-full mb-auto m-2 overflow-y-auto;
 }
+
 .panel-form-buttonbar {
-  @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;
+    @apply flex flex-grow-0 flex-shrink-0 mt-auto ml-auto m-2;
 }
+
 .panel-form-title {
-  @apply bg-[var(--vf-primary)] p-2 text-[var(--vf-color-on-primary)] text-sm mb-3 h-9 min-h-9 max-h-9 flex-nowrap truncate;
+    @apply bg-[var(--vf-primary)] p-2 text-[var(--vf-color-on-primary)] text-sm mb-3 h-9 min-h-9 max-h-9 flex-nowrap truncate;
 }
 
 @tailwind utilities;
 
 #app {
-  display: flex;
-  flex-direction: column;
-  font-weight: normal;
-  margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-weight: normal;
+    margin: 0;
 }
 
 .v-popper__inner {
-  font-size: 0.75em;
+    font-size: 0.75em;
 }
 
 body div[data-v-app=""] {
-  display: none;
+    display: none;
 }
 
 /* force the cancel button of the sweetalert to gray from red */
 body div:where(.swal2-container) button:where(.swal2-styled).swal2-deny {
-  background-color: #ccc;
+    background-color: #ccc;
 }
 
 body {
-  .v-toast {
-    .v-toast__item--success {
-      border-radius: 0.5rem;
-      background-color: white !important;
-      opacity: 1.0;
-      border: 0.125rem solid var(--vf-primary);
+    .v-toast {
+        .v-toast__item--success {
+            border-radius: 0.5rem;
+            background-color: white !important;
+            opacity: 1.0;
+            border: 0.125rem solid var(--vf-primary);
 
-      .v-toast__text {
-        color: var(--vf-primary);
-      }
+            .v-toast__text {
+                color: var(--vf-primary);
+            }
+        }
     }
-  }
 
 }
 
@@ -63,39 +66,39 @@ body {
  * flatpickr overrides for the vueform DateElement
  */
 #app .flatpickr-calendar {
-  .flatpickr-current-month {
-    font-size: 12px;
-  }
-
-  .flatpickr-weekdays {
-    font-weight: bold;
-    font-size: 12px;
-  }
-
-  .flatpickr-days {
-    max-width: 14rem;
-    width: 14rem;
-    font-size: 12px;
-
-    .dayContainer {
-      max-width: 14rem;
-      min-width: 14rem;
-      width: 14rem;
-
-      .flatpickr-day {
-        max-height: 2rem;
-        height: 2rem;
-        line-height: 2rem;
-      }
+    .flatpickr-current-month {
+        font-size: 12px;
     }
-  }
+
+    .flatpickr-weekdays {
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    .flatpickr-days {
+        max-width: 14rem;
+        width: 14rem;
+        font-size: 12px;
+
+        .dayContainer {
+            max-width: 14rem;
+            min-width: 14rem;
+            width: 14rem;
+
+            .flatpickr-day {
+                max-height: 2rem;
+                height: 2rem;
+                line-height: 2rem;
+            }
+        }
+    }
 
 }
 
 #app {
 
-  form [multiple], form [type=checkbox], form [type=date], form [type=datetime-local], form [type=email], form [type=month], form [type=number], form [type=password], form [type=radio], form [type=search], form [type=tel], form [type=text], form [type=time], form [type=url], form [type=week], form select, form textarea {
-    font-size: 0.75rem;
-    line-height: 1.25rem;
-  }
+    /*form [multiple], form [type=checkbox], form [type=date], form [type=datetime-local], form [type=email], form [type=month], form [type=number], form [type=password], form [type=radio], form [type=search], form [type=tel], form [type=text], form [type=time], form [type=url], form [type=week], form select, form textarea {
+      font-size: 0.75rem;
+      line-height: 1.25rem;
+    }*/
 }

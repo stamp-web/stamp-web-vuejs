@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed, isReactive, toRaw, watch } from 'vue'
+  import { computed, isReactive, nextTick, onMounted, ref, toRaw, watch } from 'vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import localeUtil from '@/util/locale-utils'
@@ -99,9 +99,12 @@
     </div>
   </div>
 </template>
-
 <style>
   .catalogue-editor .form-text-sm {
-    font-size: 12px;
+    font-size: var(--var-text-size-sm);
+  }
+
+  .catalogue-editor .form-text-small-sm {
+    font-size: 0.875em;
   }
 </style>

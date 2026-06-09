@@ -164,6 +164,6 @@ test.describe('update catalogue values', () => {
 
     // Verify stamp 3 is not there
     const stamp3Row = stampView.getGrid().getRowByText('s3')
-    await expect(stamp3Row).not.toBeVisible()
+    await expect(stamp3Row).toBeHidden()
   })
 })

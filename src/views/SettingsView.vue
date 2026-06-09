@@ -88,7 +88,7 @@
 </script>
 <template>
   <div class="col-start-2 col-end-6 flex-auto flex-grow p-2 pr-0 flex flex-row overflow-y-hidden">
-    <div class="flex-grow flex-auto flex flex-col overflow-y-auto">
+    <div class="settings-view flex-grow flex-auto flex flex-col overflow-y-auto">
       <div
         class="w-96 ml-auto mr-auto mt-4 h-full bg-white flex-shrink flex-auto flew-grow"
         role="form"
@@ -142,3 +142,8 @@
     </div>
   </div>
 </template>
+<style>
+  .settings-view .form-text-sm {
+    font-size: var(--var-text-size-sm);
+  }
+</style>

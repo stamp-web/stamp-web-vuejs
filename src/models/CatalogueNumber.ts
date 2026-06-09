@@ -1,23 +1,25 @@
 import type { PersistedModel } from '@/models/entityModels'
+import { createInstance } from '@/models/entityModels'
 import type { Condition } from '@/models/Condition'
 import type { Preference } from '@/models/Preference'
-import { createInstance } from '@/models/entityModels'
 
 export type CatalogueNumber = PersistedModel & {
   value: number
   catalogueRef: number
   number: string
   condition: Condition
-  active: { type: boolean; default: true }
-  unknown: { type: boolean; default: false }
-  nospace: { type: boolean; default: false }
+  active: boolean
+  unknown: boolean
+  nospace: boolean
 }
 
 export class CatalogueNumberHelper {
   static newInstance(preferences?: Preference[]): CatalogueNumber {
     const catalogueNumber = createInstance<CatalogueNumber>({
       id: 0,
-      active: true
+      active: true,
+      nospace: false,
+      unknown: false
     })
 
     type NumericKeys = keyof Pick<CatalogueNumber, 'catalogueRef' | 'condition'>

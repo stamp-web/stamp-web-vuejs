@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onMounted, nextTick, computed, isReactive, toRaw, watch } from 'vue'
+  import { computed, isReactive, nextTick, onMounted, ref, toRaw, watch } from 'vue'
   import PrimaryButton from '@/components/buttons/PrimaryButton.vue'
   import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
   import localeUtil from '@/util/locale-utils'
@@ -45,7 +45,7 @@
 </script>
 
 <template>
-  <div class="panel-form bg-white" role="form">
+  <div class="panel-form bg-white seller-editor" role="form">
     <div class="panel-form-title"><span class="sw-icon-country"></span>{{ title }}</div>
     <Vueform
       size="sm"
@@ -79,3 +79,12 @@
     </div>
   </div>
 </template>
+<style>
+  .seller-editor .form-text-sm {
+    font-size: var(--var-text-size-sm);
+  }
+
+  .seller-editor .form-text-small-sm {
+    font-size: 0.875em;
+  }
+</style>

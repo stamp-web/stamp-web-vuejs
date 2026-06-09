@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { computed, inject, nextTick, onMounted, ref, watchEffect } from 'vue'
+import { computed, inject, nextTick, onMounted, ref, watch, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Popover, PopoverButton, PopoverPanel, TransitionRoot } from '@headlessui/vue'
 import _isEmpty from 'lodash-es/isEmpty'
@@ -28,6 +28,7 @@ import FilterInput from '@/components/inputs/FilterInput.vue'
 import ConditionFilterInput from '@/components/inputs/ConditionFilterInput.vue'
 
 import StampEditor from '@/components/editors/StampEditor.vue'
+import ReferenceCatalogueNumbers from '@/components/editors/ReferenceCatalogueNumbers.vue'
 
 import { Prompt } from '@/components/Prompt'
 
@@ -177,6 +178,8 @@ import { useStampView } from '@/views/behaviors/stampView'
 
   const columnDefs = ref<ColumnDefinition[]>(createStampColumnDefs(prefPaths.value, setEditModel))
 
+  const isReferencesShown = ref(false)
+
   watchEffect(() => {
     Object.keys(columnControl.value).forEach((key) => {
       columnControl.value[key as keyof ColumnControl] = !isEditorShown()
@@ -186,6 +189,32 @@ import { useStampView } from '@/views/behaviors/stampView'
   const isSelectedWantlist = computed((): boolean => {
     return getEditModel()?.wantList
   })
+
+  const toggleReferences = () => {
+    isReferencesShown.value = !isReferencesShown.value
+  }
+
+  const selectedStamp = computed((): Stamp | undefined => {
+    const selected = getCurrentSelected()
+    return selected.length === 1 ? selected[0] : undefined
+  })
+
+  watch(selectedStamp, (newVal) => {
+    if (!newVal) {
+      isReferencesShown.value = false
+    }
+  })
+
+  watchEffect(() => {
+    if (isEditorShown()) {
+      isReferencesShown.value = false
+    }
+  })
+
+  const onStampUpdated = async (updatedStamp: Stamp) => {
+    await updateCollectionEntry(updatedStamp)
+    await setupStats()
+  }
 
   const setupStats = async () => {
     await nextTick()
@@ -499,11 +528,12 @@ import { useStampView } from '@/views/behaviors/stampView'
           :disabled="getViewMode() === 'card'"
         ></SecondaryButton>
         <SecondaryButton
-          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent"
+          class="!px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-none border !border-gray-400 !border-l-transparent hidden xl:flex"
           icon="sw-icon-references"
+          id="btn-references"
           :tooltip="t('actions.show-reference-catalogueNumbers')"
-          @click="setViewMode('card')"
-          :disabled="true"
+          @click="toggleReferences()"
+          :disabled="getCurrentSelected().length !== 1 || isEditorShown()"
         ></SecondaryButton>
         <SecondaryButton
           class="ml-0 !px-0.5 !py-0.25 h-6 mt-auto mb-1 w-6 rounded-tl-none rounded-bl-none border !border-gray-400 !border-l-transparent"
@@ -644,6 +674,23 @@ import { useStampView } from '@/views/behaviors/stampView'
             @save="save"
             @convert="convert()"
           ></StampEditor>
+        </TransitionRoot>
+        <TransitionRoot
+          :show="isReferencesShown"
+          enter="transition-opacity duration-75"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="transition-opacity duration-150"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+          class="min-w-[420px] max-w-[420px] h-full flex flex-col ml-2"
+        >
+          <ReferenceCatalogueNumbers
+            v-if="selectedStamp"
+            :stamp="selectedStamp"
+            @close="isReferencesShown = false"
+            @stamp-updated="onStampUpdated"
+          ></ReferenceCatalogueNumbers>
         </TransitionRoot>
         <StampDeleteDialog
           :is-open="deleteModel.showDelete"

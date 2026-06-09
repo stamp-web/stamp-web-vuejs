@@ -73,7 +73,7 @@
     }
   }
 
-  const changedCell = (obj: unknown) => {
+  const changedCell = (obj: unknown, colId?: string) => {
     if (obj) {
       const stamp = obj as AugmentedStamp
       if (stamp.activeCatalogueNumber && modelValue.value?.newCatalogueRef) {
@@ -95,7 +95,7 @@
         // AG Grid naturally exits edit mode on other cells when one is interacted with.
         // If the 'unknown' checkbox was unchecked, we programmatically put
         // the 'newValue' column back into edit mode for this row.
-        if (!stamp.activeCatalogueNumber?.unknown && typeof dg?.editCell === 'function') {
+        if (colId === 'unknown' && !stamp.activeCatalogueNumber?.unknown && typeof dg?.editCell === 'function') {
           const rowIndex = matchingStamps.value.findIndex((s) => s.id === stamp.id)
           if (rowIndex >= 0) {
             nextTick(() => {

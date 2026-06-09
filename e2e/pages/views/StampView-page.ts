@@ -1,12 +1,14 @@
 import { Locator, Page } from '@playwright/test'
 import { DataGridComponentCmp } from '../components/DataGridComponent-cmp.js'
 import { StampEditorCmp } from '../components/StampEditor-cmp.js'
+import { ReferenceCatalogueNumbersCmp } from '../components/ReferenceCatalogueNumbers-cmp.js'
 
 export class StampViewPage {
   readonly page: Page
 
   private grid!: DataGridComponentCmp
   private editor!: StampEditorCmp
+  private referencesPanel!: ReferenceCatalogueNumbersCmp
 
   constructor(page: Page) {
     this.page = page
@@ -50,5 +52,16 @@ export class StampViewPage {
 
   getUpdateCatalogueButton(): Locator {
     return this.page.locator(`button[id='btn-update-catalogue']`)
+  }
+
+  getReferencesButton(): Locator {
+    return this.page.locator(`button[id='btn-references']`)
+  }
+
+  getReferencesPanel(): ReferenceCatalogueNumbersCmp {
+    if (!this.referencesPanel) {
+      this.referencesPanel = new ReferenceCatalogueNumbersCmp(this.page)
+    }
+    return this.referencesPanel
   }
 }

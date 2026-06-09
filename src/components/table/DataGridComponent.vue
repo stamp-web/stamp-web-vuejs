@@ -167,7 +167,7 @@
   const onCellValueChanged = (params: CellValueChangedEvent) => {
     const id = params.data.id
     changedRows.set(id, params.data)
-    emit('cell-value-changed', params.data)
+    emit('cell-value-changed', params.data, params.column?.getId())
   }
 
   const onSelected = (event: RowSelectedEvent) => {

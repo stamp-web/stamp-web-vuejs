@@ -263,11 +263,11 @@
 </template>
 <style>
   .stamp-editor .form-text-sm {
-    font-size: 12px;
+    font-size: var(--var-text-size-sm);
   }
 
   .stamp-editor .form-text-small-sm {
-    font-size: 11px;
+    font-size: 0.875em;
   }
 
   .stamp-editor .form-bg-danger {

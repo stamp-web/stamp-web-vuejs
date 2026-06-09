@@ -1,15 +1,16 @@
-import { test, expect, Page } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import {
   AlbumTestHelper,
   CatalogueTestHelper,
   CountryTestHelper,
   SellerTestHelper,
-  StampTestHelper,
-  StampCollectionTestHelper
+  StampCollectionTestHelper,
+  StampTestHelper
 } from '../../helpers/api-helpers.js'
 import { CountryViewPage } from '../../pages/views/CountryView-page.js'
 import { StampViewPage } from '../../pages/views/StampView-page.js'
 import { StampPurchaseDialogCmp } from '../../pages/components/StampPurchaseDialog-cmp.js'
+import { PromptCmp } from '../../pages/components/Prompt-cmp.js'
 
 async function navigateToStampView(page: Page, countryName: string) {
   const countryView = new CountryViewPage(page)
@@ -252,5 +253,106 @@ test.describe('creation tests', () => {
     await editor.getCatalogueValue().fill('12.50')
     expect(await editor.isValid()).toBe(true)
     expect(await editor.hasConflict()).toBe(true)
+  })
+
+  test('verify reference catalogue numbers panel and add crash', async ({ page }) => {
+    page.on('console', (msg) => {
+      // eslint-disable-next-line no-console
+      console.log(`CONSOLE [${msg.type()}]: ${msg.text()}`)
+    })
+    page.on('pageerror', (err) => {
+      // eslint-disable-next-line no-console
+      console.log(`PAGE ERROR: ${err.message}\n${err.stack}`)
+    })
+
+    const num = `refcn-${timestamp}`
+    StampTestHelper.create(page.request, {
+      countryRef: countryId,
+      rate: '1d',
+      description: 'red',
+      wantList: false,
+      catalogueNumbers: [
+        {
+          catalogueRef: catalogueId,
+          number: num,
+          value: 100,
+          condition: 2,
+          active: true
+        }
+      ]
+    })
+    const stampView = await navigateToStampView(page, countryName)
+    await stampView.getGrid().waitForLoadingComplete()
+
+    const rowLoc = await stampView.getGrid().getRowByText(num)
+    await rowLoc.click({ delay: 500 })
+
+    const refBtn = stampView.getReferencesButton()
+    await expect(refBtn).toBeEnabled()
+    await refBtn.click()
+
+    const refPanel = stampView.getReferencesPanel()
+    const addBtn = refPanel.getAddCatalogueNumberButton()
+    await expect(addBtn).toBeVisible()
+    await addBtn.click()
+
+    await expect(refPanel.getCancelButton().first()).toBeVisible()
+  })
+
+  test('verify reference catalogue number deletion', async ({ page }) => {
+    const numActive = `activecn-${timestamp}`
+    const numRef = `refcn-del-${timestamp}`
+    await StampTestHelper.create(page.request, {
+      countryRef: countryId,
+      rate: '1d',
+      description: 'red',
+      wantList: false,
+      catalogueNumbers: [
+        {
+          catalogueRef: catalogueId,
+          number: numActive,
+          value: 100,
+          condition: 2,
+          active: true
+        },
+        {
+          catalogueRef: catalogueId,
+          number: numRef,
+          value: 50,
+          condition: 2,
+          active: false
+        }
+      ]
+    })
+    const stampView = await navigateToStampView(page, countryName)
+    await stampView.getGrid().waitForLoadingComplete()
+
+    const rowLoc = await stampView.getGrid().getRowByText(numActive)
+    await rowLoc.click({ delay: 500 })
+
+    const refBtn = stampView.getReferencesButton()
+    await expect(refBtn).toBeEnabled()
+    await refBtn.click()
+
+    // Check both are visible in the reference catalogue numbers panel
+    const refPanel = stampView.getReferencesPanel()
+    const activeItem = refPanel.getItem(numActive)
+    await expect(activeItem).toBeVisible()
+    const refItem = refPanel.getItem(numRef)
+    await expect(refItem).toBeVisible()
+
+    // Find the delete button for the secondary catalogue number
+    const deleteBtn = refPanel.getDeleteButtonForItem(numRef)
+    await expect(deleteBtn).toBeVisible()
+    await deleteBtn.click()
+
+    // Confirm deletion
+    const prompt = new PromptCmp(page)
+    await expect(prompt.getLocator()).toBeVisible()
+    await prompt.yes()
+    await expect(prompt.getLocator()).toBeHidden()
+
+    // Verify the secondary catalogue number is gone from the slide out view
+    await expect(refItem).toBeHidden()
   })
 })
