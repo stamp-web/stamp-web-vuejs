@@ -122,7 +122,7 @@
         >
         </SecondaryButton>
         <FilterInput
-          class="ml-4 filter-input"
+          class="ml-4 filter-input w-56 scale-90"
           :label="t('actions.filter')"
           :placeholder="t('form.filter-placeholder')"
           :filter-text="filterString"

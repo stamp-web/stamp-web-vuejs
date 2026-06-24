@@ -4,6 +4,7 @@
   import axios from 'axios'
   import { findBasePath } from '@/util/href-utils'
   import type { Log } from 'vuejs3-logger'
+  import PillTag from '@/components/display/PillTag.vue'
 
   const { t } = useI18n()
   const logger = inject('vuejs3-logger') as Log
@@ -136,9 +137,7 @@
               class="flex items-center justify-between p-3 rounded-xl bg-gray-50/60 border border-gray-100 hover:bg-gray-50 transition-colors"
             >
               <span class="text-sm font-semibold text-gray-700 capitalize">{{ component }}</span>
-              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100/70 text-emerald-800">
-                Build #{{ version }}
-              </span>
+              <PillTag state="active" :value="`Build #${version}`" />
             </div>
           </div>
         </div>

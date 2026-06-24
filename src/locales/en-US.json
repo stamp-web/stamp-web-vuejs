@@ -295,5 +295,10 @@
     "component-versions": "Component Build Versions",
     "no-build-info": "Build information is currently unavailable.",
     "loading": "Loading build information..."
+  },
+  "status": {
+    "active": "Active",
+    "secondary": "Secondary",
+    "tertiary": "Tertiary"
   }
 }

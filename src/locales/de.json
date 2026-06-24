@@ -20,5 +20,10 @@
     "component-versions": "Komponenten-Build-Versionen",
     "no-build-info": "Build-Informationen sind derzeit nicht verfügbar.",
     "loading": "Build-Informationen werden geladen..."
+  },
+  "status": {
+    "active": "Aktiv",
+    "secondary": "Sekundär",
+    "tertiary": "Tertiär"
   }
 }

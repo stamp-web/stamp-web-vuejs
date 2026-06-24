@@ -16,6 +16,7 @@ import SecondaryButton from '@/components/buttons/SecondaryButton.vue'
 import CatalogueSelector from '@/components/inputs/CatalogueSelector.vue'
 import ConditionSelector from '@/components/inputs/ConditionSelector.vue'
 import { ConditionHelper } from '@/models/Condition'
+import PillTag from '@/components/display/PillTag.vue'
 
 const { t } = useI18n()
   const cataloguesStore = catalogueStore()
@@ -299,18 +300,10 @@ const { t } = useI18n()
           </div>
 
           <div class="flex items-center gap-3">
-            <span
-              v-if="cn.active"
-              class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200/50 shadow-sm"
-            >
-              Active
-            </span>
-            <span
-              v-else
-              class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-500 border border-gray-200/50"
-            >
-              Secondary
-            </span>
+            <PillTag
+              :state="cn.active ? 'active' : 'secondary'"
+              :value="cn.active ? t('status.active') : t('status.secondary')"
+            />
 
             <div class="flex items-center gap-2 pl-2 border-l border-gray-200/60">
               <button
