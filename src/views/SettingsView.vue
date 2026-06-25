@@ -14,6 +14,7 @@
   import { preferenceStore } from '@/stores/preferenceStore'
   import type { Preference } from '@/models/Preference'
   import type { KeyIndexable } from '@/util/ts/key-accessor'
+import LocaleUtilities from '@/util/locale-utils'
 
   const { t } = useI18n()
 
@@ -29,7 +30,8 @@
     sellerRef: null,
     code: null,
     condition: null,
-    grade: null
+    grade: null,
+    locale: null
   })
 
   const prefStore = preferenceStore()
@@ -38,17 +40,40 @@
     return form$.value?.invalid || saving.value
   })
 
+  const changeLocaleNow = () => {
+    const selectedLocale = model.value.locale
+    if (selectedLocale === 'en-US' || selectedLocale === 'de') {
+      LocaleUtilities.setLocale(selectedLocale)
+    }
+  }
+
   const savePreferences = async () => {
     saving.value = true
-    Object.keys(model.value).forEach(async (key) => {
-      const pref: Preference = await prefStore.findByNameAndCategory(key, 'stamps')
+    const keys = Object.keys(model.value)
+    for (const key of keys) {
+      const isLocale = key === 'locale'
+      const category = isLocale ? 'user' : 'stamps'
+      const pref: Preference = await prefStore.findByNameAndCategory(key, category)
       const v = (model.value as KeyIndexable)[key]
       const value = v ? v.toString() : undefined
-      if (pref && pref.value !== value) {
-        pref.value = value
-        await prefStore.update(pref)
+      if (pref) {
+        if (pref.value !== value) {
+          pref.value = value
+          await prefStore.update(pref)
+        }
+      } else if (value !== undefined && value !== null) {
+        const newPref: Preference = {
+          id: 0,
+          name: key,
+          category,
+          value
+        }
+        await prefStore.create(newPref)
       }
-    })
+      if (isLocale && value) {
+        LocaleUtilities.setLocale(value as 'en-US' | 'de')
+      }
+    }
     showMessage.value = true
 
     setTimeout(() => {
@@ -59,11 +84,18 @@
 
   const preprocessPreferences = (prefs: Array<Preference>) => {
     Object.keys(model.value).forEach((key) => {
+      const isLocale = key === 'locale'
+      const category = isLocale ? 'user' : 'stamps'
       const p = prefs.find((pref) => {
-        return pref.name === key && pref.category === 'stamps'
+        return pref.name === key && pref.category === category
       })
       if (p && p.value) {
-        if (key.endsWith('Ref') || key === 'grade' || key === 'condition') {
+        if (isLocale) {
+          if (p.value === 'en-US' || p.value === 'de') {
+            ;(model.value as KeyIndexable)[key] = p.value
+            LocaleUtilities.setLocale(p.value as 'en-US' | 'de')
+          }
+        } else if (key.endsWith('Ref') || key === 'grade' || key === 'condition') {
           ;(model.value as KeyIndexable)[key] = Number.parseInt(p.value)
         } else {
           ;(model.value as KeyIndexable)[key] = p.value
@@ -126,6 +158,35 @@
             v-model="model"
             :columns="{ default: 4 }"
           ></CurrencySelector>
+          <div class="col-span-12">
+            <div class="w-7/12 flex items-end gap-2">
+              <div class="flex-grow">
+                <select-element
+                  name="locale"
+                  :label="t('form.language')"
+                  :native="false"
+                  :search="false"
+                  label-prop="name"
+                  value-prop="value"
+                  :items="[
+                    { value: 'en-US', name: t('languages.en-US') },
+                    { value: 'de', name: t('languages.de') }
+                  ]"
+                  :columns="{ container: 12, label: 12, wrapper: 12 }"
+                  :append-to-body="true"
+                />
+              </div>
+              <button
+                type="button"
+                class="hover:text-[var(--vf-primary)] text-gray-400 focus:outline-none transition-colors mb-2.5 flex-shrink-0 mr-2"
+                @click="changeLocaleNow"
+                title="Change the language now"
+                v-tooltip="'Change the language now'"
+              >
+                <span class="sw-icon-language scale-110"></span>
+              </button>
+            </div>
+          </div>
         </Vueform>
         <div class="mt-auto ml-auto mb-2 flex flex-row items-center">
           <span :class="`ml-auto mr-4 align-middle ${!showMessage ? 'hidden' : ''}`">{{

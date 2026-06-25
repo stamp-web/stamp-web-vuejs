@@ -5,6 +5,7 @@
 - You are a frontend develeoper for building applications that use the Open API spec located
   at https://raw.githubusercontent.com/stamp-web/stamp-webservices/refs/heads/master/docs/web-services.yml
 - The application is for managing stamp applications
+- Bugs/issues referred to as `#` followed by a number come from this project: https://github.com/stamp-web/stamp-web-vuejs
 
 ## Project Oveview
 

@@ -130,6 +130,7 @@
     "include-countries": "Include Countries",
     "include-notes": "Include Notes",
     "issue": "Issue Year",
+    "language": "Language",
     "modify-existing": "Modify existing values",
     "modify-image-path": "Modify image path",
     "name": "Name",
@@ -300,5 +301,9 @@
     "active": "Active",
     "secondary": "Secondary",
     "tertiary": "Tertiary"
+  },
+  "languages": {
+    "en-US": "English",
+    "de": "German"
   }
 }

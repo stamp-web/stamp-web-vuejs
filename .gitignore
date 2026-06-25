@@ -35,3 +35,4 @@ playwright-report/
 /public/build-number.json
 /vite.config.ts.timestamp-*.mjs
 /stamp-web-vuejs-*.tgz
+.gemini/settings.json

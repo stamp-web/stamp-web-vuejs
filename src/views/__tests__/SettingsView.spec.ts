@@ -11,6 +11,7 @@ interface SettingsViewComponent {
     countryRef: number
     stampCollectionRef: number
     code: string
+    locale: string
   }
   savePreferences: () => Promise<void>
   preprocessPreferences: (list: Array<Preference>) => void
@@ -46,6 +47,7 @@ describe('SettingsView', () => {
   it('savePreferences', async () => {
     const component = wrapper.vm as unknown as SettingsViewComponent
     component.model.countryRef = 115
+    component.model.locale = 'de'
 
     const findByNameAndCategory = vi.fn().mockImplementation((name, category) => {
       if (category === 'stamps' && name === 'countryRef') {
@@ -53,6 +55,12 @@ describe('SettingsView', () => {
           name: 'countryRef',
           category: 'stamps',
           value: '100'
+        } as Preference)
+      } else if (category === 'user' && name === 'locale') {
+        return Promise.resolve({
+          name: 'locale',
+          category: 'user',
+          value: 'en-US'
         } as Preference)
       } else {
         return Promise.resolve()
@@ -66,6 +74,7 @@ describe('SettingsView', () => {
     await component.savePreferences()
     expect(spyfindByNameAndCategory).toHaveBeenCalled()
   })
+
   it('preprocessPreferences', () => {
     const list: Array<Preference> = new Array<Preference>()
     list.push({ name: 'stampCollectionRef', category: 'stamps', value: '100' } as Preference)
@@ -77,5 +86,14 @@ describe('SettingsView', () => {
     expect(component.model.countryRef).toBe(101)
     expect(component.model.stampCollectionRef).toBe(100)
     expect(component.model.code).toBe('USD')
+  })
+
+  it('preprocessPreferences with locale', () => {
+    const list: Array<Preference> = new Array<Preference>()
+    list.push({ name: 'locale', category: 'user', value: 'de' } as Preference)
+
+    const component = wrapper.vm as unknown as SettingsViewComponent
+    component.preprocessPreferences(list)
+    expect(component.model.locale).toBe('de')
   })
 })
