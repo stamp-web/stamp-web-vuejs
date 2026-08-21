@@ -13,7 +13,7 @@ describe('PredicateUtilities', () => {
     it('verify undefined dropped', () => {
       const arr = [undefined, new Predicate({ subject: 'test', value: 'test-v' })]
       const result = PredicateUtilities.concat(Operators.AND, arr)
-      expect(result.flatten().length).toBe(1)
+      expect(result?.flatten().length).toBe(1)
     })
 
     it('verify multiple concatentated', () => {
@@ -22,7 +22,7 @@ describe('PredicateUtilities', () => {
         new Predicate({ subject: 'test', value: 'test-v' })
       ]
       const result = PredicateUtilities.concat(Operators.AND, arr)
-      expect(result.flatten().length).toBe(2)
+      expect(result?.flatten().length).toBe(2)
     })
 
     it('verify multiple undefines are not concatentated', () => {
@@ -33,7 +33,7 @@ describe('PredicateUtilities', () => {
         undefined
       ]
       const result = PredicateUtilities.concat(Operators.AND, arr)
-      expect(result.flatten().length).toBe(2)
+      expect(result?.flatten().length).toBe(2)
     })
   })
 
@@ -47,7 +47,7 @@ describe('PredicateUtilities', () => {
     it('no removal without matching item from single array', () => {
       const ps = new Predicate({ subject: 'my-subject', value: 'something' })
       const result = PredicateUtilities.removeMatchesByPredicate('no removal', ps)
-      expect(result.flatten().length).toBe(1)
+      expect(result?.flatten().length).toBe(1)
     })
 
     it('no removal without matching item from array', () => {
@@ -59,7 +59,7 @@ describe('PredicateUtilities', () => {
           new Predicate({ subject: 'yet-again-subject', value: 'something' })
         ])
       )
-      expect(result.flatten().length).toBe(3)
+      expect(result?.flatten().length).toBe(3)
     })
 
     it('removal matching first item from array', () => {
@@ -71,7 +71,7 @@ describe('PredicateUtilities', () => {
           new Predicate({ subject: 'yet-again-subject', value: 'something' })
         ])
       )
-      expect(result.flatten().length).toBe(2)
+      expect(result?.flatten().length).toBe(2)
     })
 
     it('removal matching last item from array', () => {
@@ -83,7 +83,7 @@ describe('PredicateUtilities', () => {
           new Predicate({ subject: 'yet-again-subject', value: 'something' })
         ])
       )
-      expect(result.flatten().length).toBe(2)
+      expect(result?.flatten().length).toBe(2)
     })
 
     it('removal matching OR condition', () => {
@@ -99,7 +99,7 @@ describe('PredicateUtilities', () => {
           new Predicate({ subject: 'yet-again-subject', value: 'something' })
         ])
       )
-      expect(result.flatten().length).toBe(2)
+      expect(result?.flatten().length).toBe(2)
     })
 
     it('removal nested condition with others', () => {
@@ -122,7 +122,7 @@ describe('PredicateUtilities', () => {
           })
         ])
       )
-      expect(result.flatten().length).toBe(1)
+      expect(result?.flatten().length).toBe(1)
     })
 
     it('removal matching only AND condition', () => {
@@ -149,12 +149,12 @@ describe('PredicateUtilities', () => {
       const list = [
         new Predicate({
           subject: 'test',
-          operator: Operators.EQ,
+          operator: Operators.EQUALS,
           value: 'bar'
         }),
         new Predicate({
           subject: 'another',
-          operator: Operators.GT,
+          operator: Operators.GREATER_THAN,
           value: 42
         })
       ]
@@ -166,19 +166,19 @@ describe('PredicateUtilities', () => {
       const list = [
         new Predicate({
           subject: 'test',
-          operator: Operators.EQ,
+          operator: Operators.EQUALS,
           value: 'bar'
         }),
         new Predicate({
           subject: new Predicate({
             subject: 'condition',
-            operator: Operators.EQ,
+            operator: Operators.EQUALS,
             value: 1
           }),
           operator: Operators.OR,
           value: new Predicate({
             subject: 'condition',
-            operator: Operators.EQ,
+            operator: Operators.EQUALS,
             value: 2
           })
         })

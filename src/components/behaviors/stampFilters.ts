@@ -37,7 +37,10 @@ const stampFilters = () => {
         break
     }
     if (conditions.length > 0) {
-      predicates.push(PredicateUtilities.concat(Operators.OR, conditions))
+      const p = PredicateUtilities.concat(Operators.OR, conditions)
+      if (p) {
+        predicates.push(p)
+      }
     }
   }
 
@@ -99,10 +102,8 @@ const stampFilters = () => {
   }
 
   const parseQueryFilter = (query: LocationQuery) => {
-    const q = {
-      ...structuredClone(query)
-    }
-    return q.$filter ? Parser.parse(q.$filter) : undefined
+    const filterStr = Array.isArray(query.$filter) ? query.$filter[0] : query.$filter
+    return filterStr ? Parser.parse(filterStr) ?? undefined : undefined
   }
 
   return {

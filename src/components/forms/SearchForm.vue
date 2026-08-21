@@ -90,7 +90,9 @@
   const goSearch = () => {
     const predicates = buildPredicates()
     const searchParam = PredicateUtilities.concat(Operators.AND, predicates)
-    emit('search-options', searchParam)
+    if (searchParam) {
+      emit('search-options', searchParam)
+    }
     close()
   }
   const close = () => {

@@ -48,17 +48,17 @@ export const createFilter = (stamp: Stamp, cn: CatalogueNumber): object => {
   const searchCriteria = [
     new Predicate({
       subject: 'countryRef',
-      operator: Operators.EQUAL,
+      operator: Operators.EQUALS,
       value: stamp.countryRef
     }),
     new Predicate({
       subject: 'number',
-      operator: Operators.EQUAL,
+      operator: Operators.EQUALS,
       value: cn.number
     })
   ]
   return {
-    $filter: PredicateUtilities.concat(Operators.AND, searchCriteria).serialize()
+    $filter: PredicateUtilities.concat(Operators.AND, searchCriteria)?.serialize()
   }
 }
 

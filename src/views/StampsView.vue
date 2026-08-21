@@ -252,7 +252,7 @@ import { useStampView } from '@/views/behaviors/stampView'
     query.value.$filter = PredicateUtilities.concat(
       Operators.AND,
       state.value.predicates.concat(state.value.filterPredicates)
-    ).serialize()
+    )?.serialize() ?? ''
     return findWithQuery(query.value)
   }
 
@@ -377,7 +377,7 @@ import { useStampView } from '@/views/behaviors/stampView'
     state.value.predicates.push(searchFilter)
     await router.push({
       query: {
-        $filter: PredicateUtilities.concat(Operators.AND, state.value.predicates).serialize()
+        $filter: PredicateUtilities.concat(Operators.AND, state.value.predicates)?.serialize()
       }
     })
     await gotoPage(getActivePage())
@@ -455,7 +455,8 @@ import { useStampView } from '@/views/behaviors/stampView'
         ...structuredClone(route.query)
       }
       if (query.value.$filter) {
-        state.value.predicates = [Parser.parse(query.value.$filter)]
+        const parsed = Parser.parse(query.value.$filter)
+        state.value.predicates = parsed ? [parsed] : []
       }
     }
     query.value.$orderby = OdataUtil.createSort('number', 'asc')

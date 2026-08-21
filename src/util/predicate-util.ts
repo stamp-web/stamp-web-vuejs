@@ -13,50 +13,52 @@ export const PredicateUtilities = {
     }
   },
 
-  removeMatchesByPredicate(subject: string, predicates: Predicate) {
-    if (Operators.isLogical(predicates.operator)) {
-      if (predicates.subject instanceof Predicate && predicates.subject.subject === subject) {
-        predicates = predicates.value
+  removeMatchesByPredicate(subject: string, predicates: Predicate): Predicate | undefined {
+    let result: Predicate | undefined = predicates
+    if (Operators.isLogical(result.operator)) {
+      if (result.subject instanceof Predicate && result.subject.subject === subject) {
+        result = result.value
       }
-      if (predicates.value instanceof Predicate && predicates.value.subject === subject) {
-        predicates = predicates.subject
+      if (result && result.value instanceof Predicate && result.value.subject === subject) {
+        result = result.subject
       }
       if (
-        predicates.subject instanceof Predicate &&
-        Operators.isLogical(predicates.subject.operator)
+        result &&
+        result.subject instanceof Predicate &&
+        Operators.isLogical(result.subject.operator)
       ) {
-        predicates.subject = PredicateUtilities.removeMatchesByPredicate(
+        result.subject = PredicateUtilities.removeMatchesByPredicate(
           subject,
-          predicates.subject
+          result.subject
         )
-        if (!predicates.subject || predicates.subject === '') {
-          predicates = predicates.value
+        if (!result.subject) {
+          result = result.value
         }
       }
-      if (predicates.value instanceof Predicate && Operators.isLogical(predicates.value.operator)) {
-        predicates.value = PredicateUtilities.removeMatchesByPredicate(subject, predicates.value)
-        if (!predicates.value || predicates.value === '') {
-          predicates = predicates.subject
+      if (result && result.value instanceof Predicate && Operators.isLogical(result.value.operator)) {
+        result.value = PredicateUtilities.removeMatchesByPredicate(subject, result.value)
+        if (!result.value) {
+          result = result.subject
         }
       }
     }
-    if (predicates instanceof Predicate && predicates.subject === subject) {
-      predicates = undefined
+    if (result instanceof Predicate && result.subject === subject) {
+      result = undefined
     }
-    return predicates
+    return result
   },
 
-  concat(op: Operators, array: Array<Predicate | []>) {
-    const ret = [].concat(
-      ...array.filter((elm: Predicate | []) => {
-        return elm && (Array.isArray(elm) || elm instanceof Predicate)
-      })
+  concat(op: string, array: Array<unknown>): Predicate | undefined {
+    const ret: Array<Predicate | []> = [].concat(
+      ...(array.filter((elm): elm is Predicate | [] => {
+        return Boolean(elm && (Array.isArray(elm) || elm instanceof Predicate))
+      }) as unknown as [])
     )
     if (ret && ret.length > 1) {
-      return Predicate.concat(op, ret)
+      return Predicate.concat(op, ret as unknown as Predicate[])
     } else {
       if (ret && (ret[0] as unknown) instanceof Predicate) {
-        return ret[0]
+        return ret[0] as Predicate
       }
     }
     return undefined
